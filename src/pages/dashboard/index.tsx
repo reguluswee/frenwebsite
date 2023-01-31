@@ -16,7 +16,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import { useEnvironmentChains } from "~/hooks/useEnvironmentChains";
 
+let v : number = 1
 const Chains: NextPage = () => {
+  console.log('dashboard更新', ++v)
   const { t } = useTranslation("common");
   const { envChains } = useEnvironmentChains();
   const [mintAddresses, setMintAddresses] = useState<{ [key: number]: number }>(

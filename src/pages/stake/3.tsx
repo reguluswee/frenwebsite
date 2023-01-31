@@ -19,7 +19,8 @@ import { clsx } from "clsx";
 import GasEstimate from "~/components/GasEstimate";
 import CardContainer from "~/components/containers/CardContainer";
 import XENContext from "~/contexts/XENContext";
-import XENCryptoABI from "~/abi/XENCryptoABI";
+//import XENCryptoABI from "~/abi/XENCryptoABI";
+import FRENCryptoABI from "~/abi/FRENCryptoABI"
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Breadcrumbs from "~/components/Breadcrumbs";
@@ -40,7 +41,7 @@ const Stake = () => {
 
   const { config } = usePrepareContractWrite({
     addressOrName: xenContract(chain).addressOrName,
-    contractInterface: XENCryptoABI,
+    contractInterface: FRENCryptoABI,
     functionName: "withdraw",
     enabled: (userStake && !userStake.term.isZero()) ?? false,
   });
@@ -108,7 +109,7 @@ const Stake = () => {
                     amount: Number(userStake?.amount ?? 0),
                     apy: Number(userStake?.apy ?? 0),
                   })}
-                  description="XEN"
+                  description="FREN"
                 />
               </div>
 

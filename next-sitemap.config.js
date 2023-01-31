@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: "https://xen.fyi",
+  siteUrl: "https://fenus.xyz",
   generateRobotsTxt: true, // (optional)
   // ...other options
 };

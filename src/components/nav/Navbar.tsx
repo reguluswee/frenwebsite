@@ -135,7 +135,7 @@ export const Navbar: NextPage = () => {
   return (
     <div className="navbar">
       <div className="navbar-start space-x-2">
-        <a className="text-neutral normal-case text-3xl font-light">XEN</a>
+        <a className="text-neutral normal-case text-3xl font-light">FREN</a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal glass rounded-box p-2 space-x-4">
@@ -224,8 +224,8 @@ export const Navbar: NextPage = () => {
                     (connector as InjectedConnector)?.watchAsset?.({
                       address: token.address,
                       decimals: token.decimals,
-                      image: "https://xen.fyi/images/xen.png",
-                      symbol: token.symbol ?? "XEN",
+                      image: "https://fenus.xyz/fren.jpg",
+                      symbol: token.symbol ?? "FREN",
                     });
                     (document.activeElement as HTMLElement).blur();
                   }}

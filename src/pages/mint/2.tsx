@@ -22,7 +22,7 @@ const Mint = () => {
     {
       title: t("card.estimated"),
       value: estimatedXEN(globalRank, userMint),
-      suffix: " XEN",
+      suffix: " FREN",
       decimals: 0,
     },
     {

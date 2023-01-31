@@ -12,8 +12,17 @@ import { dogechainMainnet } from "~/lib/chains/dogechainMainnet";
 import { okxMainnet } from "./chains/okxMainnet";
 import { polygonTestnet } from "./chains/polygonTestnet";
 
+import { ethfMainnet } from "~/lib/chains/ethfMainnet";
+import FRENCryptoABI from "~/abi/FRENCryptoABI";
+
 export const xenContract = (contractChain?: Chain) => {
   switch (contractChain?.id) {
+    case ethfMainnet.id:
+      return {
+        addressOrName: "0x7127deeff734cE589beaD9C4edEFFc39C9128771",
+        contractInterface: FRENCryptoABI,
+        chainId: contractChain.id,
+      };
     case dogechainMainnet.id:
       return {
         addressOrName: "0x948eed4490833D526688fD1E5Ba0b9B35CD2c32e",

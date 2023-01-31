@@ -29,14 +29,14 @@ const Stake = () => {
       value: Number(
         ethers.utils.formatUnits(xenBalance?.value ?? BigNumber.from(0))
       ),
-      suffix: " XEN",
+      suffix: " FREN",
     },
     {
       title: t("card.staked"),
       value: Number(
         ethers.utils.formatUnits(userStake?.amount ?? BigNumber.from(0))
       ),
-      suffix: " XEN",
+      suffix: " FREN",
       tokenDecimals: 2,
     },
     {

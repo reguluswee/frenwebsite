@@ -22,6 +22,11 @@ const nextConfig = {
         destination: "/stake/1",
         permanent: false,
       },
+      {
+        source: "/batch",
+        destination: "/batch/fop",
+        permanent: false,
+      },
     ];
   },
 };

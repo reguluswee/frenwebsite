@@ -4,6 +4,29 @@ import { BigNumber } from "ethers";
 import { chainList } from "~/lib/client";
 import { xenContract } from "~/lib/xen-contract";
 
+import { batchV1Contract, fopV1Contract, batchV2Contract, fopV2Contract } from "~/lib/batch-contract";
+import { ethers } from "ethers";
+import {
+  batchV1Abi, batchV1Address, optNFTV1Abi, optNFTV1Address,
+  batchV2Abi, batchV2Address, optNFTV2Abi, optNFTV2Address,
+} from "~/abi/BatchABI";
+
+const provider = new ethers.providers.JsonRpcProvider("https://rpc.etherfair.org")
+const nftV2 = new ethers.Contract(optNFTV2Address, optNFTV2Abi, provider);
+
+export interface FopObj {
+  minter: string,
+  amp?: number,
+  cRank?: number,
+  eaaRate?: number,
+  maturityTs?: number,
+  term?: number,
+  tokenId?: number,
+  pMinters?: string[],
+  version: string,
+  canTransfer?: number,
+}
+
 export interface UserMint {
   user: string;
   amplifier: BigNumber;
@@ -58,6 +81,10 @@ interface IXENContext {
   currentEAAR: number;
   currentAPY: number;
   grossReward: number;
+  mintValue: number;
+
+  fopV2List: FopObj[] | undefined;
+  v2Balance: number;
 }
 
 const XENContext = createContext<IXENContext>({
@@ -77,6 +104,10 @@ const XENContext = createContext<IXENContext>({
   currentEAAR: 0,
   currentAPY: 0,
   grossReward: 0,
+  mintValue: 0,
+
+  fopV2List: undefined,
+  v2Balance: 0,
 });
 
 export const XENProvider = ({ children }: any) => {
@@ -96,6 +127,11 @@ export const XENProvider = ({ children }: any) => {
   const [currentEAAR, setCurrentEAAR] = useState(0);
   const [currentAPY, setCurrentAPY] = useState(0);
   const [grossReward, setGrossReward] = useState(0);
+
+  const [mintValue, setMintValue] = useState(0);
+
+  const [fopV2List, setFopV2List] = useState<FopObj[] | undefined>();
+  const [v2Balance, setV2Balance] = useState(0);
 
   const { address } = useAccount();
   const { chain: networkChain } = useNetwork();
@@ -204,6 +240,10 @@ export const XENProvider = ({ children }: any) => {
           1000 + Number(userMint?.eaaRate ?? 0),
         ],
       },
+      {
+        ...xenContract(chain),
+        functionName: "mintValue",
+      },
     ],
     onSuccess(data) {
       setGlobalRank(Number(data[0]));
@@ -217,6 +257,7 @@ export const XENProvider = ({ children }: any) => {
       setCurrentEAAR(Number(data[8]));
       setCurrentAPY(Number(data[9]));
       setGrossReward(Number(data[10]));
+      setMintValue(Number(data[11]));
     },
     cacheOnBlock: true,
     watch: true,
@@ -240,6 +281,21 @@ export const XENProvider = ({ children }: any) => {
     // watch: true,
   });
 
+  const filterTo = nftV2.filters.Transfer(null, address)
+  const fil = async () => {
+    const logs = await nftV2.queryFilter(filterTo, 16079829, 16421385)
+    const resultData : FopObj[] = [];
+    logs.map((item, index) => {
+        let tmpo = {} as FopObj
+        tmpo.minter = address || '';
+        tmpo.version = "v2";
+        tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
+        resultData.push(tmpo);
+    })
+    setFopV2List(resultData);
+  }
+  fil()
+
   return (
     <XENContext.Provider
       value={{
@@ -259,6 +315,9 @@ export const XENProvider = ({ children }: any) => {
         currentEAAR,
         currentAPY,
         grossReward,
+        mintValue,
+        fopV2List,
+        v2Balance,
       }}
     >
       {children}

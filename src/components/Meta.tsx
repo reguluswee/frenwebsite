@@ -10,10 +10,10 @@ const Meta: NextPage = () => {
   const { asPath } = router;
   const path = asPath.split("/").filter((item) => item !== "");
 
-  const title = `XEN.fyi - ${path.join(" - ")}`;
+  const title = `fenus.xyz - ${path.join(" - ")}`;
   const description = t("meta.description");
-  const url = "https://xen.fyi";
-  const image = "https://xen.fyi/images/xen-logo-slogan-horizontal.png";
+  const url = "https://fenus.xyz";
+  const image = "https://fenus.xyz/images/xen-logo-slogan-horizontal.png";
 
   return (
     <Head>
@@ -27,7 +27,7 @@ const Meta: NextPage = () => {
       <meta name="author" content="Joe Blau joe@atomize.xyz" />
       <meta
         name="keywords"
-        content="xen.fyi, xen crypto, xencrypto, xen, crypto, xen.network, token, ethereum, avalanche, polygon, binance, moonbeam, evmos, fantom, dogechain"
+        content="fenus.xyz, xen crypto, xencrypto, fren, crypto, ethf, token, ethereumfair, etherfair, polygon, binance, moonbeam, evmos, fantom, dogechain"
       />
 
       {/* Apple */}

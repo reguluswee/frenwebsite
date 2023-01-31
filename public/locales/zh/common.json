@@ -5,7 +5,7 @@
   "chain": "区块链",
   "address": "地址",
   "theme": "主题",
-  "add-to-wallet": "添加XEN到钱包",
+  "add-to-wallet": "添加FREN到钱包",
   "connect-wallet": "连接钱包",
   "or": "或",
   "success": "成功",
@@ -35,11 +35,11 @@
     "select-chain": "选择区块链",
     "chain-id": "区块链ID: {{chainId}}",
     "amp": "AMP",
-    "amp-description": "奖励增强值 (AMP) 是XEN铸造过程中时间相关的奖励部分。它自创世第一天开始，以3,000作为起始数值，逐日递减1，达到1后将不再变化。",
+    "amp-description": "奖励增强值 (AMP) 是FREN铸造过程中时间相关的奖励部分。它自创世第一天开始，以3,000作为起始数值，逐日递减1，达到1后将不再变化。",
     "eaa": "EAA",
-    "eaa-description": "早期用户增强值 (EAA) 是XEN铸造过程中依赖于当前全球排名的奖励部分。其数值起始于10%，每增加10万个全球排名，便会呈线性递减0.1%",
+    "eaa-description": "早期用户增强值 (EAA) 是FREN铸造过程中依赖于当前全球排名的奖励部分。其数值起始于10%，每增加10万个全球排名，便会呈线性递减0.1%",
     "apy": "APY",
-    "apy-description": "年化收益率 (APY) 决定了XEN抵押奖励的收入多少。它没有复投过程，只按质押天数计算。自创世以后，APY以20%为起始数值，每90天递减1个百分点，达到2%后将不再变化。"
+    "apy-description": "年化收益率 (APY) 决定了FREN抵押奖励的收入多少。它没有复投过程，只按质押天数计算。自创世以后，APY以20%为起始数值，每90天递减1个百分点，达到2%后将不再变化。"
   },
   "mint": {
     "title": "铸造",
@@ -125,5 +125,30 @@
     "claim-and-stake-successful": "申请铸造并质押成功",
     "stake-successful": "质押成功",
     "end-stake-successful": "结束质押成功"
+  },
+  "batch": {
+    "title": "批量铸造",
+    "quantity": "数量",
+    "quantity-desc": "铸造的批量数量",
+    "quantity-required": "输入批量铸造的数量",
+    "quantity-positive": "批量铸造的数量需要大于0",
+    "record": "记录",
+    "fop": {
+      "title": "使用FOP铸造",
+      "action-claim": "申领",
+      "action-view": "查看",
+      "tb": {
+        "token": "Token",
+        "rank": "排名",
+        "term": "期限",
+        "estimate": "预估",
+        "quantity": "铸造数",
+        "exptime": "到期",
+        "action": "动作"
+      }
+    },
+    "gas": {
+      "title": "省Gas铸造"
+    }
   }
 }

@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://xen.fyi
+Host: https://fenus.xyz
 
 # Sitemaps
-Sitemap: https://xen.fyi/sitemap.xml
+Sitemap: https://fenus.xyz/sitemap.xml

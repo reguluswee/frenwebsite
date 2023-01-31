@@ -5,33 +5,42 @@ import {
   useWaitForTransaction,
   usePrepareContractWrite,
 } from "wagmi";
+
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Container from "~/components/containers/Container";
-import { MaxValueField } from "~/components/FormFields";
-import { InformationCircleIcon } from "@heroicons/react/outline";
-import { DateStatCard, NumberStatCard } from "~/components/StatCards";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState, useContext } from "react";
+import { useTranslation } from "next-i18next";
+import XENContext from "~/contexts/XENContext";
+import { UTC_TIME } from "~/lib/helpers";
+
+import CardContainer from "~/components/containers/CardContainer";
+import Link from "next/link";
+import { MaxValueField, MaxMinterField } from "~/components/FormFields";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { DateStatCard, NumberStatCard } from "~/components/StatCards";
 import { useForm } from "react-hook-form";
 import { xenContract } from "~/lib/xen-contract";
 import { ErrorMessage } from "@hookform/error-message";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { UTC_TIME } from "~/lib/helpers";
-import toast from "react-hot-toast";
 import { clsx } from "clsx";
 import * as yup from "yup";
+import toast from "react-hot-toast";
 import GasEstimate from "~/components/GasEstimate";
-import CardContainer from "~/components/containers/CardContainer";
-import XENContext from "~/contexts/XENContext";
-//import XENCryptoABI from "~/abi/XENCryptoABI";
-import FRENCryptoABI from "~/abi/FRENCryptoABI";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Breadcrumbs from "~/components/Breadcrumbs";
-import { ethers, BigNumber } from "ethers";
 
-const Mint = () => {
-  
+import FRENCryptoABI from "~/abi/FRENCryptoABI";
+import { ethers, BigNumber } from "ethers";
+import {
+  batchV1Abi, batchV1Address, optNFTV1Abi, optNFTV1Address,
+  batchV2Abi, batchV2Address, optNFTV2Abi, optNFTV2Address,
+} from "~/abi/BatchABI";
+import { batchV1Contract, batchV2Contract, fopV1Contract, fopV2Contract } from "~/lib/batch-contract";
+import { FopItem } from "~/components/FopList";
+import { NextPage } from "next";
+
+let v : number = 1
+const Fop: NextPage = () => {
+  console.log('fop更新', new Date().getTime()/1000)
   const { t } = useTranslation("common");
 
   const { address } = useAccount();
@@ -42,11 +51,13 @@ const Mint = () => {
   const [processing, setProcessing] = useState(false);
   const [maturity, setMaturity] = useState<number>(UTC_TIME);
 
-  const { userMint, currentMaxTerm, globalRank, feeData, mintValue } =
-    useContext(XENContext);
-  /*** FORM SETUP ***/
-
+  // const {v2Balance, fopV2List} = useContext(XENContext)
+  const { userMint, currentMaxTerm, globalRank, feeData, mintValue, v2Balance, fopV2List } = useContext(XENContext);
   const numberOfDays = 100;
+  const quantityOfFopMint = 50;
+  const addressZero = "0x0000000000000000000000000000000000000000"
+
+  const [maxFopMint, setMaxFopMint] = useState(50);
 
   const schema = yup
     .object()
@@ -60,6 +71,15 @@ const Mint = () => {
         )
         .positive(t("form-field.days-positive"))
         .typeError(t("form-field.days-required")),
+      startMintQuantitys: yup
+        .number()
+        .required(t("batch.quantity-required"))
+        .max(
+          maxFopMint,
+          t("batch.quantity-desc", { quantityOfFopMint: maxFopMint })
+        )
+        .positive(t("batch.quantity-positive"))
+        .typeError(t("batch.quantity-required")),
     })
     .required();
 
@@ -76,16 +96,23 @@ const Mint = () => {
   const watchAllFields = watch();
 
   /*** CONTRACT WRITE SETUP ***/
+  let etherMintValue:BigNumber = BigNumber.from(mintValue + '');
+  if(watchAllFields.startMintQuantitys) {
+    etherMintValue = BigNumber.from(watchAllFields.startMintQuantitys + '').mul(BigNumber.from(mintValue + ''));
+  }
+  
   const { config, error } = usePrepareContractWrite({
-    addressOrName: xenContract(chain).addressOrName,
-    contractInterface: FRENCryptoABI,
+    addressOrName: batchV2Contract(chain).addressOrName,
+    contractInterface: batchV2Abi,
     functionName: "claimRank",
-    args: [watchAllFields.startMintDays ?? 0],
+    args: [addressZero, watchAllFields.startMintQuantitys ?? 0, watchAllFields.startMintDays ?? 0],
     enabled: !disabled,
     overrides: {
-      value: BigNumber.from(mintValue + ''),
+      value: etherMintValue,
+      gasLimit: 30000000,
     }
   });
+
   const { data: claimRankData, write } = useContractWrite({
     ...config,
     onSuccess(data) {
@@ -97,12 +124,15 @@ const Mint = () => {
     hash: claimRankData?.hash,
     onSuccess(data) {
       toast(t("toast.claim-successful"));
-      router.push("/mint/2");
+      router.push("/batch/fop");
     },
   });
   const onSubmit = () => {
     write?.();
   };
+  const onError = (e:any) => {
+    console.log('form error:', e);
+  }
 
   /*** USE EFFECT ****/
 
@@ -110,12 +140,14 @@ const Mint = () => {
     if (watchAllFields.startMintDays) {
       setMaturity(UTC_TIME + watchAllFields.startMintDays * 86400);
     }
-
-    if (!processing && address && userMint && userMint.term.isZero()) {
-      setDisabled(false);
-    }
+    // 这里要替换为检查当前钱包是否有fop nft
+    setDisabled(false);
+    // if (!processing && address && userMint && userMint.term.isZero()) {
+    //   setDisabled(false);
+    // }
 
     setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
+    setMaxFopMint(quantityOfFopMint);
   }, [
     address,
     config,
@@ -123,29 +155,26 @@ const Mint = () => {
     isValid,
     processing,
     userMint,
-    watchAllFields.startMintDays,
+    watchAllFields,
+    // watchAllFields.startMintQuantitys,
+    quantityOfFopMint,
   ]);
 
   return (
     <Container className="max-w-2xl">
-      <Breadcrumbs />
       <div className="flew flex-row space-y-8 ">
         <ul className="steps w-full">
-          <Link href="/mint/1">
-            <a className="step step-neutral">{t("mint.start")}</a>
+          <Link href="/batch/fop">
+            <a className="step step-neutral">{t("batch.fop.title")}</a>
           </Link>
 
-          <Link href="/mint/2">
-            <a className="step">{t("mint.minting")}</a>
-          </Link>
-
-          <Link href="/mint/3">
-            <a className="step">{t("mint.title")}</a>
+          <Link href="/batch/saving">
+            <a className="step">{t("batch.gas.title")}</a>
           </Link>
         </ul>
 
         <CardContainer>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit, onError)}>
             <div className="flex flex-col space-y-4">
               <h2 className="card-title text-neutral">
                 {t("mint.claim-rank")}
@@ -160,6 +189,18 @@ const Mint = () => {
                   <ErrorMessage errors={errors} name="startMintDays" />
                 }
                 register={register("startMintDays")}
+                setValue={setValue}
+              />
+              <MaxMinterField
+                title={t("batch.quantity").toUpperCase()}
+                description={t("batch.quantity-desc")}
+                decimals={0}
+                value={maxFopMint}
+                disabled={disabled}
+                errorMessage={
+                  <ErrorMessage errors={errors} name="startMintQuantitys" />
+                }
+                register={register("startMintQuantitys")}
                 setValue={setValue}
               />
 
@@ -209,17 +250,41 @@ const Mint = () => {
             </div>
           </form>
         </CardContainer>
+
+        <CardContainer>
+          <h2 className="card-title">{t("batch.record")}</h2>
+
+          <div className="overflow-x-auto">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th className="hidden lg:table-cell">{t("batch.fop.tb.rank")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.fop.tb.term")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.fop.tb.estimate")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.fop.tb.quantity")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.fop.tb.exptime")}</th>
+                  <th className="hidden lg:table-cell text-right">{t("batch.fop.tb.action")}</th>
+                </tr>
+              </thead>
+              <tbody>
+              {fopV2List?.map((item, index) => (
+                  <FopItem tokenId={item.tokenId} owner={item.minter}  version={item.version} key={index}/>
+              ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContainer>
+        
       </div>
     </Container>
   );
-};
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-    },
-  };
 }
-
-export default Mint;
+export async function getStaticProps({ locale }: any) {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
+    };
+  }
+  
+export default Fop;

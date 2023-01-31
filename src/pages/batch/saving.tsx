@@ -5,33 +5,32 @@ import {
   useWaitForTransaction,
   usePrepareContractWrite,
 } from "wagmi";
+
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Container from "~/components/containers/Container";
+import { useRouter } from "next/router";
+import { useEffect, useState, useContext } from "react";
+import { useTranslation } from "next-i18next";
+import XENContext from "~/contexts/XENContext";
+import { UTC_TIME } from "~/lib/helpers";
+
+import CardContainer from "~/components/containers/CardContainer";
+import Link from "next/link";
 import { MaxValueField } from "~/components/FormFields";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { DateStatCard, NumberStatCard } from "~/components/StatCards";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { xenContract } from "~/lib/xen-contract";
 import { ErrorMessage } from "@hookform/error-message";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { UTC_TIME } from "~/lib/helpers";
-import toast from "react-hot-toast";
 import { clsx } from "clsx";
 import * as yup from "yup";
+import toast from "react-hot-toast";
 import GasEstimate from "~/components/GasEstimate";
-import CardContainer from "~/components/containers/CardContainer";
-import XENContext from "~/contexts/XENContext";
-//import XENCryptoABI from "~/abi/XENCryptoABI";
-import FRENCryptoABI from "~/abi/FRENCryptoABI";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Breadcrumbs from "~/components/Breadcrumbs";
-import { ethers, BigNumber } from "ethers";
 
-const Mint = () => {
-  
+import FRENCryptoABI from "~/abi/FRENCryptoABI";
+
+const Saving = () => {
   const { t } = useTranslation("common");
 
   const { address } = useAccount();
@@ -42,10 +41,7 @@ const Mint = () => {
   const [processing, setProcessing] = useState(false);
   const [maturity, setMaturity] = useState<number>(UTC_TIME);
 
-  const { userMint, currentMaxTerm, globalRank, feeData, mintValue } =
-    useContext(XENContext);
-  /*** FORM SETUP ***/
-
+  const { userMint, currentMaxTerm, globalRank, feeData } = useContext(XENContext);
   const numberOfDays = 100;
 
   const schema = yup
@@ -76,15 +72,13 @@ const Mint = () => {
   const watchAllFields = watch();
 
   /*** CONTRACT WRITE SETUP ***/
+
   const { config, error } = usePrepareContractWrite({
     addressOrName: xenContract(chain).addressOrName,
     contractInterface: FRENCryptoABI,
     functionName: "claimRank",
     args: [watchAllFields.startMintDays ?? 0],
     enabled: !disabled,
-    overrides: {
-      value: BigNumber.from(mintValue + ''),
-    }
   });
   const { data: claimRankData, write } = useContractWrite({
     ...config,
@@ -128,19 +122,14 @@ const Mint = () => {
 
   return (
     <Container className="max-w-2xl">
-      <Breadcrumbs />
       <div className="flew flex-row space-y-8 ">
         <ul className="steps w-full">
-          <Link href="/mint/1">
-            <a className="step step-neutral">{t("mint.start")}</a>
+          <Link href="/batch/fop">
+            <a className="step">{t("batch.fop.title")}</a>
           </Link>
 
-          <Link href="/mint/2">
-            <a className="step">{t("mint.minting")}</a>
-          </Link>
-
-          <Link href="/mint/3">
-            <a className="step">{t("mint.title")}</a>
+          <Link href="/batch/saving">
+            <a className="step step-neutral">{t("batch.gas.title")}</a>
           </Link>
         </ul>
 
@@ -209,17 +198,17 @@ const Mint = () => {
             </div>
           </form>
         </CardContainer>
+        
       </div>
     </Container>
   );
-};
-
-export async function getStaticProps({ locale }: any) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-    },
-  };
 }
-
-export default Mint;
+export async function getStaticProps({ locale }: any) {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
+    };
+  }
+  
+  export default Saving;

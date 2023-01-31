@@ -5,7 +5,7 @@
   "chain": "Chain",
   "address": "Address",
   "theme": "Theme",
-  "add-to-wallet": "Add XEN to Wallet",
+  "add-to-wallet": "Add FREN to Wallet",
   "connect-wallet": "Connect Wallet",
   "or": "or",
   "success": "Success",
@@ -35,11 +35,11 @@
     "select-chain": "Select Chain",
     "chain-id": "Chain ID: {{chainId}}",
     "amp": "AMP",
-    "amp-description": "Reward Amplifier (AMP) is a time-dependent part of XEN Mint Reward calculation. It starts at 3,000 at Genesis and decreases by 1 every day until it reaches 1",
+    "amp-description": "Reward Amplifier (AMP) is a time-dependent part of FREN Mint Reward calculation. It starts at 3,000 at Genesis and decreases by 1 every day until it reaches 1",
     "eaa": "EAA",
-    "eaa-description": "Early Adopter Amplifier (EAA) is a part of XEN Mint Reward calculation which depends on current Global Rank. EAA starts from 10% and decreases in a linear fashion by 0.1% per each 100,000 increase in Global Rank.",
+    "eaa-description": "Early Adopter Amplifier (EAA) is a part of FREN Mint Reward calculation which depends on current Global Rank. EAA starts from 10% and decreases in a linear fashion by 0.1% per each 100,000 increase in Global Rank.",
     "apy": "APY",
-    "apy-description": "Annual Percentage Yield (APY) determines XEN Staking Reward calculation. It is non-compounding and is pro-rated by days. APY starts at 20% on Genesis and decreases by 1p.p. every 90 days until it reaches 2%"
+    "apy-description": "Annual Percentage Yield (APY) determines FREN Staking Reward calculation. It is non-compounding and is pro-rated by days. APY starts at 20% on Genesis and decreases by 1p.p. every 90 days until it reaches 2%"
   },
   "mint": {
     "title": "Mint",
@@ -125,5 +125,30 @@
     "claim-and-stake-successful": "Claim mint and stake successful",
     "stake-successful": "Stake successful",
     "end-stake-successful": "End stake successful"
+  },
+  "batch": {
+    "title": "Batch",
+    "quantity": "Quantity",
+    "quantity-desc": "Quantity of batch-mint",
+    "quantity-required": "Quantity required",
+    "quantity-positive": "Quantity of batch-mint must be greater than 0",
+    "record": "Record",
+    "fop": {
+      "title": "FOP Mint",
+      "action-claim": "claim",
+      "action-view": "view",
+      "tb": {
+        "token": "Token",
+        "rank": "Rank",
+        "term": "Term",
+        "estimate": "Estimate",
+        "quantity": "Quantity",
+        "exptime": "Exp",
+        "action": "Action"
+      }
+    },
+    "gas": {
+      "title": "Gas-Saving Mint"
+    }
   }
 }
