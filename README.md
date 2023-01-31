@@ -1,6 +1,6 @@
 # fenus.xyz
 
-[fenus.xyz](https://fenus.xyz) is an alternative frontend for [xen.network](https://xen.network). This project was built to help provide users with multiple options to interact with the XEN protocol.
+Thanks xen.fyi
 
 ## Setup
 
