@@ -12,7 +12,7 @@ import {
   import { serverSideTranslations } from "next-i18next/serverSideTranslations";
   import Container from "~/components/containers/Container";
   import { useRouter } from "next/router";
-  import { useEffect, useState, useContext } from "react";
+  import { useEffect, useState, useContext, Children } from "react";
   import { useTranslation } from "next-i18next";
   import XENContext from "~/contexts/XENContext";
   import { UTC_TIME, estimatedXEN, formatDate } from "~/lib/helpers";
@@ -41,29 +41,11 @@ import {
     canTransfer?: number,
   }
 
-  const fetchTokenData = (chain: Chain, owner: string, tokenId: number | undefined, version: string) => {
-    const { data:tokenData } = useContractRead({
-        ...fopV2Contract(chain),
-        functionName: "ownerOfWithPack",
-        overrides: { from: owner },
-        args: [tokenId],
-    });
-    
-    console.log('获取到的token数据：', tokenData, tokenId, fopV2Contract(chain))
-    if (!tokenData) {
-        return [];
-    }
-    return tokenData;
-  }
-
-  export const FopItem: NextPage<{tokenId: number | undefined, owner: string, version: string}> = ({ tokenId, owner, version }) => {
+  export const FopItem: NextPage<{tokenData:any, tokenId: number | undefined, owner: string, version: string}> = ({ tokenData, tokenId, owner, version }) => {
     const { t } = useTranslation("common");
 
     const { address } = useAccount();
-    const chain = chainList[0];
-    // const [tokenData, setTokenData] = useState<any[]>([true, {}]);
-
-    const tokenData = fetchTokenData(chain, owner, tokenId, version);
+    const { globalRank } = useContext(XENContext);
 
     const timeNow = new Date().getTime() / 1000;
 
@@ -122,7 +104,7 @@ import {
         <tr>
             <td>{tokenData[1].cRank?.toString()}</td>
             <td>{tokenData[1].term?.toString()}</td>
-            <td>{(tokenData[1].pMinters?.length * estimatedXEN(1025535, {
+            <td>{(tokenData[1].pMinters?.length * estimatedXEN(globalRank, {
                 amplifier: tokenData[1].amp,
                 term: tokenData[1].term,
                 rank: tokenData[1].cRank,
@@ -133,7 +115,7 @@ import {
                 <button
                     type="button"
                     onClick={handleClaim.bind(this, tokenData[1], tokenId, version)}
-                    disabled={timeNow > tokenData[1].maturityTs}
+                    disabled={timeNow < tokenData[1].maturityTs}
                     className="btn btn-xs glass text-neutral ml-2"
                 >
                     {t("batch.fop.action-claim")}
@@ -151,3 +133,19 @@ import {
         </tr>
     );
   };
+
+  export const WFopItem: NextPage<{tokenId: number | undefined, owner: string, version: string}> = ({ tokenId, owner, version }) => {
+    const chain = chainList[0];
+    
+    const { data:tokenData } = useContractRead({
+        ...fopV2Contract(chain),
+        functionName: "ownerOfWithPack",
+        overrides: { from: owner },
+        args: [tokenId],
+    });
+    
+    if (!tokenData || !tokenData[0] || tokenData[1].minter!=owner) {
+        return <></>
+    }
+    return (<FopItem tokenId={tokenId} owner={owner} version={version} tokenData={tokenData}></FopItem>)
+  }

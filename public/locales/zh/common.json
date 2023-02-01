@@ -133,19 +133,19 @@
     "quantity-required": "输入批量铸造的数量",
     "quantity-positive": "批量铸造的数量需要大于0",
     "record": "记录",
+    "tb": {
+      "token": "Token",
+      "rank": "排名",
+      "term": "期限",
+      "estimate": "预估",
+      "quantity": "铸造数",
+      "exptime": "到期",
+      "action": "动作"
+    },
     "fop": {
       "title": "使用FOP铸造",
       "action-claim": "申领",
-      "action-view": "查看",
-      "tb": {
-        "token": "Token",
-        "rank": "排名",
-        "term": "期限",
-        "estimate": "预估",
-        "quantity": "铸造数",
-        "exptime": "到期",
-        "action": "动作"
-      }
+      "action-view": "查看"
     },
     "gas": {
       "title": "省Gas铸造"

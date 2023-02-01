@@ -35,7 +35,7 @@ import {
   batchV2Abi, batchV2Address, optNFTV2Abi, optNFTV2Address,
 } from "~/abi/BatchABI";
 import { batchV1Contract, batchV2Contract, fopV1Contract, fopV2Contract } from "~/lib/batch-contract";
-import { FopItem } from "~/components/FopList";
+import { WFopItem } from "~/components/FopList";
 import { NextPage } from "next";
 
 let v : number = 1
@@ -258,17 +258,17 @@ const Fop: NextPage = () => {
             <table className="table w-full">
               <thead>
                 <tr>
-                  <th className="hidden lg:table-cell">{t("batch.fop.tb.rank")}</th>
-                  <th className="hidden lg:table-cell">{t("batch.fop.tb.term")}</th>
-                  <th className="hidden lg:table-cell">{t("batch.fop.tb.estimate")}</th>
-                  <th className="hidden lg:table-cell">{t("batch.fop.tb.quantity")}</th>
-                  <th className="hidden lg:table-cell">{t("batch.fop.tb.exptime")}</th>
-                  <th className="hidden lg:table-cell text-right">{t("batch.fop.tb.action")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.rank")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.term")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.estimate")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.quantity")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.exptime")}</th>
+                  <th className="hidden lg:table-cell text-right">{t("batch.tb.action")}</th>
                 </tr>
               </thead>
               <tbody>
               {fopV2List?.map((item, index) => (
-                  <FopItem tokenId={item.tokenId} owner={item.minter}  version={item.version} key={index}/>
+                  <WFopItem tokenId={item.tokenId} owner={item.minter}  version={item.version} key={index}/>
               ))}
               </tbody>
             </table>

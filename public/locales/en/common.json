@@ -133,22 +133,23 @@
     "quantity-required": "Quantity required",
     "quantity-positive": "Quantity of batch-mint must be greater than 0",
     "record": "Record",
+    "tb": {
+      "token": "Token",
+      "rank": "Rank",
+      "term": "Term",
+      "estimate": "Estimate",
+      "quantity": "Quantity",
+      "exptime": "Exp",
+      "action": "Action"
+    },
     "fop": {
       "title": "FOP Mint",
       "action-claim": "claim",
-      "action-view": "view",
-      "tb": {
-        "token": "Token",
-        "rank": "Rank",
-        "term": "Term",
-        "estimate": "Estimate",
-        "quantity": "Quantity",
-        "exptime": "Exp",
-        "action": "Action"
-      }
+      "action-view": "view"
     },
     "gas": {
-      "title": "Gas-Saving Mint"
+      "title": "Gas-Saving Mint",
+      "action-claim": "claim",
     }
   }
 }

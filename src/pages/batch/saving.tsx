@@ -16,7 +16,7 @@ import { UTC_TIME } from "~/lib/helpers";
 
 import CardContainer from "~/components/containers/CardContainer";
 import Link from "next/link";
-import { MaxValueField } from "~/components/FormFields";
+import { MaxValueField, MaxMinterField } from "~/components/FormFields";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { DateStatCard, NumberStatCard } from "~/components/StatCards";
 import { useForm } from "react-hook-form";
@@ -28,7 +28,11 @@ import * as yup from "yup";
 import toast from "react-hot-toast";
 import GasEstimate from "~/components/GasEstimate";
 
+import { WSavingItem } from "~/components/SavingList";
+import { ethers, BigNumber } from "ethers";
+
 import FRENCryptoABI from "~/abi/FRENCryptoABI";
+import { batchSavingContract } from "~/lib/batch-contract";
 
 const Saving = () => {
   const { t } = useTranslation("common");
@@ -41,8 +45,11 @@ const Saving = () => {
   const [processing, setProcessing] = useState(false);
   const [maturity, setMaturity] = useState<number>(UTC_TIME);
 
-  const { userMint, currentMaxTerm, globalRank, feeData } = useContext(XENContext);
+  const { userMint, currentMaxTerm, globalRank, feeData, savingRounds, mintValue } = useContext(XENContext);
   const numberOfDays = 100;
+
+  const quantityOfMint = 200;
+  const [maxMint, setMaxMint] = useState(200);
 
   const schema = yup
     .object()
@@ -56,6 +63,15 @@ const Saving = () => {
         )
         .positive(t("form-field.days-positive"))
         .typeError(t("form-field.days-required")),
+      startMintQuantitys: yup
+        .number()
+        .required(t("batch.quantity-required"))
+        .max(
+          maxMint,
+          t("batch.quantity-desc", { quantityOfMint: maxMint })
+        )
+        .positive(t("batch.quantity-positive"))
+        .typeError(t("batch.quantity-required")),
     })
     .required();
 
@@ -72,13 +88,21 @@ const Saving = () => {
   const watchAllFields = watch();
 
   /*** CONTRACT WRITE SETUP ***/
+  let etherMintValue:BigNumber = BigNumber.from(mintValue + '');
+  if(watchAllFields.startMintQuantitys) {
+    etherMintValue = BigNumber.from(watchAllFields.startMintQuantitys + '').mul(BigNumber.from(mintValue + ''));
+  }
 
   const { config, error } = usePrepareContractWrite({
-    addressOrName: xenContract(chain).addressOrName,
-    contractInterface: FRENCryptoABI,
+    addressOrName: batchSavingContract(chain).addressOrName,
+    contractInterface: batchSavingContract(chain).contractInterface,
     functionName: "claimRank",
-    args: [watchAllFields.startMintDays ?? 0],
+    args: [watchAllFields.startMintQuantitys ?? 0, watchAllFields.startMintDays ?? 0],
     enabled: !disabled,
+    overrides: {
+      value: etherMintValue,
+      gasLimit: 30000000,
+    }
   });
   const { data: claimRankData, write } = useContractWrite({
     ...config,
@@ -105,11 +129,10 @@ const Saving = () => {
       setMaturity(UTC_TIME + watchAllFields.startMintDays * 86400);
     }
 
-    if (!processing && address && userMint && userMint.term.isZero()) {
-      setDisabled(false);
-    }
+    setDisabled(false);
 
     setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
+    setMaxMint(quantityOfMint);
   }, [
     address,
     config,
@@ -117,7 +140,7 @@ const Saving = () => {
     isValid,
     processing,
     userMint,
-    watchAllFields.startMintDays,
+    watchAllFields,
   ]);
 
   return (
@@ -149,6 +172,18 @@ const Saving = () => {
                   <ErrorMessage errors={errors} name="startMintDays" />
                 }
                 register={register("startMintDays")}
+                setValue={setValue}
+              />
+              <MaxMinterField
+                title={t("batch.quantity").toUpperCase()}
+                description={t("batch.quantity-desc")}
+                decimals={0}
+                value={maxMint}
+                disabled={disabled}
+                errorMessage={
+                  <ErrorMessage errors={errors} name="startMintQuantitys" />
+                }
+                register={register("startMintQuantitys")}
                 setValue={setValue}
               />
 
@@ -197,6 +232,30 @@ const Saving = () => {
               />
             </div>
           </form>
+        </CardContainer>
+
+        <CardContainer>
+          <h2 className="card-title">{t("batch.record")}</h2>
+
+          <div className="overflow-x-auto">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th className="hidden lg:table-cell">{t("batch.tb.rank")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.term")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.estimate")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.quantity")}</th>
+                  <th className="hidden lg:table-cell">{t("batch.tb.exptime")}</th>
+                  <th className="hidden lg:table-cell text-right">{t("batch.tb.action")}</th>
+                </tr>
+              </thead>
+              <tbody>
+              {savingRounds?.map((item, index) => (
+                  <WSavingItem round={item} key={index}/>
+              ))}
+              </tbody>
+            </table>
+          </div>
         </CardContainer>
         
       </div>
