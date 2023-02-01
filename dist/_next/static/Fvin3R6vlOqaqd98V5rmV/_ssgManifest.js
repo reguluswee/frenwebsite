@@ -1,1 +1,0 @@
-self.__SSG_MANIFEST=new Set(["\u002Fbatch\u002Ffop","\u002Fbatch\u002Fsaving","\u002Fdashboard","\u002Fdashboard\u002F[chainId]","\u002Fmint\u002F1","\u002Fmint\u002F2","\u002Fmint\u002F3","\u002Fstake\u002F1","\u002Fstake\u002F2","\u002Fstake\u002F3"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
