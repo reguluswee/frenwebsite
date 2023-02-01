@@ -116,6 +116,12 @@ export const linkItems = [
     icon: <DuneIcon />,
     href: "https://dune.com/reguluswee/fren-crypto",
   },
+  {
+    name: "Version Switch",
+    t: "version-old",
+    icon: <BookOpenIcon className="h-5 w-5" />,
+    href: "https://fenus.xyz/",
+  },
   // {
   //   name: "Whitepaper",
   //   t: "link.whitepaper",

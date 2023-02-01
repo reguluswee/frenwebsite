@@ -1,6 +1,7 @@
 {
-  "contract": "合约",
+  "contract": "代币合约",
   "donate": "捐赠",
+  "treasury": "金库合约",
   "global-rank": "全球排名",
   "chain": "区块链",
   "address": "地址",
@@ -19,7 +20,8 @@
     "discord": "Discord",
     "github": "GitHub",
     "coinmarketcap": "CoinMarketCap",
-    "dune": "Dune分析"
+    "dune": "Dune分析",
+    "version-old": "回到旧版"
   },
   "meta": {
     "description": "XEN.fyi是一个开源项目，旨在帮助用户理解XEN加密协议以及生态系统。"

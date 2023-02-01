@@ -17,10 +17,8 @@ import {
   import XENContext from "~/contexts/XENContext";
   import { UTC_TIME, estimatedXEN, formatDate } from "~/lib/helpers";
   import type { NextPage } from "next";
-  import { batchV1Contract, batchV2Contract, fopV1Contract, fopV2Contract, batchSavingContract } from "~/lib/batch-contract";
-  import {
-    batchSavingAbi, batchSavingAddress
-  } from "~/abi/BatchABI";
+  import { batchSavingContract } from "~/lib/batch-contract";
+
   import { chainList } from "~/lib/client";
   import toast from "react-hot-toast";
 
@@ -53,31 +51,27 @@ import { xenContract } from "~/lib/xen-contract";
         functionName: "globalRank",
         // watch: true,
       });
-    console.log('全球排名', globalRank)
-    if(!globalRank) {
-        return <></>
-    }
 
-    // const { config, error } = usePrepareContractWrite({
-    //     addressOrName: contaddress,
-    //     contractInterface: contabi,
-    //     functionName: "claimMintReward",
-    //     args: [tokenId],
-    //     overrides: {
-    //         from: address,
-    //         gasLimit: 30000000,
-    //     }
-    // });
-    // const { data, isError, isLoading, write } = useContractWrite({
-    //     ...config,
-    //     onSuccess(data) {
-    //         // setProcessing(true);
-    //         // setDisabled(true);
-    //     },
-    // });
+    const { config, error } = usePrepareContractWrite({
+        addressOrName: batchSavingContract(chain).addressOrName,
+        contractInterface:  batchSavingContract(chain).contractInterface,
+        functionName: "claimMintReward",
+        args: [round],
+        overrides: {
+            from: address,
+            gasLimit: 30000000,
+        }
+    });
+    const { data, isError, isLoading, write } = useContractWrite({
+        ...config,
+        onSuccess(data) {
+            // setProcessing(true);
+            // setDisabled(true);
+        },
+    });
 
     const handleClaim = (round: number | undefined, e: any) => {
-        // write?.()
+        write?.()
     };
 
     useEffect(() => {
@@ -100,7 +94,7 @@ import { xenContract } from "~/lib/xen-contract";
                 <button
                     type="button"
                     onClick={handleClaim.bind(this, round)}
-                    disabled={timeNow < mintData.maturityTs}
+                    disabled={timeNow <= mintData.maturityTs}
                     className="btn btn-xs glass text-neutral ml-2"
                 >
                     {t("batch.fop.action-claim")}

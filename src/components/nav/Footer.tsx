@@ -3,7 +3,7 @@ import { chain, useNetwork, Chain } from "wagmi";
 import Link from "next/link";
 import { xenContract } from "~/lib/xen-contract";
 import { useState } from "react";
-import { DONATION_ADDRESS } from "~/lib/helpers";
+import { TREASURY_ADDRESS } from "~/lib/helpers";
 import AddressLink from "~/components/AddressLink";
 import { useTranslation } from "next-i18next";
 
@@ -38,11 +38,11 @@ const Footer = () => {
         chain={defaultChain}
       />
       <AddressLink
-        name={t("donate")}
-        address={DONATION_ADDRESS}
+        name={t("treasury")}
+        address={TREASURY_ADDRESS}
         chain={defaultChain}
       />
-      <div className="grid grid-flow-col gap-4">
+      {/* <div className="grid grid-flow-col gap-4">
         {textLinkItems.map((item, index) => (
           <Link href={item.href} key={index}>
             <a target="_blank" className="link link-hover text-neutral">
@@ -50,7 +50,7 @@ const Footer = () => {
             </a>
           </Link>
         ))}
-      </div>
+      </div> */}
     </footer>
   );
 };

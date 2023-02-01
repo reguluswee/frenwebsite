@@ -1,6 +1,7 @@
 {
-  "contract": "Contract",
+  "contract": "Token Contract",
   "donate": "Donate",
+  "treasury": "Treasury Contract",
   "global-rank": "Global Rank",
   "chain": "Chain",
   "address": "Address",
@@ -19,7 +20,8 @@
     "discord": "Discord",
     "github": "GitHub",
     "coinmarketcap": "CoinMarketCap",
-    "dune": "Dune Analytics"
+    "dune": "Dune Analytics",
+    "version-old": "Pre-Version"
   },
   "meta": {
     "description": "XEN.fyi is an open-source project to help users understand the XEN crypto protocol and its ecosystem."
@@ -149,7 +151,7 @@
     },
     "gas": {
       "title": "Gas-Saving Mint",
-      "action-claim": "claim",
+      "action-claim": "claim"
     }
   }
 }
