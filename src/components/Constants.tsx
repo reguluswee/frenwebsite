@@ -118,7 +118,7 @@ export const linkItems = [
   },
   {
     name: "Version Switch",
-    t: "version-old",
+    t: "link.version-old",
     icon: <BookOpenIcon className="h-5 w-5" />,
     href: "https://fenus.xyz/",
   },

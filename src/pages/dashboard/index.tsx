@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { Chain, useToken, useContractRead } from "wagmi";
+import { useEffect, useState, useContext } from "react";
+import { Chain, useToken, useContractRead, useBalance } from "wagmi";
 import Container from "~/components/containers/Container";
 import CardContainer from "~/components/containers/CardContainer";
 import { chainIcons } from "~/components/Constants";
@@ -15,6 +15,15 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Breadcrumbs from "~/components/Breadcrumbs";
 import { useEnvironmentChains } from "~/hooks/useEnvironmentChains";
+import XENContext from "~/contexts/XENContext";
+
+import {
+  NumberStatCard,
+  ChainStatCard,
+  DateStatCard,
+  DataCard,
+} from "~/components/StatCards";
+import { BigNumber } from "ethers";
 
 const Chains: NextPage = () => {
   const { t } = useTranslation("common");
@@ -24,6 +33,52 @@ const Chains: NextPage = () => {
   );
   const [totalMintCount, setTotalMintCount] = useState(0);
   const [totalChainCount, setTotalChainCount] = useState(0);
+  const [frenTotalBurned, setFrenTotalBurned] = useState(0);
+
+  const {
+    setChainOverride,
+    globalRank,
+    activeMinters,
+    activeStakes,
+    currentMaxTerm,
+    genesisTs,
+    treasuryBalance,
+  } = useContext(XENContext);
+
+  const chainFromId = envChains.find((c) => c && c.id == 513100);
+  const { data: token } = useToken({
+    address: xenContract(chainFromId).addressOrName,
+    chainId: chainFromId?.id,
+  });
+
+  const generalStats = [
+    {
+      title: t("card.global-rank"),
+      value: globalRank,
+    },
+    {
+      title: t("card.active-mints"),
+      value: activeMinters,
+    },
+    {
+      title: t("card.active-stakes"),
+      value: activeStakes,
+    },
+    {
+      title: t("card.max-mint-term"),
+      value: currentMaxTerm / 86400,
+      suffix: " Days",
+    },
+    {
+      title: t("card.treasury-balance"),
+      value: treasuryBalance ? Number(treasuryBalance?.formatted) : 0,
+      suffix: " ETHF",
+    },
+    {
+      title: t("card.fren-burn-amount"),
+      value: frenTotalBurned,
+    },
+  ];
 
   const AddressLinks: NextPage<{ chain: Chain }> = ({ chain }) => {
     const [_, copy] = useCopyToClipboard();
@@ -69,11 +124,11 @@ const Chains: NextPage = () => {
       chainId: chain?.id,
     });
 
-    const { data: globalRank } = useContractRead({
-      ...xenContract(chain),
-      functionName: "globalRank",
-      // watch: true,
-    });
+    // const { data: globalRank } = useContractRead({
+    //   ...xenContract(chain),
+    //   functionName: "globalRank",
+    //   // watch: true,
+    // });
 
     const tempMintAddresses = mintAddresses;
     tempMintAddresses[chain.id] = Number(globalRank);
@@ -179,6 +234,23 @@ const Chains: NextPage = () => {
     setTotalChainCount(chains);
     const gRanks = Object.values(mintAddresses).reduce((a, b) => a + b, 0);
     setTotalMintCount(gRanks);
+    
+    fetch("/apc/data/total_burned", {
+      method: "GET",
+      mode: 'no-cors',
+    }).then( res => {
+      if(res.ok) {
+        return res.json()
+      }
+      throw res;
+    }).then( data => {
+      if(data.Code == 0) {
+        const bgdec = BigNumber.from(10**18 + '');
+        setFrenTotalBurned(BigNumber.from(data.Data.Amount).div(bgdec).toNumber())
+      }
+    }).catch(err => {
+      console.log(':::', err)
+    })
   }, [mintAddresses]);
 
   return (
@@ -198,7 +270,7 @@ const Chains: NextPage = () => {
                 {envChains.map((item, index) => (
                   <ChainRow chain={item} key={index} />
                 ))}
-                <TotalMintRow />
+                {/* <TotalMintRow /> */}
               </tbody>
               <tfoot>
                 <TableHeaderFooter />
@@ -206,6 +278,39 @@ const Chains: NextPage = () => {
             </table>
           </div>
         </CardContainer>
+
+        <CardContainer>
+            <h2 className="card-title">{t("dashboard.general-stats")}</h2>
+            <div className="stats stats-vertical bg-transparent text-neutral">
+              <ChainStatCard
+                value={"EthereumFair"}
+                id={513100}
+              />
+              <DateStatCard
+                title={t("dashboard.days-since-launch")}
+                dateTs={genesisTs}
+                isPast={true}
+              />
+              {token && (
+                <DataCard
+                  title={t("dashboard.token-address")}
+                  value={token?.symbol ?? "XEN"}
+                  description={xenContract(chainFromId).addressOrName}
+                />
+              )}
+
+              {generalStats.map((item, index) => (
+                <NumberStatCard
+                  key={index}
+                  title={item.title}
+                  value={item.value}
+                  decimals={0}
+                  suffix={item.suffix}
+                />
+              ))}
+            </div>
+          </CardContainer>
+
       </div>
     </Container>
   );

@@ -16,6 +16,8 @@ const provider = new ethers.providers.JsonRpcProvider("https://rpc.etherfair.org
 const nftV2 = new ethers.Contract(optNFTV2Address, optNFTV2Abi, provider);
 const nftV1 = new ethers.Contract(optNFTV1Address, optNFTV1Abi, provider);
 
+const treasuryContract = "0xcCa5db687393a018d744658524B6C14dC251015f";
+
 export interface FopObj {
   minter: string,
   amp?: number,
@@ -85,12 +87,13 @@ interface IXENContext {
   grossReward: number;
   mintValue: number;
 
-  fopV2List: FopObj[] | undefined;
-  v2Balance: number;
-  fopV1List: FopObj[] | undefined,
-  v1Balance: number,
+  // fopV2List: FopObj[] | undefined;
+  // v2Balance: number;
+  // fopV1List: FopObj[] | undefined,
+  // v1Balance: number,
 
   savingRounds: number[],
+  treasuryBalance?: Balance,
 }
 
 const XENContext = createContext<IXENContext>({
@@ -112,12 +115,13 @@ const XENContext = createContext<IXENContext>({
   grossReward: 0,
   mintValue: 0,
 
-  fopV2List: undefined,
-  v2Balance: 0,
-  fopV1List: undefined,
-  v1Balance: 0,
+  // fopV2List: undefined,
+  // v2Balance: 0,
+  // fopV1List: undefined,
+  // v1Balance: 0,
 
   savingRounds: [],
+  treasuryBalance: undefined,
 });
 
 export const XENProvider = ({ children }: any) => {
@@ -139,12 +143,13 @@ export const XENProvider = ({ children }: any) => {
   const [grossReward, setGrossReward] = useState(0);
 
   const [mintValue, setMintValue] = useState(0);
+  const [treasuryBalance, setTreasuryBalance] = useState<Balance | undefined>();
 
-  const [fopV2List, setFopV2List] = useState<FopObj[] | undefined>();
-  const [v2Balance, setV2Balance] = useState(0);
+  // const [fopV2List, setFopV2List] = useState<FopObj[] | undefined>();
+  // const [v2Balance, setV2Balance] = useState(0);
 
-  const [fopV1List, setFopV1List] = useState<FopObj[] | undefined>();
-  const [v1Balance, setV1Balance] = useState(0);
+  // const [fopV1List, setFopV1List] = useState<FopObj[] | undefined>();
+  // const [v1Balance, setV1Balance] = useState(0);
 
   const [savingRounds, setSavingRounds] = useState<number[]>([]);
 
@@ -166,6 +171,17 @@ export const XENProvider = ({ children }: any) => {
     },
     // watch: true,
   });
+  useBalance({
+    addressOrName: treasuryContract,
+    onSuccess(data) {
+      setTreasuryBalance({
+        decimals: data.decimals,
+        formatted: data.formatted,
+        symbol: data.symbol,
+        value: data.value,
+      });
+    }
+  })
 
   useContractRead({
     ...xenContract(chain),
@@ -296,34 +312,34 @@ export const XENProvider = ({ children }: any) => {
     // watch: true,
   });
 
-  const filterToV2 = nftV2.filters.Transfer(null, address)
-  const filterToV1 = nftV1.filters.Transfer(null, address);
-  const fillV2 = async () => {
-    const logs = await nftV2.queryFilter(filterToV2, 16114220, 16314220)
-    const resultData : FopObj[] = [];
-    logs.map((item, index) => {
-        let tmpo = {} as FopObj
-        tmpo.minter = address || '';
-        tmpo.version = "v2";
-        tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
-        resultData.push(tmpo);
-    })
-    setFopV2List(resultData);
-  }
-  const fillV1 = async () => {
-    const logs = await nftV1.queryFilter(filterToV1, 15908752, 15918752)
-    const resultData : FopObj[] = [];
-    logs.map((item, index) => {
-        let tmpo = {} as FopObj
-        tmpo.minter = address || '';
-        tmpo.version = "v1";
-        tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
-        resultData.push(tmpo);
-    })
-    setFopV1List(resultData);
-  }
-  fillV2();
-  fillV1();
+  // const filterToV2 = nftV2.filters.Transfer(null, address)
+  // const filterToV1 = nftV1.filters.Transfer(null, address);
+  // const fillV2 = async () => {
+  //   const logs = await nftV2.queryFilter(filterToV2, 16114220, 16314220)
+  //   const resultData : FopObj[] = [];
+  //   logs.map((item, index) => {
+  //       let tmpo = {} as FopObj
+  //       tmpo.minter = address || '';
+  //       tmpo.version = "v2";
+  //       tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
+  //       resultData.push(tmpo);
+  //   })
+  //   setFopV2List(resultData);
+  // }
+  // const fillV1 = async () => {
+  //   const logs = await nftV1.queryFilter(filterToV1, 15908752, 15918752)
+  //   const resultData : FopObj[] = [];
+  //   logs.map((item, index) => {
+  //       let tmpo = {} as FopObj
+  //       tmpo.minter = address || '';
+  //       tmpo.version = "v1";
+  //       tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
+  //       resultData.push(tmpo);
+  //   })
+  //   setFopV1List(resultData);
+  // }
+  // fillV2();
+  // fillV1();
 
   useContractRead({
     ...batchSavingContract(chain),
@@ -358,11 +374,12 @@ export const XENProvider = ({ children }: any) => {
         currentAPY,
         grossReward,
         mintValue,
-        fopV2List,
-        v2Balance,
-        fopV1List,
-        v1Balance,
+        // fopV2List,
+        // v2Balance,
+        // fopV1List,
+        // v1Balance,
         savingRounds,
+        treasuryBalance,
       }}
     >
       {children}

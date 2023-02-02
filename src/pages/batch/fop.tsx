@@ -11,7 +11,7 @@ import Container from "~/components/containers/Container";
 import { useRouter } from "next/router";
 import { useEffect, useState, useContext } from "react";
 import { useTranslation } from "next-i18next";
-import XENContext from "~/contexts/XENContext";
+import XENContext, { FopObj } from "~/contexts/XENContext";
 import { UTC_TIME } from "~/lib/helpers";
 
 import CardContainer from "~/components/containers/CardContainer";
@@ -38,9 +38,7 @@ import { batchV1Contract, batchV2Contract, fopV1Contract, fopV2Contract } from "
 import { WFopItem } from "~/components/FopList";
 import { NextPage } from "next";
 
-let v : number = 1
 const Fop: NextPage = () => {
-  console.log('fop更新', new Date().getTime()/1000)
   const { t } = useTranslation("common");
 
   const { address } = useAccount();
@@ -50,9 +48,11 @@ const Fop: NextPage = () => {
   const [maxFreeMint, setMaxFreeMint] = useState(100);
   const [processing, setProcessing] = useState(false);
   const [maturity, setMaturity] = useState<number>(UTC_TIME);
+  const [fopV2List, setFopV2List] = useState<FopObj[]>([]);
+  const [fopV1List, setFopV1List] = useState<FopObj[]>([]);
 
   // const {v2Balance, fopV2List} = useContext(XENContext)
-  const { userMint, currentMaxTerm, globalRank, feeData, mintValue, v2Balance, fopV2List } = useContext(XENContext);
+  const { userMint, currentMaxTerm, globalRank, feeData, mintValue } = useContext(XENContext);
   const numberOfDays = 100;
   const quantityOfFopMint = 50;
   const addressZero = "0x0000000000000000000000000000000000000000"
@@ -148,6 +148,38 @@ const Fop: NextPage = () => {
 
     setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
     setMaxFopMint(quantityOfFopMint);
+
+    const provider = new ethers.providers.JsonRpcProvider("https://rpc.etherfair.org")
+    const nftV2 = new ethers.Contract(optNFTV2Address, optNFTV2Abi, provider);
+    const nftV1 = new ethers.Contract(optNFTV1Address, optNFTV1Abi, provider);
+    const filterToV2 = nftV2.filters.Transfer(null, address)
+    const filterToV1 = nftV1.filters.Transfer(null, address);
+    const fillV2 = async () => {
+      const logs = await nftV2.queryFilter(filterToV2, 16114220, 16314220)
+      const resultData : FopObj[] = [];
+      logs.map((item, index) => {
+          let tmpo = {} as FopObj
+          tmpo.minter = address || '';
+          tmpo.version = "v2";
+          tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
+          resultData.push(tmpo);
+      })
+      setFopV2List(resultData);
+    }
+    const fillV1 = async () => {
+      const logs = await nftV1.queryFilter(filterToV1, 15908752, 15918752)
+      const resultData : FopObj[] = [];
+      logs.map((item, index) => {
+          let tmpo = {} as FopObj
+          tmpo.minter = address || '';
+          tmpo.version = "v1";
+          tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
+          resultData.push(tmpo);
+      })
+      setFopV1List(resultData);
+    }
+    fillV2();
+    fillV1();
   }, [
     address,
     config,

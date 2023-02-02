@@ -80,6 +80,10 @@
     "active-mints": "活跃铸造",
     "active-stakes": "活跃质押",
     "max-mint-term": "最大铸造期限",
+
+    "treasury-balance": "金库余额",
+    "fren-burn-amount": "FREN销毁",
+
     "total": "总计",
     "matures-in": "成熟期",
     "progress": "过程",

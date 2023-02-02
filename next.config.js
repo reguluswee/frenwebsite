@@ -5,6 +5,14 @@ const nextConfig = {
   i18n,
   reactStrictMode: true,
   swcMinify: true,
+  async rewrites() {
+    return [
+      {
+        source: '/apc/:path*',
+        destination: 'https://fenus.xyz/dalink/api/:path*',
+      },
+    ]
+  },
   async redirects() {
     return [
       {

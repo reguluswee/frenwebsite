@@ -80,6 +80,10 @@
     "active-mints": "Active Mints",
     "active-stakes": "Active Stakes",
     "max-mint-term": "Max Mint Term",
+
+    "treasury-balance": "Treasury Balance",
+    "fren-burn-amount": "FREN Burned",
+
     "total": "Total",
     "matures-in": "Matures in",
     "progress": "Progress",
