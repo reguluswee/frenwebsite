@@ -10,7 +10,7 @@ const Meta: NextPage = () => {
   const { asPath } = router;
   const path = asPath.split("/").filter((item) => item !== "");
 
-  const title = `fenus.xyz - ${path.join(" - ")}`;
+  const title = `FREN Crypto | ETHF - ${path.join(" - ")}`;
   const description = t("meta.description");
   const url = "https://fenus.xyz";
   const image = "https://fenus.xyz/images/xen-logo-slogan-horizontal.png";
