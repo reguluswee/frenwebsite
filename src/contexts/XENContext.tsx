@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import { Chain, useFeeData, useBalance, useAccount, useNetwork, useContractRead, useContractReads } from "wagmi";
+import { Chain, useFeeData, useBalance, useAccount, useNetwork, useContractRead, useContractReads, useBlockNumber } from "wagmi";
 import { BigNumber } from "ethers";
 import { chainList } from "~/lib/client";
 import { xenContract } from "~/lib/xen-contract";
@@ -94,6 +94,7 @@ interface IXENContext {
 
   savingRounds: number[],
   treasuryBalance?: Balance,
+  latestBlock: number,
 }
 
 const XENContext = createContext<IXENContext>({
@@ -122,6 +123,7 @@ const XENContext = createContext<IXENContext>({
 
   savingRounds: [],
   treasuryBalance: undefined,
+  latestBlock: 0,
 });
 
 export const XENProvider = ({ children }: any) => {
@@ -152,6 +154,7 @@ export const XENProvider = ({ children }: any) => {
   // const [v1Balance, setV1Balance] = useState(0);
 
   const [savingRounds, setSavingRounds] = useState<number[]>([]);
+  const [latestBlock, setLatestBlock] = useState<number>(0);
 
   const { address } = useAccount();
   const { chain: networkChain } = useNetwork();
@@ -312,35 +315,6 @@ export const XENProvider = ({ children }: any) => {
     // watch: true,
   });
 
-  // const filterToV2 = nftV2.filters.Transfer(null, address)
-  // const filterToV1 = nftV1.filters.Transfer(null, address);
-  // const fillV2 = async () => {
-  //   const logs = await nftV2.queryFilter(filterToV2, 16114220, 16314220)
-  //   const resultData : FopObj[] = [];
-  //   logs.map((item, index) => {
-  //       let tmpo = {} as FopObj
-  //       tmpo.minter = address || '';
-  //       tmpo.version = "v2";
-  //       tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
-  //       resultData.push(tmpo);
-  //   })
-  //   setFopV2List(resultData);
-  // }
-  // const fillV1 = async () => {
-  //   const logs = await nftV1.queryFilter(filterToV1, 15908752, 15918752)
-  //   const resultData : FopObj[] = [];
-  //   logs.map((item, index) => {
-  //       let tmpo = {} as FopObj
-  //       tmpo.minter = address || '';
-  //       tmpo.version = "v1";
-  //       tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
-  //       resultData.push(tmpo);
-  //   })
-  //   setFopV1List(resultData);
-  // }
-  // fillV2();
-  // fillV1();
-
   useContractRead({
     ...batchSavingContract(chain),
     functionName: "getMintingData",
@@ -353,6 +327,11 @@ export const XENProvider = ({ children }: any) => {
     cacheOnBlock: true,
     // watch: true,
   });
+  const blockNumber = useBlockNumber({
+    onBlock(blockNumber) {
+      setLatestBlock(blockNumber);
+    },
+  })
 
   return (
     <XENContext.Provider
@@ -380,6 +359,7 @@ export const XENProvider = ({ children }: any) => {
         // v1Balance,
         savingRounds,
         treasuryBalance,
+        latestBlock,
       }}
     >
       {children}

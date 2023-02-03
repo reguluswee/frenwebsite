@@ -37,6 +37,7 @@ import {
 import { batchV1Contract, batchV2Contract, fopV1Contract, fopV2Contract } from "~/lib/batch-contract";
 import { WFopItem } from "~/components/FopList";
 import { NextPage } from "next";
+import { start } from "repl";
 
 const Fop: NextPage = () => {
   const { t } = useTranslation("common");
@@ -51,8 +52,10 @@ const Fop: NextPage = () => {
   const [fopV2List, setFopV2List] = useState<FopObj[]>([]);
   const [fopV1List, setFopV1List] = useState<FopObj[]>([]);
 
+  const [startBlock, setStartBlock] = useState<number>(16114220);
+
   // const {v2Balance, fopV2List} = useContext(XENContext)
-  const { userMint, currentMaxTerm, globalRank, feeData, mintValue } = useContext(XENContext);
+  const { userMint, currentMaxTerm, globalRank, feeData, mintValue, latestBlock } = useContext(XENContext);
   const numberOfDays = 100;
   const quantityOfFopMint = 50;
   const addressZero = "0x0000000000000000000000000000000000000000"
@@ -136,6 +139,10 @@ const Fop: NextPage = () => {
 
   /*** USE EFFECT ****/
 
+  const delay = (ms : number)=> {
+    return new Promise(resolve=>setTimeout(resolve, ms))
+  }
+
   useEffect(() => {
     if (watchAllFields.startMintDays) {
       setMaturity(UTC_TIME + watchAllFields.startMintDays * 86400);
@@ -155,15 +162,30 @@ const Fop: NextPage = () => {
     const filterToV2 = nftV2.filters.Transfer(null, address)
     const filterToV1 = nftV1.filters.Transfer(null, address);
     const fillV2 = async () => {
-      const logs = await nftV2.queryFilter(filterToV2, 16114220, 16314220)
+      let currentBlock : number = startBlock;
+      
       const resultData : FopObj[] = [];
-      logs.map((item, index) => {
-          let tmpo = {} as FopObj
-          tmpo.minter = address || '';
-          tmpo.version = "v2";
-          tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
-          resultData.push(tmpo);
-      })
+      while(currentBlock <= latestBlock) {
+        if(currentBlock >= latestBlock) {
+          break;
+        }
+        let endBlock = (currentBlock + 100000);
+        
+        if(endBlock >= latestBlock) {
+          endBlock = latestBlock
+        }
+        const logs = await nftV2.queryFilter(filterToV2, currentBlock, endBlock);
+        
+        logs.map((item, index) => {
+            let tmpo = {} as FopObj
+            tmpo.minter = address || '';
+            tmpo.version = "v2";
+            tmpo.tokenId = BigNumber.from(item.topics[3]).toNumber();
+            resultData.push(tmpo);
+        })
+        await delay(500);
+        currentBlock = endBlock + 1;
+      }
       setFopV2List(resultData);
     }
     const fillV1 = async () => {
@@ -181,15 +203,17 @@ const Fop: NextPage = () => {
     fillV2();
     fillV1();
   }, [
-    address,
-    config,
-    currentMaxTerm,
-    isValid,
-    processing,
-    userMint,
-    watchAllFields,
-    // watchAllFields.startMintQuantitys,
-    quantityOfFopMint,
+    // address,
+    // config,
+    // currentMaxTerm,
+    // isValid,
+    // processing,
+    // userMint,
+    // watchAllFields,
+    // // watchAllFields.startMintQuantitys,
+    // quantityOfFopMint,
+    startBlock,
+    latestBlock,
   ]);
 
   return (
