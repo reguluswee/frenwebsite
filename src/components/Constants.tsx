@@ -120,7 +120,7 @@ export const linkItems = [
     name: "Version Switch",
     t: "link.version-old",
     icon: <BookOpenIcon className="h-5 w-5" />,
-    href: "https://fenus.xyz/",
+    href: "https://pre.fenus.xyz/",
   },
   // {
   //   name: "Whitepaper",
