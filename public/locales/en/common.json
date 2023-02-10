@@ -122,7 +122,9 @@
     "amount-maximum": "Maximum amount is {{maximumAmount}}",
     "amount-positive": "Amount must be greater than 0",
     "amount-description": "Maximum amount",
-    "max": "Max"
+    "max": "Max",
+    "coins": "Coins",
+    "coins-description": "Alternative Token for minting"
   },
   "toast": {
     "copied-to-clipboard": "Copied to clipboard",
@@ -130,7 +132,8 @@
     "claim-and-share-successful": "Claim mint and share successful",
     "claim-and-stake-successful": "Claim mint and stake successful",
     "stake-successful": "Stake successful",
-    "end-stake-successful": "End stake successful"
+    "end-stake-successful": "End stake successful",
+    "approve-successful": "Approve successful"
   },
   "batch": {
     "title": "Batch",

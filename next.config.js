@@ -35,6 +35,11 @@ const nextConfig = {
         destination: "/batch/fop",
         permanent: false,
       },
+      {
+        source: "/multitoken",
+        destination: "/multi/tokens",
+        permanent: false,
+      },
     ];
   },
 };

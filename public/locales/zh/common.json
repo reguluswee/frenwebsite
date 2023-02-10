@@ -122,7 +122,9 @@
     "amount-maximum": "最大数量是 {{maximumAmount}}",
     "amount-positive": "数量必须大于0",
     "amount-description": "最大数量",
-    "max": "最大值"
+    "max": "最大值",
+    "coins": "币种",
+    "coins-description": "支付的币种"
   },
   "toast": {
     "copied-to-clipboard": "拷贝到剪贴板",
@@ -130,7 +132,8 @@
     "claim-and-share-successful": "申领铸造并分享成功",
     "claim-and-stake-successful": "申请铸造并质押成功",
     "stake-successful": "质押成功",
-    "end-stake-successful": "结束质押成功"
+    "end-stake-successful": "结束质押成功",
+    "approve-successful": "授权成功"
   },
   "batch": {
     "title": "批量铸造",

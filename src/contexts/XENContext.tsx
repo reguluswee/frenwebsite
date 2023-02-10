@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 import { chainList } from "~/lib/client";
 import { xenContract } from "~/lib/xen-contract";
 
-import { batchV1Contract, fopV1Contract, batchV2Contract, fopV2Contract, batchSavingContract } from "~/lib/batch-contract";
+import { batchV1Contract, fopV1Contract, batchV2Contract, fopV2Contract, batchSavingContract, multiContract } from "~/lib/batch-contract";
 import { ethers } from "ethers";
 import {
   batchV1Abi, batchV1Address, optNFTV1Abi, optNFTV1Address,
@@ -95,6 +95,7 @@ interface IXENContext {
   savingRounds: number[],
   treasuryBalance?: Balance,
   latestBlock: number,
+  multiRounds: number[],
 }
 
 const XENContext = createContext<IXENContext>({
@@ -124,6 +125,7 @@ const XENContext = createContext<IXENContext>({
   savingRounds: [],
   treasuryBalance: undefined,
   latestBlock: 0,
+  multiRounds: [],
 });
 
 export const XENProvider = ({ children }: any) => {
@@ -155,6 +157,8 @@ export const XENProvider = ({ children }: any) => {
 
   const [savingRounds, setSavingRounds] = useState<number[]>([]);
   const [latestBlock, setLatestBlock] = useState<number>(0);
+
+  const [multiRounds, setMultiRounds] = useState<number[]>([]);
 
   const { address } = useAccount();
   const { chain: networkChain } = useNetwork();
@@ -327,6 +331,20 @@ export const XENProvider = ({ children }: any) => {
     cacheOnBlock: true,
     // watch: true,
   });
+
+  useContractRead({
+    ...multiContract(chain),
+    functionName: "getMintingData",
+    overrides: { from: address },
+    args: [address],
+    onSuccess(data) {
+      setMultiRounds(data as number[]);
+    },
+    enabled: address != null,
+    cacheOnBlock: true,
+    // watch: true,
+  });
+
   const blockNumber = useBlockNumber({
     onBlock(blockNumber) {
       setLatestBlock(blockNumber);
@@ -360,6 +378,7 @@ export const XENProvider = ({ children }: any) => {
         savingRounds,
         treasuryBalance,
         latestBlock,
+        multiRounds,
       }}
     >
       {children}

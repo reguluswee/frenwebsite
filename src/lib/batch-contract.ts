@@ -5,6 +5,7 @@ import {
     batchV1Abi, batchV1Address, optNFTV1Abi, optNFTV1Address,
     batchV2Abi, batchV2Address, optNFTV2Abi, optNFTV2Address,
     batchSavingAbi, batchSavingAddress,
+    multiAbi, multiAddress,
   } from "~/abi/BatchABI";
 
 export const batchV1Contract = (contractChain?: Chain) => {
@@ -41,6 +42,14 @@ export const batchSavingContract = (contractChain?: Chain) => {
     return {
         addressOrName: batchSavingAddress,
         contractInterface: batchSavingAbi,
+        chainId: contractChain?.id,
+    };
+}
+
+export const multiContract = (contractChain?: Chain) => {
+    return {
+        addressOrName: multiAddress,
+        contractInterface: multiAbi,
         chainId: contractChain?.id,
     };
 }
