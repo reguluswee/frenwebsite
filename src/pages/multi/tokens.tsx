@@ -97,7 +97,8 @@ import {
     if(watchAllFields.startMintQuantitys && watchAllFields.mintSelToken == '0x0000000000000000000000000000000000000000') {
       etherMintValue = BigNumber.from(watchAllFields.startMintQuantitys + '').mul(BigNumber.from(mintValue + ''));
     }
-
+// console.log('watchAllFields.mintSelToke', watchAllFields.mintSelToken)
+    
     const { config: _20config, error: _20error } = usePrepareContractWrite({
       addressOrName: watchAllFields.mintSelToken,
       contractInterface: erc20ABI,
@@ -123,7 +124,6 @@ import {
         setTokenAllowance(BigNumber.from(data));
       }
     })
-
 
     const { config, error } = usePrepareContractWrite({
       addressOrName: multiContract(chain).addressOrName,

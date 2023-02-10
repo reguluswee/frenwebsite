@@ -99,6 +99,8 @@ export const TokenSelection: NextPage<any> = (props) => {
   const { t } = useTranslation("common");
 
   const { chain } = useNetwork();
+  const [selToken, setSelToken] = useState();
+  const [estimateAmount, setEstimateAmount] = useState('');
 
   const { data: tokenList } = useContractRead({
     ...multiContract(chain),
@@ -109,18 +111,40 @@ export const TokenSelection: NextPage<any> = (props) => {
     },
   });
 
+  const {} = useContractRead({
+    addressOrName: multiContract(chain).addressOrName,
+    contractInterface: multiContract(chain).contractInterface,
+    functionName: "computeClaimAmount",
+    args: [selToken],
+    onSuccess(data) {
+      let amount = (data[0].toNumber() + data[1].toNumber())/ 10 ** (data[2].toNumber() + 8)
+      
+      amount = Math.round(amount * 10000) / 10000;
+      if(amount==0)  {
+        amount = 1;
+      }
+      
+      props.setValue(props.register.name, {'token':selToken, 'amount': amount});
+      setEstimateAmount(' - ' + amount + '/ETHF');
+    }
+  })
+
+  const handleChange = (e : any) => {
+    setSelToken(e.target.value)
+  }
+
   return (
     <div className="form-control w-full">
       <label className="label text-neutral">
         <span className="label-text text-neutral">{props.title}</span>
         <span className="label-text-alt text-error">{props.errorMessage}</span>
       </label>
-      <select className="input input-bordered w-full text-neutral" onChange={(e) => props.setValue(props.register.name, e.target.value)}>
+      <select className="input input-bordered w-full text-neutral" onChange={(e) => handleChange(e)}>
           <option value="0x0000000000000000000000000000000000000000">ETHF</option>
           <option value="0x6593900a9BEc57c5B80a12d034d683e2B89b7C99">FCZZ</option>
       </select>
       <label className="label">
-        <span className="label-text-alt text-neutral">{props.description}</span>
+        <span className="label-text-alt text-neutral">{props.description}{estimateAmount}</span>
       </label>
     </div>
   );
