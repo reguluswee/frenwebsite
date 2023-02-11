@@ -94,16 +94,16 @@ import {
   
     /*** CONTRACT WRITE SETUP ***/
     let etherMintValue:BigNumber = BigNumber.from('0');
-    if(watchAllFields.startMintQuantitys && watchAllFields.mintSelToken == '0x0000000000000000000000000000000000000000') {
+    if(watchAllFields.startMintQuantitys && watchAllFields.mintSelToken?.token == '0x0000000000000000000000000000000000000000') {
       etherMintValue = BigNumber.from(watchAllFields.startMintQuantitys + '').mul(BigNumber.from(mintValue + ''));
     }
-// console.log('watchAllFields.mintSelToke', watchAllFields.mintSelToken)
-    
+
+    const approveAmount = ethers.utils.parseEther('100000000');
     const { config: _20config, error: _20error } = usePrepareContractWrite({
-      addressOrName: watchAllFields.mintSelToken,
+      addressOrName: watchAllFields.mintSelToken?.token,
       contractInterface: erc20ABI,
       functionName: "approve",
-      args: [multiContract(chain).addressOrName, 1000000000],
+      args: [multiContract(chain).addressOrName, approveAmount],
     })
     const { data: approveData, write: approveWrite } = useContractWrite({
       ..._20config,
@@ -115,7 +115,7 @@ import {
     });
 
     const {} = useContractRead({
-      addressOrName: watchAllFields.mintSelToken,
+      addressOrName: watchAllFields.mintSelToken?.token,
       contractInterface: erc20ABI,
       functionName: "allowance",
       overrides: { from: address },
@@ -129,7 +129,7 @@ import {
       addressOrName: multiContract(chain).addressOrName,
       contractInterface: multiContract(chain).contractInterface,
       functionName: "claimRank",
-      args: [watchAllFields.mintSelToken, watchAllFields.startMintQuantitys ?? 0, watchAllFields.startMintDays ?? 0],
+      args: [watchAllFields.mintSelToken?.token, watchAllFields.startMintQuantitys ?? 0, watchAllFields.startMintDays ?? 0],
       enabled: !disabled,
       overrides: {
         value: etherMintValue,
@@ -159,10 +159,11 @@ import {
     const onSubmit = () => {
       //write?.();
       if(watchAllFields.mintSelToken) {
-        if( watchAllFields.mintSelToken == '0x0000000000000000000000000000000000000000') {
+        if( watchAllFields.mintSelToken.token == '0x0000000000000000000000000000000000000000') {
           write?.();
         } else {
-          if(tokenAllowance.eq(BigNumber.from(0))) {
+          console.log('授权的金额：', tokenAllowance)
+          if(tokenAllowance.lte(approveAmount)) {
             approveWrite?.();
           } else {
             write?.();
