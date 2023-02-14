@@ -123,12 +123,10 @@ export const TokenSelection: NextPage<any> = (props) => {
     args: [selToken],
     onSuccess(data) {
       let amount = (data[0].toNumber() + data[1].toNumber())/ 10 ** (data[2].toNumber() + 8)
-      
       amount = Math.round(amount * 10000) / 10000;
       if(amount==0)  {
         amount = 1;
       }
-      
       props.setValue(props.register.name, {'token':selToken, 'amount': amount});
       setRatio(amount);
     }
@@ -159,7 +157,6 @@ export const TokenSelection: NextPage<any> = (props) => {
     }
   }
   
-
   const handleChange = (e : any) => {
     setSelToken(e.target.value)
   }
@@ -167,7 +164,7 @@ export const TokenSelection: NextPage<any> = (props) => {
   useEffect(() => {
     handleCompute(props.minters)
   }, [
-    props.minters
+    props.minters, ratio
   ])
 
   return (
