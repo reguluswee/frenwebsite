@@ -145,14 +145,15 @@ export const TokenSelection: NextPage<any> = (props) => {
   })
 
   const handleCompute = (minters: number | undefined) => {
-    console.log('货渠道的数据', credit, ratio)
     if(!minters) {
       return
     }
     let esStr = ''
     if(selToken) {
       esStr = ' - ' + ratio + '/ETHF, ' + t("form-field.coins-consume-total") + ':' + (ratio * minters);
-      esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + ethers.utils.formatEther(credit);
+      if(credit) {
+        esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + ethers.utils.formatEther(credit);
+      }
       setEstimateAmount(esStr);
       getAmount(ratio)
     }
