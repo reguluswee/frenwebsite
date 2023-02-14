@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
-import { useContractRead, useNetwork } from "wagmi";
+import { useContractRead, useNetwork, useBalance } from "wagmi";
 import { multiContract } from "~/lib/batch-contract";
 import React, { useEffect, useState } from "react";
 import { ethers, BigNumber } from "ethers";
@@ -106,6 +106,7 @@ export const TokenSelection: NextPage<any> = (props) => {
   const [ratio, setRatio] = useState(0);
 
   const [credit, setCredit] = useState<BigNumber>();
+  const [balance, setBalance] = useState<any>();
 
   const { data: tokenList } = useContractRead({
     ...multiContract(chain),
@@ -132,6 +133,14 @@ export const TokenSelection: NextPage<any> = (props) => {
     }
   })
 
+  const { } = useBalance({
+    addressOrName: multiContract(chain).addressOrName,
+    formatUnits: 'ether',
+    onSuccess(data) {
+      setBalance(data.value);
+    }
+  })
+
   const {} = useContractRead({
     addressOrName: multiContract(chain).addressOrName,
     contractInterface: multiContract(chain).contractInterface,
@@ -150,7 +159,8 @@ export const TokenSelection: NextPage<any> = (props) => {
     if(selToken) {
       esStr = ' - ' + ratio + '/ETHF, ' + t("form-field.coins-consume-total") + ':' + (ratio * minters);
       if(credit) {
-        esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + ethers.utils.formatEther(credit);
+        let minVal = ethers.utils.formatEther(credit) > balance ? balance : ethers.utils.formatEther(credit);
+        esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + minVal;
       }
       setEstimateAmount(esStr);
       getAmount(ratio)
