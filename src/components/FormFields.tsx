@@ -3,6 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useContractRead, useNetwork } from "wagmi";
 import { multiContract } from "~/lib/batch-contract";
 import React, { useEffect, useState } from "react";
+import { ethers, BigNumber } from "ethers";
 
 export const MaxValueField: NextPage<any> = (props) => {
   const { t } = useTranslation("common");
@@ -104,6 +105,8 @@ export const TokenSelection: NextPage<any> = (props) => {
   const { getAmount } = props;
   const [ratio, setRatio] = useState(0);
 
+  const [credit, setCredit] = useState<BigNumber>();
+
   const { data: tokenList } = useContractRead({
     ...multiContract(chain),
     functionName: "tokenList",
@@ -131,13 +134,25 @@ export const TokenSelection: NextPage<any> = (props) => {
     }
   })
 
+  const {} = useContractRead({
+    addressOrName: multiContract(chain).addressOrName,
+    contractInterface: multiContract(chain).contractInterface,
+    functionName: "tokenCredit",
+    args: [selToken],
+    onSuccess(data) {
+      setCredit(BigNumber.from(data.toString()));
+    }
+  })
+
   const handleCompute = (minters: number | undefined) => {
+    console.log('货渠道的数据', credit, ratio)
     if(!minters) {
       return
     }
     let esStr = ''
     if(selToken) {
       esStr = ' - ' + ratio + '/ETHF, ' + t("form-field.coins-consume-total") + ':' + (ratio * minters);
+      esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + ethers.utils.formatEther(credit);
       setEstimateAmount(esStr);
       getAmount(ratio)
     }

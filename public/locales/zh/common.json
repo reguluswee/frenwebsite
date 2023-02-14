@@ -125,7 +125,8 @@
     "max": "最大值",
     "coins": "币种",
     "coins-description": "支付的币种",
-    "coins-consume-total": "总消耗代币"
+    "coins-consume-total": "总消耗代币",
+    "coins-credit-quota": "可用授信额度"
   },
   "toast": {
     "copied-to-clipboard": "拷贝到剪贴板",

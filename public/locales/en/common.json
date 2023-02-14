@@ -125,7 +125,8 @@
     "max": "Max",
     "coins": "Coins",
     "coins-description": "Alternative Token for minting",
-    "coins-consume-total": "Total consume tokens"
+    "coins-consume-total": "Total consume tokens",
+    "coins-credit-quota": "Available credit quota"
   },
   "toast": {
     "copied-to-clipboard": "Copied to clipboard",
