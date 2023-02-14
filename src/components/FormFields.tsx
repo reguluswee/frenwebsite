@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { useContractRead, useNetwork } from "wagmi";
 import { multiContract } from "~/lib/batch-contract";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export const MaxValueField: NextPage<any> = (props) => {
   const { t } = useTranslation("common");
@@ -101,6 +101,8 @@ export const TokenSelection: NextPage<any> = (props) => {
   const { chain } = useNetwork();
   const [selToken, setSelToken] = useState();
   const [estimateAmount, setEstimateAmount] = useState('');
+  const { getAmount } = props;
+  const [ratio, setRatio] = useState(0);
 
   const { data: tokenList } = useContractRead({
     ...multiContract(chain),
@@ -125,13 +127,32 @@ export const TokenSelection: NextPage<any> = (props) => {
       }
       
       props.setValue(props.register.name, {'token':selToken, 'amount': amount});
-      setEstimateAmount(' - ' + amount + '/ETHF');
+      setRatio(amount);
     }
   })
+
+  const handleCompute = (minters: number | undefined) => {
+    if(!minters) {
+      return
+    }
+    let esStr = ''
+    if(selToken) {
+      esStr = ' - ' + ratio + '/ETHF, ' + t("form-field.coins-consume-total") + ':' + (ratio * minters);
+      setEstimateAmount(esStr);
+      getAmount(ratio)
+    }
+  }
+  
 
   const handleChange = (e : any) => {
     setSelToken(e.target.value)
   }
+
+  useEffect(() => {
+    handleCompute(props.minters)
+  }, [
+    props.minters
+  ])
 
   return (
     <div className="form-control w-full">

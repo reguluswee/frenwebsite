@@ -55,6 +55,7 @@ import {
     const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
 
     const [approveProcessing, setApproveProcessing] = useState(false);
+    const [needAmount, setNeedAmount] = useState<BigNumber>(BigNumber.from(0));
   
     const schema = yup
       .object()
@@ -91,6 +92,11 @@ import {
       resolver: yupResolver(schema),
     });
     const watchAllFields = watch();
+
+    const getAmount = (val: number) => {
+      let result = ethers.utils.parseEther(val + '')
+      setNeedAmount(result);
+    }
   
     /*** CONTRACT WRITE SETUP ***/
     let etherMintValue:BigNumber = BigNumber.from('0');
@@ -108,7 +114,7 @@ import {
     const { data: approveData, write: approveWrite } = useContractWrite({
       ..._20config,
       onSuccess(data) {
-        // setProcessing(true);
+        setProcessing(true);
         setApproveProcessing(true);
         setDisabled(true);
       },
@@ -162,8 +168,8 @@ import {
         if( watchAllFields.mintSelToken.token == '0x0000000000000000000000000000000000000000') {
           write?.();
         } else {
-          console.log('授权的金额：', tokenAllowance)
-          if(tokenAllowance.lte(approveAmount)) {
+          console.log('relative amounts:', tokenAllowance?.toString(), needAmount.toString());
+          if(tokenAllowance.lte(needAmount)) {
             approveWrite?.();
           } else {
             write?.();
@@ -189,6 +195,7 @@ import {
       currentMaxTerm,
       isValid,
       processing,
+      approveProcessing,
       userMint,
       watchAllFields,
     ]);
@@ -241,6 +248,7 @@ import {
                   title={t("form-field.coins").toUpperCase()}
                   description={t("form-field.coins-description")}
                   decimals={0}
+                  minters={watchAllFields.startMintQuantitys}
                   value={maxFreeMint}
                   disabled={disabled}
                   errorMessage={
@@ -248,6 +256,7 @@ import {
                   }
                   register={register("mintSelToken")}
                   setValue={setValue}
+                  getAmount={getAmount}
                 />
   
                 <div className="flex stats glass w-full text-neutral">

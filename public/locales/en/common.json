@@ -124,7 +124,8 @@
     "amount-description": "Maximum amount",
     "max": "Max",
     "coins": "Coins",
-    "coins-description": "Alternative Token for minting"
+    "coins-description": "Alternative Token for minting",
+    "coins-consume-total": "Total consume tokens"
   },
   "toast": {
     "copied-to-clipboard": "Copied to clipboard",
@@ -137,7 +138,7 @@
   },
   "batch": {
     "title": "Batch",
-    "quantity": "Quantity",
+    "quantity": "Minters",
     "quantity-desc": "Quantity of batch-mint",
     "quantity-required": "Quantity required",
     "quantity-positive": "Quantity of batch-mint must be greater than 0",

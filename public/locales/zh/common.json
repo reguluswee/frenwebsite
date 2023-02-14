@@ -124,7 +124,8 @@
     "amount-description": "最大数量",
     "max": "最大值",
     "coins": "币种",
-    "coins-description": "支付的币种"
+    "coins-description": "支付的币种",
+    "coins-consume-total": "总消耗代币"
   },
   "toast": {
     "copied-to-clipboard": "拷贝到剪贴板",
@@ -137,7 +138,7 @@
   },
   "batch": {
     "title": "批量铸造",
-    "quantity": "数量",
+    "quantity": "铸造数量",
     "quantity-desc": "铸造的批量数量",
     "quantity-required": "输入批量铸造的数量",
     "quantity-positive": "批量铸造的数量需要大于0",
