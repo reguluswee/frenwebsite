@@ -133,9 +133,8 @@ export const TokenSelection: NextPage<any> = (props) => {
     }
   })
 
-  const { } = useBalance({
+  const {} = useBalance({
     addressOrName: multiContract(chain).addressOrName,
-    formatUnits: 'ether',
     onSuccess(data) {
       setBalance(data.value);
     }
@@ -159,11 +158,11 @@ export const TokenSelection: NextPage<any> = (props) => {
     if(selToken) {
       esStr = ' - ' + ratio + '/ETHF, ' + t("form-field.coins-consume-total") + ':' + (ratio * minters);
       if(credit) {
-        let minVal = ethers.utils.formatEther(credit) > balance ? balance : ethers.utils.formatEther(credit);
+        let minVal = credit.gte(balance) ? ethers.utils.formatEther(balance) : ethers.utils.formatEther(credit);
         esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + minVal;
       }
       setEstimateAmount(esStr);
-      getAmount(ratio)
+      getAmount(ratio, ethers.utils.formatEther(balance))
     }
   }
   

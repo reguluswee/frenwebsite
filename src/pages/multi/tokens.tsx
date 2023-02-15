@@ -55,7 +55,8 @@ import {
     const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
 
     const [approveProcessing, setApproveProcessing] = useState(false);
-    const [needAmount, setNeedAmount] = useState<BigNumber>(BigNumber.from(0));
+    const [ratio, setRatio] = useState<BigNumber>(BigNumber.from(0));
+    const [availableBalance, setAvailableBalance] = useState<BigNumber>(BigNumber.from(0));
   
     const schema = yup
       .object()
@@ -93,9 +94,12 @@ import {
     });
     const watchAllFields = watch();
 
-    const getAmount = (val: number) => {
-      let result = ethers.utils.parseEther(val + '')
-      setNeedAmount(result);
+    const getAmount = (ratio: number, balance: number) => {
+      let ndAmount = ethers.utils.parseEther(ratio + '')
+      let avBalance = ethers.utils.parseEther(balance + '');
+      setRatio(ndAmount);
+      setAvailableBalance(avBalance);
+      console.log('父组件获取结果：', ndAmount.toString(), avBalance.toString());
     }
   
     /*** CONTRACT WRITE SETUP ***/
@@ -161,6 +165,18 @@ import {
           router.push("/multi/tokens");
         }
       },
+      onError(err) {
+        console.log('tx ended error', err)
+        setDisabled(false)
+        setProcessing(false)
+        setApproveProcessing(false)
+      },
+      onSettled(de) {
+        console.log('tx ended settled', de)
+        setDisabled(false)
+        setProcessing(false)
+        setApproveProcessing(false)
+      }
     });
     const onSubmit = () => {
       //write?.();
@@ -168,8 +184,14 @@ import {
         if( watchAllFields.mintSelToken.token == '0x0000000000000000000000000000000000000000') {
           write?.();
         } else {
-          console.log('relative amounts:', tokenAllowance?.toString(), needAmount.toString());
-          if(tokenAllowance.lte(needAmount)) {
+          let bigMinters = BigNumber.from(watchAllFields.startMintQuantitys + '');
+          let totalNeedEthf = bigMinters.mul(BigNumber.from(10 ** 18 + ''));
+          console.log('relative amounts:', tokenAllowance?.toString(), ratio.toString(), totalNeedEthf.toString());
+          if(totalNeedEthf.gt(availableBalance)) {
+            alert('超过限额了');
+            //return
+          }
+          if(tokenAllowance.lte(totalNeedEthf)) {
             approveWrite?.();
           } else {
             write?.();
@@ -185,7 +207,10 @@ import {
         setMaturity(UTC_TIME + watchAllFields.startMintDays * 86400);
       }
   
-      setDisabled(false);
+      // setDisabled(false);
+      if (!processing && !approveProcessing) {
+        setDisabled(false);
+      }
   
       setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
       setMaxMint(quantityOfMint);
