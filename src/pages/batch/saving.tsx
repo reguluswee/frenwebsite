@@ -154,6 +154,10 @@ const Saving = () => {
           <Link href="/batch/saving">
             <a className="step step-neutral">{t("batch.gas.title")}</a>
           </Link>
+
+          <Link href="/multi/tokens">
+            <a className="step">{t("batch.multi.title")}</a>
+          </Link>
         </ul>
 
         <CardContainer>

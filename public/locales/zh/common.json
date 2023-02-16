@@ -126,7 +126,8 @@
     "coins": "币种",
     "coins-description": "支付的币种",
     "coins-consume-total": "总消耗代币",
-    "coins-credit-quota": "可用授信额度"
+    "coins-credit-quota": "可用授信额度",
+    "limit-exceed": "超过可用限额"
   },
   "toast": {
     "copied-to-clipboard": "拷贝到剪贴板",
@@ -160,6 +161,11 @@
     },
     "gas": {
       "title": "省Gas铸造"
+    },
+    "multi": {
+      "title": "多币种铸造",
+      "action-claim": "claim",
+      "action-view": "view"
     }
   }
 }

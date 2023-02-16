@@ -99,7 +99,6 @@ import {
       let avBalance = ethers.utils.parseEther(balance + '');
       setRatio(ndAmount);
       setAvailableBalance(avBalance);
-      console.log('父组件获取结果：', ndAmount.toString(), avBalance.toString());
     }
   
     /*** CONTRACT WRITE SETUP ***/
@@ -179,7 +178,6 @@ import {
       }
     });
     const onSubmit = () => {
-      //write?.();
       if(watchAllFields.mintSelToken) {
         if( watchAllFields.mintSelToken.token == '0x0000000000000000000000000000000000000000') {
           write?.();
@@ -188,8 +186,8 @@ import {
           let totalNeedEthf = bigMinters.mul(BigNumber.from(10 ** 18 + ''));
           console.log('relative amounts:', tokenAllowance?.toString(), ratio.toString(), totalNeedEthf.toString());
           if(totalNeedEthf.gt(availableBalance)) {
-            alert('超过限额了');
-            //return
+            alert(t('limit-exceed'));
+            return
           }
           if(tokenAllowance.lte(totalNeedEthf)) {
             approveWrite?.();
@@ -234,7 +232,11 @@ import {
             </Link>
   
             <Link href="/batch/saving">
-              <a className="step step-neutral">{t("batch.gas.title")}</a>
+              <a className="step">{t("batch.gas.title")}</a>
+            </Link>
+
+            <Link href="/multi/tokens">
+              <a className="step step-neutral">{t("batch.multi.title")}</a>
             </Link>
           </ul>
   

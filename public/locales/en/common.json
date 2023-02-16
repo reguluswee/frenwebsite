@@ -126,7 +126,8 @@
     "coins": "Coins",
     "coins-description": "Alternative Token for minting",
     "coins-consume-total": "Total consume tokens",
-    "coins-credit-quota": "Available credit quota"
+    "coins-credit-quota": "Available credit quota",
+    "limit-exceed": "limit exceeded"
   },
   "toast": {
     "copied-to-clipboard": "Copied to clipboard",
@@ -161,6 +162,11 @@
     "gas": {
       "title": "Gas-Saving Mint",
       "action-claim": "claim"
+    },
+    "multi": {
+      "title": "Multi-Token Mint",
+      "action-claim": "claim",
+      "action-view": "view"
     }
   }
 }

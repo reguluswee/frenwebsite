@@ -187,7 +187,7 @@ export const TokenSelection: NextPage<any> = (props) => {
           <option value="0x6593900a9BEc57c5B80a12d034d683e2B89b7C99">FCZZ</option>
       </select>
       <label className="label">
-        <span className="label-text-alt text-neutral">{props.description}{estimateAmount}</span>
+        <a href="https://www.oklink.com/zh-cn/ethf/address/0x8e3f39Beb44758C004F856E1E7498bAB26CD3F3F" target="_blank" className="label-text-alt text-neutral">{props.description}{estimateAmount}</a>
       </label>
     </div>
   );
