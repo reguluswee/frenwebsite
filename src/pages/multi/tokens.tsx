@@ -50,8 +50,8 @@ import {
     const { userMint, currentMaxTerm, globalRank, feeData, multiRounds, mintValue } = useContext(XENContext);
     const numberOfDays = 100;
   
-    const quantityOfMint = 200;
-    const [maxMint, setMaxMint] = useState(200);
+    const quantityOfMint = 128;
+    const [maxMint, setMaxMint] = useState(128);
     const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
 
     const [approveProcessing, setApproveProcessing] = useState(false);
