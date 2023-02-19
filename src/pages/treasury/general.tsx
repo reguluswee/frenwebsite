@@ -4,10 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useContractRead, useToken, useNetwork, erc20ABI } from "wagmi";
 import {
-  NumberStatCard,
-  ChainStatCard,
-  DateStatCard,
-  DataCard,
+  RichNumberStatCard,
 } from "~/components/StatCards";
 import CardContainer from "~/components/containers/CardContainer";
 import { xenContract } from "~/lib/xen-contract";
@@ -35,6 +32,8 @@ const TreasuryGeneral: NextPage = () => {
 
   const [balFczz, setBalFczz] = useState(0);
   const [balFren, setBalFren] = useState(0);
+  const [creditFczz, setCreditFczz] = useState('');
+  const [creditFren, setCreditFren] = useState('');
 
   const {
     setChainOverride,
@@ -73,23 +72,42 @@ const TreasuryGeneral: NextPage = () => {
     cacheOnBlock: true,
   });
 
+  const {} = useContractRead({
+    ...multiContract(chain),
+    functionName: "tokenCredit",
+    args: ['0x6593900a9BEc57c5B80a12d034d683e2B89b7C99'],
+    onSuccess(data) {
+      setCreditFczz(BigNumber.from(data).div(1e18 + '').toString() + ' ETHF')
+    }
+  })
+  const {} = useContractRead({
+    ...multiContract(chain),
+    functionName: "tokenCredit",
+    args: ['0x7127deeff734cE589beaD9C4edEFFc39C9128771'],
+    onSuccess(data) {
+      setCreditFren(BigNumber.from(data).div(1e18 + '').toString() + ' ETHF')
+    }
+  })
+
   const tokenList = [
     {
       title: "ETHF",
       value: treasuryBalance ? treasuryBalance.value.div(BigNumber.from(1e18 + ''))?.toNumber() : 0,
-      tooltip: "A fork of Ethereum that keeps POW. Anyone can participate without restrictions"
+      tooltip: t("treasury-info.ethf.tip"),
     },
     {
       title: "FCZZ",
       value: balFczz,
-      tooltip: "CZZ is the first public chain to realize decentralized cross-chain transaction."
+      tooltip: t("treasury-info.fczz.tip"),
+      description: 'FCZZ-Credit',
+      credit: creditFczz,
     },
     {
       title: "FREN",
       value: balFren,
-      tooltip: `Designed to allow creation of innovative
-      structured and collateralized spot and option products by POWP(Proof of
-      Work and Proof of Participation)`
+      tooltip: t("treasury-info.fren.tip"),
+      description: 'FREN-Credit',
+      credit: creditFren
     },
   ];
 
@@ -109,11 +127,13 @@ const TreasuryGeneral: NextPage = () => {
             <h2 className="card-title">{t("treasury-info.title")}</h2>
             <div className="stats stats-vertical bg-transparent text-neutral">
               {tokenList.map((item, index) => (
-                <NumberStatCard
+                <RichNumberStatCard
                   key={index}
                   title={item.title}
                   value={item.value}
                   tooltip={item.tooltip}
+                  description={item.description}
+                  credit={item.credit}
                 />
               ))}
             </div>

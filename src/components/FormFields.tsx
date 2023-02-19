@@ -159,7 +159,7 @@ export const TokenSelection: NextPage<any> = (props) => {
       esStr = ' - ' + ratio + '/ETHF, ' + t("form-field.coins-consume-total") + ':' + (ratio * minters);
       if(credit) {
         let minVal = credit.gte(balance) ? ethers.utils.formatEther(balance) : ethers.utils.formatEther(credit);
-        esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + minVal;
+        esStr = esStr + ', ' + t("form-field.coins-credit-quota") + ':' + Number(minVal).toFixed(2);
       }
       setEstimateAmount(esStr);
       getAmount(ratio, ethers.utils.formatEther(balance))

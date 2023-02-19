@@ -171,6 +171,15 @@
     }
   },
   "treasury-info": {
-    "title": "Treasury Infos"
+    "title": "Treasury Infos",
+    "ethf": {
+      "tip": "A fork of Ethereum that keeps POW. Anyone can participate without restrictions"
+    },
+    "fczz": {
+      "tip": "CZZ is the first public chain to realize decentralized cross-chain transaction."
+    },
+    "fren": {
+      "tip": "Designed to allow creation of innovative \n structured and collateralized spot and option products by POWP(Proof of \n Work and Proof of Participation)"
+    }
   }
 }

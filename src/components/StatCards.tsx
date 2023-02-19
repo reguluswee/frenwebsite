@@ -207,3 +207,46 @@ export const CountdownCard: NextPage<CountdownCardStat> = (props) => {
     </div>
   );
 };
+
+interface RichNumberStat {
+  title: string;
+  value: number;
+  separator?: string;
+  decimals?: number;
+  suffix?: string;
+  description?: string;
+  tokenDecimals?: number;
+  tooltip?: string;
+  credit?: string;
+}
+
+export const RichNumberStatCard: NextPage<RichNumberStat> = (props) => {
+  return (
+    <div className="stat">
+      <div className="stat-title">{props.title}</div>
+      <code className="stat-value text-lg md:text-2xl text-right">
+        <CountUp
+          end={props.value}
+          preserveValue={true}
+          separator={props?.separator ?? ","}
+          decimals={props?.decimals ?? 2}
+          suffix={props.suffix ?? ""}
+        />
+      </code>
+      <div className="stat-title">{props.description}</div>
+      <div className="stat-desc text-right">{props.credit}</div>
+      {props.tooltip && (
+        <div className="alert shadow-lg glass mt-4">
+          <div>
+            <div>
+              <InformationCircleIcon className="w-8 h-8" />
+            </div>
+            <div>
+              <div className="text-xs">{props.tooltip}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
