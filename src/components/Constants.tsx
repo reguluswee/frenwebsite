@@ -1,4 +1,4 @@
-import { BookOpenIcon, ViewGridIcon, LockClosedIcon, DocumentTextIcon, HomeIcon, EmojiHappyIcon, CashIcon } from "@heroicons/react/outline";
+import { BookOpenIcon, ViewGridIcon, LockClosedIcon, CashIcon } from "@heroicons/react/outline";
 import {
   DuneIcon,
   TwitterIcon,
@@ -121,6 +121,12 @@ export const linkItems = [
     t: "link.version-old",
     icon: <BookOpenIcon className="h-5 w-5" />,
     href: "https://pre.fenus.xyz/",
+  },
+  {
+    name: "Treasury Information",
+    t: "link.treasury-view",
+    icon: <CoinmarketCapIcon/>,
+    href: "https://fenus.xyz/treasury",
   },
   // {
   //   name: "Whitepaper",

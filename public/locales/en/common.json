@@ -21,7 +21,8 @@
     "github": "GitHub",
     "coinmarketcap": "CoinMarketCap",
     "dune": "Dune Analytics",
-    "version-old": "Pre-Version"
+    "version-old": "Pre-Version",
+    "treasury-view": "Fren Treasury"
   },
   "meta": {
     "description": "XEN.fyi is an open-source project to help users understand the XEN crypto protocol and its ecosystem."
@@ -168,5 +169,8 @@
       "action-claim": "claim",
       "action-view": "view"
     }
+  },
+  "treasury-info": {
+    "title": "Treasury Infos"
   }
 }

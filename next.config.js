@@ -40,6 +40,11 @@ const nextConfig = {
         destination: "/multi/tokens",
         permanent: false,
       },
+      {
+        source: "/treasury",
+        destination: "/treasury/general",
+        permanent: false,
+      },
     ];
   },
 };

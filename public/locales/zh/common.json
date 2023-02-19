@@ -21,7 +21,8 @@
     "github": "GitHub",
     "coinmarketcap": "CoinMarketCap",
     "dune": "Dune分析",
-    "version-old": "回到旧版"
+    "version-old": "回到旧版",
+    "treasury-view": "金库信息"
   },
   "meta": {
     "description": "XEN.fyi是一个开源项目，旨在帮助用户理解XEN加密协议以及生态系统。"
@@ -167,5 +168,8 @@
       "action-claim": "claim",
       "action-view": "view"
     }
+  },
+  "treasury-info": {
+    "title": "金库详情"
   }
 }

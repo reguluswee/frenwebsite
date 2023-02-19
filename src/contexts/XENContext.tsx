@@ -4,12 +4,11 @@ import { BigNumber } from "ethers";
 import { chainList } from "~/lib/client";
 import { xenContract } from "~/lib/xen-contract";
 
-import { batchV1Contract, fopV1Contract, batchV2Contract, fopV2Contract, batchSavingContract, multiContract } from "~/lib/batch-contract";
+import { batchSavingContract, multiContract } from "~/lib/batch-contract";
 import { ethers } from "ethers";
 import {
-  batchV1Abi, batchV1Address, optNFTV1Abi, optNFTV1Address,
-  batchV2Abi, batchV2Address, optNFTV2Abi, optNFTV2Address,
-  batchSavingAbi, batchSavingAddress,
+  optNFTV1Abi, optNFTV1Address,
+  optNFTV2Abi, optNFTV2Address,
 } from "~/abi/BatchABI";
 
 const provider = new ethers.providers.JsonRpcProvider("https://rpc.etherfair.org")
@@ -68,6 +67,15 @@ export interface Balance {
   value: BigNumber;
 }
 
+const emptyBalance = () => {
+  return {
+    decimals: 0,
+    formatted: "",
+    symbol: "",
+    value: BigNumber.from(0)
+  }
+}
+
 interface IXENContext {
   setChainOverride: (chain: Chain) => void;
   userMint?: UserMint;
@@ -87,13 +95,8 @@ interface IXENContext {
   grossReward: number;
   mintValue: number;
 
-  // fopV2List: FopObj[] | undefined;
-  // v2Balance: number;
-  // fopV1List: FopObj[] | undefined,
-  // v1Balance: number,
-
   savingRounds: number[],
-  treasuryBalance?: Balance,
+  treasuryBalance: Balance | undefined,
   latestBlock: number,
   multiRounds: number[],
 }
@@ -117,13 +120,8 @@ const XENContext = createContext<IXENContext>({
   grossReward: 0,
   mintValue: 0,
 
-  // fopV2List: undefined,
-  // v2Balance: 0,
-  // fopV1List: undefined,
-  // v1Balance: 0,
-
   savingRounds: [],
-  treasuryBalance: undefined,
+  treasuryBalance: emptyBalance(),
   latestBlock: 0,
   multiRounds: [],
 });
@@ -147,13 +145,7 @@ export const XENProvider = ({ children }: any) => {
   const [grossReward, setGrossReward] = useState(0);
 
   const [mintValue, setMintValue] = useState(0);
-  const [treasuryBalance, setTreasuryBalance] = useState<Balance | undefined>();
-
-  // const [fopV2List, setFopV2List] = useState<FopObj[] | undefined>();
-  // const [v2Balance, setV2Balance] = useState(0);
-
-  // const [fopV1List, setFopV1List] = useState<FopObj[] | undefined>();
-  // const [v1Balance, setV1Balance] = useState(0);
+  const [treasuryBalance, setTreasuryBalance] = useState<Balance>();
 
   const [savingRounds, setSavingRounds] = useState<number[]>([]);
   const [latestBlock, setLatestBlock] = useState<number>(0);
@@ -371,10 +363,6 @@ export const XENProvider = ({ children }: any) => {
         currentAPY,
         grossReward,
         mintValue,
-        // fopV2List,
-        // v2Balance,
-        // fopV1List,
-        // v1Balance,
         savingRounds,
         treasuryBalance,
         latestBlock,
