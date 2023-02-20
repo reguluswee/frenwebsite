@@ -33,7 +33,6 @@ import {
   import { WSavingItem } from "~/components/MultiList";
   import { ethers, BigNumber } from "ethers";
   
-  import FRENCryptoABI from "~/abi/FRENCryptoABI";
   import { multiContract } from "~/lib/batch-contract";
   
   const MultiToken = () => {
@@ -107,7 +106,7 @@ import {
       etherMintValue = BigNumber.from(watchAllFields.startMintQuantitys + '').mul(BigNumber.from(mintValue + ''));
     }
 
-    const approveAmount = ethers.utils.parseEther('100000000');
+    const approveAmount = BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); //ethers.utils.parseEther('100000000');
     const { config: _20config, error: _20error } = usePrepareContractWrite({
       addressOrName: watchAllFields.mintSelToken?.token,
       contractInterface: erc20ABI,
@@ -189,7 +188,7 @@ import {
             alert(t('limit-exceed'));
             return
           }
-          if(tokenAllowance.lte(totalNeedEthf)) {
+          if(tokenAllowance.lte(bigMinters.mul(ratio))) {
             approveWrite?.();
           } else {
             write?.();
