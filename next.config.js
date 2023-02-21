@@ -45,6 +45,11 @@ const nextConfig = {
         destination: "/treasury/general",
         permanent: false,
       },
+      {
+        source: "/mdao",
+        destination: "/mdao/compensate",
+        permanent: false,
+      },
     ];
   },
 };
