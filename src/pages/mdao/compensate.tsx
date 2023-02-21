@@ -57,7 +57,6 @@ import {
       } = useForm({
         mode: "onChange",
       });
-    console.log('输入的term；', term)
   
     /*** CONTRACT WRITE SETUP ***/
     const { config: _20config, error: _20error } = usePrepareContractWrite({
@@ -129,7 +128,7 @@ import {
             </Link>
 
             <Link href="/multi/tokens">
-              <a className="step">compensate because of mdao's issue</a>
+              <a className="step">compensate</a>
             </Link>
           </ul>
   
