@@ -56,6 +56,12 @@ import {
     const [approveProcessing, setApproveProcessing] = useState(false);
     const [ratio, setRatio] = useState<BigNumber>(BigNumber.from(0));
     const [availableBalance, setAvailableBalance] = useState<BigNumber>(BigNumber.from(0));
+
+    const [pageSize, setPageSize] = useState(10);
+    const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [nowStart, setNowStart] = useState(0);
+    const [nowEnd, setNowEnd] = useState(0);
   
     const schema = yup
       .object()
@@ -211,6 +217,17 @@ import {
   
       setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
       setMaxMint(quantityOfMint);
+
+      setCurrentPage(1)
+
+      let start = (currentPage - 1) * pageSize;
+      let end = (start + 1) * pageSize;
+      if(end > multiRounds.length) {
+        end = multiRounds.length;
+      }
+
+      setNowStart(start)
+      setNowEnd(end)
     }, [
       address,
       config,
@@ -220,6 +237,9 @@ import {
       approveProcessing,
       userMint,
       watchAllFields,
+
+      currentPage,
+      multiRounds
     ]);
   
     return (
@@ -334,6 +354,23 @@ import {
   
           <CardContainer>
             <h2 className="card-title">{t("batch.record")}</h2>
+            <div className="text-right">
+              <button
+                  type="button"
+                  onClick={setCurrentPage.bind(this, currentPage <= 1 ? 1 : (currentPage-1))}
+                  className="btn btn-xs glass text-neutral ml-2"
+              >
+                  pre
+              </button>
+              <span className="btn btn-xs glass text-neutral ml-2">{currentPage} / {totalPage}</span>
+              <button
+                  type="button"
+                  onClick={setCurrentPage.bind(this, currentPage >= totalPage ? totalPage : (currentPage+1))}
+                  className="btn btn-xs glass text-neutral ml-2"
+              >
+                  next
+              </button>
+            </div>
   
             <div className="overflow-x-auto">
               <table className="table w-full">
@@ -348,7 +385,7 @@ import {
                   </tr>
                 </thead>
                 <tbody>
-                {multiRounds?.map((item, index) => (
+                {multiRounds.slice(nowStart, nowEnd)?.map((item, index) => (
                     <WSavingItem round={item} key={index}/>
                 ))}
                 </tbody>

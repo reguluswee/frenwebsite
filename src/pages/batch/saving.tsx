@@ -63,10 +63,6 @@ const Saving = () => {
     if(end > savingRounds.length) {
       end = savingRounds.length;
     }
-    // console.log('真正循环的数据', roundPage, start, end);
-    // setRoundPage(
-    //   savingRounds.slice(start, end)
-    // )
   }
 
   const schema = yup
