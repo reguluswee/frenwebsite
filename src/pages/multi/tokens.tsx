@@ -57,7 +57,7 @@ import {
     const [ratio, setRatio] = useState<BigNumber>(BigNumber.from(0));
     const [availableBalance, setAvailableBalance] = useState<BigNumber>(BigNumber.from(0));
 
-    const [pageSize, setPageSize] = useState(2);
+    const [pageSize, setPageSize] = useState(10);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [nowStart, setNowStart] = useState(0);
