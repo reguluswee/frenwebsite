@@ -15,7 +15,7 @@ import {
   import { useEffect, useState, useContext, Children } from "react";
   import { useTranslation } from "next-i18next";
   import XENContext from "~/contexts/XENContext";
-  import { UTC_TIME, estimatedXEN, formatDate } from "~/lib/helpers";
+  import { UTC_TIME, estimatedXEN, formatDateWithoutYear, formatFullDate } from "~/lib/helpers";
   import type { NextPage } from "next";
   import { batchSavingContract } from "~/lib/batch-contract";
 
@@ -78,7 +78,7 @@ import { xenContract } from "~/lib/xen-contract";
     }, [])
 
     return (
-        <tr>
+        <tr title={formatFullDate(Number(mintData.maturityTs))}>
             <td>{Number(mintData.rank)}</td>
             <td>{Number(mintData.term)}</td>
             <td>
@@ -89,7 +89,7 @@ import { xenContract } from "~/lib/xen-contract";
             })).toFixed(0)}
             </td>
             <td>{len}</td>
-            <td>{formatDate(Number(mintData.maturityTs))}</td>
+            <td>{formatDateWithoutYear(Number(mintData.maturityTs))}</td>
             <td>
                 <button
                     type="button"

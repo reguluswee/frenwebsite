@@ -51,6 +51,24 @@ const Saving = () => {
   const quantityOfMint = 200;
   const [maxMint, setMaxMint] = useState(200);
 
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [nowStart, setNowStart] = useState(0);
+  const [nowEnd, setNowEnd] = useState(0);
+
+  const handlePage = () => {
+    let start = (currentPage - 1) * pageSize;
+    let end = (start + 1) * pageSize;
+    if(end > savingRounds.length) {
+      end = savingRounds.length;
+    }
+    // console.log('真正循环的数据', roundPage, start, end);
+    // setRoundPage(
+    //   savingRounds.slice(start, end)
+    // )
+  }
+
   const schema = yup
     .object()
     .shape({
@@ -115,7 +133,7 @@ const Saving = () => {
     hash: claimRankData?.hash,
     onSuccess(data) {
       toast(t("toast.claim-successful"));
-      router.push("/mint/2");
+      router.push("/batch/saving");
     },
   });
   const onSubmit = () => {
@@ -133,6 +151,22 @@ const Saving = () => {
 
     setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
     setMaxMint(quantityOfMint);
+
+    if(savingRounds.length <= pageSize) {
+      setTotalPage(1)
+    } else {
+      setTotalPage(savingRounds.length % pageSize == 0 ? savingRounds.length / pageSize : ( Math.floor(savingRounds.length / pageSize) + 1));
+    }
+    setCurrentPage(1)
+
+    let start = (currentPage - 1) * pageSize;
+    let end = (start + 1) * pageSize;
+    if(end > savingRounds.length) {
+      end = savingRounds.length;
+    }
+
+    setNowStart(start)
+    setNowEnd(end)
   }, [
     address,
     config,
@@ -141,6 +175,8 @@ const Saving = () => {
     processing,
     userMint,
     watchAllFields,
+    currentPage,
+    savingRounds
   ]);
 
   return (
@@ -240,6 +276,25 @@ const Saving = () => {
 
         <CardContainer>
           <h2 className="card-title">{t("batch.record")}</h2>
+          <div className="text-right">
+            <button
+                type="button"
+                onClick={setCurrentPage.bind(this, currentPage <= 1 ? 1 : (currentPage-1))}
+                className="btn btn-xs glass text-neutral ml-2"
+            >
+                pre
+            </button>
+            
+            <span className="btn btn-xs glass text-neutral ml-2">{currentPage} / {totalPage}</span>
+
+            <button
+                type="button"
+                onClick={setCurrentPage.bind(this, currentPage >= totalPage ? totalPage : (currentPage+1))}
+                className="btn btn-xs glass text-neutral ml-2"
+            >
+                next
+            </button>
+          </div>
 
           <div className="overflow-x-auto">
             <table className="table w-full">
@@ -254,7 +309,7 @@ const Saving = () => {
                 </tr>
               </thead>
               <tbody>
-              {savingRounds?.map((item, index) => (
+              {savingRounds.slice(nowStart, nowEnd)?.map((item, index) => (
                   <WSavingItem round={item} key={index}/>
               ))}
               </tbody>

@@ -161,3 +161,19 @@ export const formatTime = (date: number) => {
   const second = `0${d.getSeconds()}`.slice(-2);
   return `${hour}:${minute}:${second}`;
 };
+
+export const formatDateWithoutFullYear = (date: number) => {
+  const d = new Date(date * 1000);
+  const year = d.getFullYear();
+  const month = `0${d.getMonth() + 1}`.slice(-2);
+  const _date = `0${d.getDate()}`.slice(-2);
+  const shorYear = (year + '').substring(2);
+  return `${shorYear}/${month}/${_date}`;
+};
+
+export const formatDateWithoutYear = (date: number) => {
+  const d = new Date(date * 1000);
+  const month = `0${d.getMonth() + 1}`.slice(-2);
+  const _date = `0${d.getDate()}`.slice(-2);
+  return `${month}/${_date}`;
+};
