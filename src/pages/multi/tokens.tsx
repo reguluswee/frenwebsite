@@ -57,7 +57,7 @@ import {
     const [ratio, setRatio] = useState<BigNumber>(BigNumber.from(0));
     const [availableBalance, setAvailableBalance] = useState<BigNumber>(BigNumber.from(0));
 
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(2);
     const [totalPage, setTotalPage] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [nowStart, setNowStart] = useState(0);
@@ -218,7 +218,11 @@ import {
       setMaxFreeMint(Number(currentMaxTerm ?? 8640000) / 86400);
       setMaxMint(quantityOfMint);
 
-      setCurrentPage(1)
+      if(multiRounds.length <= pageSize) {
+        setTotalPage(1)
+      } else {
+        setTotalPage(multiRounds.length % pageSize == 0 ? multiRounds.length / pageSize : ( Math.floor(multiRounds.length / pageSize) + 1));
+      }
 
       let start = (currentPage - 1) * pageSize;
       let end = (start + 1) * pageSize;

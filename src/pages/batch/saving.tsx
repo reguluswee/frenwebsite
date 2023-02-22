@@ -57,14 +57,6 @@ const Saving = () => {
   const [nowStart, setNowStart] = useState(0);
   const [nowEnd, setNowEnd] = useState(0);
 
-  const handlePage = () => {
-    let start = (currentPage - 1) * pageSize;
-    let end = (start + 1) * pageSize;
-    if(end > savingRounds.length) {
-      end = savingRounds.length;
-    }
-  }
-
   const schema = yup
     .object()
     .shape({
@@ -153,7 +145,6 @@ const Saving = () => {
     } else {
       setTotalPage(savingRounds.length % pageSize == 0 ? savingRounds.length / pageSize : ( Math.floor(savingRounds.length / pageSize) + 1));
     }
-    setCurrentPage(1)
 
     let start = (currentPage - 1) * pageSize;
     let end = (start + 1) * pageSize;
@@ -280,9 +271,7 @@ const Saving = () => {
             >
                 pre
             </button>
-            
             <span className="btn btn-xs glass text-neutral ml-2">{currentPage} / {totalPage}</span>
-
             <button
                 type="button"
                 onClick={setCurrentPage.bind(this, currentPage >= totalPage ? totalPage : (currentPage+1))}
