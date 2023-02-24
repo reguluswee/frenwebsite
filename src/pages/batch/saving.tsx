@@ -48,8 +48,8 @@ const Saving = () => {
   const { userMint, currentMaxTerm, globalRank, feeData, savingRounds, mintValue } = useContext(XENContext);
   const numberOfDays = 100;
 
-  const quantityOfMint = 200;
-  const [maxMint, setMaxMint] = useState(200);
+  const quantityOfMint = 80;
+  const [maxMint, setMaxMint] = useState(80);
 
   const [pageSize, setPageSize] = useState(10);
   const [totalPage, setTotalPage] = useState(0);
