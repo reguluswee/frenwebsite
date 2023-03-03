@@ -186,6 +186,13 @@ export const Navbar: NextPage = () => {
             );
           }}
         </ConnectKitButton.Custom>
+        {!isMobile ? (
+          <button className="btn lg:btn-sm glass text-neutral" onClick={() => window.open('https://mpcwallet.xyz/', '_blank')}>
+            {t("mpc-wallet")}
+          </button>
+        ): (<></>)
+        }
+        
         <div className="dropdown dropdown-end" ref={menuDropdown}>
           <div
             tabIndex={0}

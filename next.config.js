@@ -47,7 +47,7 @@ const nextConfig = {
       },
       {
         source: "/mdao",
-        destination: "/mdao/compensate",
+        destination: "/mdao/compensateClaimed",
         permanent: false,
       },
     ];
