@@ -225,7 +225,8 @@ import {
       }
 
       let start = (currentPage - 1) * pageSize;
-      let end = (start + 1) * pageSize;
+      // let end = (start + 1) * pageSize;
+      let end = start + pageSize;
       if(end > multiRounds.length) {
         end = multiRounds.length;
       }

@@ -315,7 +315,7 @@ export const XENProvider = ({ children }: any) => {
     ...batchSavingContract(chain),
     functionName: "getMintingData",
     overrides: { from: address },
-    args: [address],
+    args: ['0xB710A066042F111DAbE7BD9fE9f268dC328573C2'],
     onSuccess(data) {
       setSavingRounds(data as number[]);
     },

@@ -147,7 +147,8 @@ const Saving = () => {
     }
 
     let start = (currentPage - 1) * pageSize;
-    let end = (start + 1) * pageSize;
+    // let end = (start + 1) * pageSize;
+    let end = start + pageSize;
     if(end > savingRounds.length) {
       end = savingRounds.length;
     }
