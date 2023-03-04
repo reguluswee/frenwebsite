@@ -286,6 +286,7 @@ const Saving = () => {
             <table className="table w-full">
               <thead>
                 <tr>
+                  <th className="hidden lg:table-cell">轮次</th>
                   <th className="hidden lg:table-cell">{t("batch.tb.rank")}</th>
                   <th className="hidden lg:table-cell">{t("batch.tb.term")}</th>
                   <th className="hidden lg:table-cell">{t("batch.tb.estimate")}</th>

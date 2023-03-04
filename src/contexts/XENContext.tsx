@@ -317,7 +317,25 @@ export const XENProvider = ({ children }: any) => {
     overrides: { from: address },
     args: [address],
     onSuccess(data) {
-      setSavingRounds(data as number[]);
+      // setSavingRounds(data as number[]);
+      let result = data as BigNumber[]
+
+      let valData : number[] = [];
+      valData.push(result[0].toNumber());
+
+      for(var i=1; i<result.length; i++) {
+        if(result[i].toNumber() >= valData[valData.length - 1]) {
+          valData.push(result[i].toNumber());
+        } else {
+          for(var j=0; j<valData.length; j++) {
+            if(result[i].toNumber() < valData[j]) {
+              valData.splice(j, 0, result[i].toNumber());
+              break;
+            }
+          }
+        }
+      }
+      setSavingRounds(valData);
     },
     enabled: address != null,
     cacheOnBlock: true,

@@ -79,6 +79,7 @@ import { xenContract } from "~/lib/xen-contract";
 
     return (
         <tr title={formatFullDate(Number(mintData.maturityTs))}>
+            <td>{Number(round)}</td>
             <td>{Number(mintData.rank)}</td>
             <td>{Number(mintData.term)}</td>
             <td>
