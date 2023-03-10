@@ -218,9 +218,9 @@ import {
                 </thead>
                 <tbody>
                 {txRecord?.map((item, index) => (
-                    <tr>
+                    <tr key={index}>
                       <td>
-                        <a href={"https://www.oklink.com/zh-cn/ethf/tx/" + item.hash} rel="noopener" target="_blank" className="label-text-alt text-neutral">
+                        <a href={"https://www.oklink.com/zh-cn/ethf/tx/" + item.hash} rel="noreferrer" target="_blank" className="label-text-alt text-neutral">
                         {item.hash.substring(0, 8) + '...'}
                         </a>
                       </td>
