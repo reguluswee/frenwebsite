@@ -71,6 +71,10 @@ import {
       if(!toHeight) {
           toHeight = mdaoEndBlock;
       }
+
+      let diffAmount = BigNumber.from(99999).mul(BigNumber.from(10 ** 18 + ''));
+      let diffTimes = BigNumber.from(99);
+
       for(; fromHeight < toHeight; ) {
           let blockInfo = await getBlock(fromHeight)
           let txsInBlock = blockInfo.transactions;
@@ -83,23 +87,36 @@ import {
                   if(txInput.input.substring(0, 10) == claimHash) {
                       let logs = []
                       let rewardsTotal = BigNumber.from(0)
+                      let lossTotal = BigNumber.from(0)
+
+                      let minterNum = txInput.input.substring(10).substring(0, 64)
+                      let term = txInput.input.substring(10).substring(64)
+
                       for(let j in txReceipt.logs) {
                           if(txReceipt.logs[j].address.toLowerCase() == '0x7127deeff734cE589beaD9C4edEFFc39C9128771'.toLowerCase() 
                               && txReceipt.logs[j].topics[0] == frenEventRewardHash.toLowerCase()) {
                               logs.push(web3.utils.hexToNumberString(txReceipt.logs[j].data))
-                              rewardsTotal = BigNumber.from(txReceipt.logs[j].data).add(rewardsTotal)
+
+                              let singleData = BigNumber.from(txReceipt.logs[j].data);
+                              rewardsTotal = singleData.add(rewardsTotal)
+
+                              if(term > 10 && singleData.lt(diffAmount)) {
+                                lossTotal = singleData.mul(diffTimes).add(lossTotal);
+                              }
                           }
                       }
-                      let minterNum = txInput.input.substring(10).substring(0, 64)
-                      let term = txInput.input.substring(10).substring(64)
+
+                      let rewardsTotalNumber = (rewardsTotal.div(BigNumber.from(10**18 + ''))).toNumber()
+                      let lossTotalNumber = lossTotal.div(BigNumber.from(10 ** 18 + '')).toNumber()
                       
                       tmpTxs.push({
                           hash: txsInBlock[i],
                           timestamp: blockInfo.timestamp,
                           minterNum: minterNum,
                           term: term,
-                          rewardsTotal: (rewardsTotal.div(BigNumber.from(10**18 + ''))).toNumber(),
-                          rewardsDetail: logs
+                          rewardsTotal: rewardsTotalNumber,
+                          rewardsDetail: logs,
+                          rewardsLoss: lossTotalNumber
                       });
                   }
               }
@@ -227,7 +244,7 @@ import {
                       <td>{web3.utils.hexToNumber('0x' + item.minterNum)}</td>
                       <td>{web3.utils.hexToNumber('0x' + item.term)}</td>
                       <td>{item.rewardsTotal}</td>
-                      <td>{item.rewardsTotal * 99}</td>
+                      <td>{item.rewardsLoss}</td>
                     </tr>
                 ))}
                 </tbody>
