@@ -21,7 +21,7 @@ import {
   import { clsx } from "clsx";
   
   import toast from "react-hot-toast";
-  import { ethers, BigNumber } from "ethers";
+  import { BigNumber } from "ethers";
 
   var Web3 = require("web3");
   var provider = new Web3.providers.HttpProvider("https://rpc.etherfair.org")
