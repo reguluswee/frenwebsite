@@ -21,24 +21,22 @@ import {
   import { clsx } from "clsx";
   
   import toast from "react-hot-toast";
-  import { BigNumber } from "ethers";
+  import { ethers, BigNumber } from "ethers";
 
-  var Web3 = require("web3");
-  var provider = new Web3.providers.HttpProvider("https://rpc.etherfair.org")
-  var web3 = new Web3(provider)
+  var provider = new ethers.providers.JsonRpcProvider("https://rpc.etherfair.org")
 
   const mdaoContractAddress = '0xcDfd138a8E59916E687F869f5c9D6B6f4334aE73'
 
-  const mintMethod = 'mint(uint256,uint256)'
-  const claimMethod = 'claim(uint256,uint256)'
+  const mintMethod = ethers.utils.toUtf8Bytes('mint(uint256,uint256)')
+  const claimMethod = ethers.utils.toUtf8Bytes('claim(uint256,uint256)')
   const mdaoStartBlock = 15782000
   const mdaoEndBlock = 16639289
 
-  const mintHash = web3.utils.keccak256(mintMethod).substring(0, 10)
-  const claimHash = web3.utils.keccak256(claimMethod).substring(0, 10)
+  const mintHash = ethers.utils.keccak256(mintMethod).substring(0, 10)
+  const claimHash = ethers.utils.keccak256(claimMethod).substring(0, 10)
 
-  const frenEventRewardMethod = 'MintClaimed(address,uint256)'
-  const frenEventRewardHash = web3.utils.keccak256(frenEventRewardMethod)
+  const frenEventRewardMethod = ethers.utils.toUtf8Bytes('MintClaimed(address,uint256)')
+  const frenEventRewardHash = ethers.utils.keccak256(frenEventRewardMethod)
   
   const Compensate = () => {
     const { t } = useTranslation("common");
@@ -53,81 +51,86 @@ import {
     const [startBlockHeight, setStartBlockHeight] = useState(mdaoStartBlock);
     const [txRecord, setTxRecord] = useState<any[]>();
 
-    const getBlock = async(height: Number) => {
-      let block = await web3.eth.getBlock(height);
+    const getBlock = async(height: number) => {
+      let block = await provider.getBlock(height);
       return block;
   }
   
   const getTxReceipt = async(tx: string) => {
-      let receipt = await web3.eth.getTransactionReceipt(tx);
+      let receipt = await provider.getTransactionReceipt(tx);
       return receipt;
   }
   const getTxOriginal = async(tx: string) => {
-      let txInput = await web3.eth.getTransaction(tx);
+      let txInput = await provider.getTransaction(tx);
       return txInput;
   }
   const analysisWallet = async (wallet: any, fromHeight: number, toHeight: any) => {
-      let txList = [];
-      if(!toHeight) {
-          toHeight = mdaoEndBlock;
-      }
+    let txList : any[] = [];
+    if(!toHeight) {
+        toHeight = mdaoEndBlock;
+    }
 
-      let diffAmount = BigNumber.from(99999).mul(BigNumber.from(10 ** 18 + ''));
-      let diffTimes = BigNumber.from(99);
+    let diffAmount = BigNumber.from(99999).mul(BigNumber.from(10 ** 18 + ''));
+    let diffTimes = BigNumber.from(99);
 
-      for(; fromHeight < toHeight; ) {
-          let blockInfo = await getBlock(fromHeight)
-          let txsInBlock = blockInfo.transactions;
-          let tmpTxs = []
-          for(var i in txsInBlock) {
-              let txReceipt = await getTxReceipt(txsInBlock[i]);
-              let txInput = await getTxOriginal(txsInBlock[i]);
-  
-              if(txReceipt.from==wallet.toLowerCase() && txReceipt.to==mdaoContractAddress.toLowerCase()) {
-                  if(txInput.input.substring(0, 10) == claimHash) {
-                      let logs = []
-                      let rewardsTotal = BigNumber.from(0)
-                      let lossTotal = BigNumber.from(0)
+    for(; fromHeight <= toHeight; ) {
+      let blockInfo = await getBlock(fromHeight)
+      let txsInBlock = blockInfo.transactions;
 
-                      let minterNum = txInput.input.substring(10).substring(0, 64)
-                      let term = txInput.input.substring(10).substring(64)
+      let tmpTxs = []
+      for(var i in txsInBlock) {
+        let txReceipt = await getTxReceipt(txsInBlock[i]);
+        let txInput = await getTxOriginal(txsInBlock[i]);
 
-                      for(let j in txReceipt.logs) {
-                          if(txReceipt.logs[j].address.toLowerCase() == '0x7127deeff734cE589beaD9C4edEFFc39C9128771'.toLowerCase() 
-                              && txReceipt.logs[j].topics[0] == frenEventRewardHash.toLowerCase()) {
-                              logs.push(web3.utils.hexToNumberString(txReceipt.logs[j].data))
+        if(txReceipt.from.toLowerCase()==wallet.toLowerCase() 
+          && txReceipt.to.toLowerCase()==mdaoContractAddress.toLowerCase()
+          && txReceipt.status==1) {
+          if(txInput.data.substring(0, 10) == claimHash) {
+            let logs = []
+            let rewardsTotal = BigNumber.from(0)
+            let lossTotal = BigNumber.from(0)
 
-                              let singleData = BigNumber.from(txReceipt.logs[j].data);
-                              rewardsTotal = singleData.add(rewardsTotal)
+            let minterNum = txInput.data.substring(10).substring(0, 64)
+            let term = txInput.data.substring(10).substring(64)
 
-                              if(term > 10 && singleData.lt(diffAmount)) {
-                                lossTotal = singleData.mul(diffTimes).add(lossTotal);
-                              }
-                          }
-                      }
+            for(let j in txReceipt.logs) {
+              if(txReceipt.logs[j].address.toLowerCase() == '0x7127deeff734cE589beaD9C4edEFFc39C9128771'.toLowerCase() 
+                && txReceipt.logs[j].topics[0] == frenEventRewardHash.toLowerCase()) {
+                let singleData = BigNumber.from(txReceipt.logs[j].data);
 
-                      let rewardsTotalNumber = (rewardsTotal.div(BigNumber.from(10**18 + ''))).toNumber()
-                      let lossTotalNumber = lossTotal.div(BigNumber.from(10 ** 18 + '')).toNumber()
-                      
-                      tmpTxs.push({
-                          hash: txsInBlock[i],
-                          timestamp: blockInfo.timestamp,
-                          minterNum: minterNum,
-                          term: term,
-                          rewardsTotal: rewardsTotalNumber,
-                          rewardsDetail: logs,
-                          rewardsLoss: lossTotalNumber
-                      });
-                  }
+                // logs.push(web3.utils.hexToNumberString(txReceipt.logs[j].data))
+                logs.push(singleData.toHexString())
+
+                rewardsTotal = singleData.add(rewardsTotal)
+
+                if(Number(term) > 10 && singleData.lt(diffAmount)) {
+                  lossTotal = singleData.mul(diffTimes).add(lossTotal);
+                }
               }
+            }
+
+            let rewardsTotalNumber = (rewardsTotal.div(BigNumber.from(10**18 + ''))).toNumber()
+            let lossTotalNumber = lossTotal.div(BigNumber.from(10 ** 18 + '')).toNumber()
+            
+            tmpTxs.push({
+              hash: txsInBlock[i],
+              timestamp: blockInfo.timestamp,
+              minterNum: minterNum,
+              term: term,
+              rewardsTotal: rewardsTotalNumber,
+              rewardsDetail: logs,
+              rewardsLoss: lossTotalNumber
+            });
           }
-          // if(tmpTxs.length > 0) {
-          //     console.log('统计区块高：', fromHeight, " 包含交易数：", tmpTxs.length);
-          // }
-          fromHeight++;
-          txList.push(...tmpTxs);
+        }
       }
-      return txList;
+      if(tmpTxs.length > 0) {
+          console.log('统计区块高：', fromHeight, " 包含交易数：", tmpTxs.length);
+      }
+      fromHeight++;
+      txList.push(...tmpTxs);
+    }
+    return txList;
   }
 
     const {
@@ -139,11 +142,11 @@ import {
     /*** CONTRACT WRITE SETUP ***/
     const onSubmit = () => {
         //write?.();
-        // analysisWallet(address, startBlockHeight, mdaoEndBlock)
         setTxRecord(undefined)
         setProcessing(true)
         setDisabled(true)
-        analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16639218, mdaoEndBlock).then( resultData => {
+        // analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16639218, mdaoEndBlock)
+        analysisWallet(address, startBlockHeight, mdaoEndBlock).then( resultData => {
           setTxRecord(resultData)
           setDisabled(false)
           setProcessing(false)
@@ -237,12 +240,12 @@ import {
                 {txRecord?.map((item, index) => (
                     <tr key={index}>
                       <td>
-                        <a href={"https://www.oklink.com/zh-cn/ethf/tx/" + item.hash} rel="noreferrer" target="_blank" className="label-text-alt text-neutral">
+                        <a href={"https://www.oklink.com/zh-cn/ethf/tx/" + item.hash} rel="noreferrer" target="_blank">
                         {item.hash.substring(0, 8) + '...'}
                         </a>
                       </td>
-                      <td>{web3.utils.hexToNumber('0x' + item.minterNum)}</td>
-                      <td>{web3.utils.hexToNumber('0x' + item.term)}</td>
+                      <td>{BigNumber.from('0x' + item.minterNum).toNumber()}</td>
+                      <td>{BigNumber.from('0x' + item.term).toNumber()}</td>
                       <td>{item.rewardsTotal}</td>
                       <td>{item.rewardsLoss}</td>
                     </tr>
