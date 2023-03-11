@@ -50,6 +50,7 @@ import {
     const [errMsg, setErrMsg] = useState("");
     const [startBlockHeight, setStartBlockHeight] = useState(mdaoStartBlock);
     const [txRecord, setTxRecord] = useState<any[]>();
+    const [currentBlock, setCurrentBlock] = useState(0);
 
     const getBlock = async(height: number) => {
       let block = await provider.getBlock(height);
@@ -74,6 +75,7 @@ import {
     let diffTimes = BigNumber.from(99);
 
     for(; fromHeight <= toHeight; ) {
+      setCurrentBlock(fromHeight);
       let blockInfo = await getBlock(fromHeight)
       let txsInBlock = blockInfo.transactions;
 
@@ -125,12 +127,14 @@ import {
         }
       }
       if(tmpTxs.length > 0) {
-          console.log('统计区块高：', fromHeight, " 包含交易数：", tmpTxs.length);
+          //console.log('统计区块高：', fromHeight, " 包含交易数：", tmpTxs.length);
+          txList.push(...tmpTxs);
       }
       fromHeight++;
-      txList.push(...tmpTxs);
+      // txList.push(...tmpTxs);
+      setTxRecord(txList)
     }
-    return txList;
+    // return txList;
   }
 
     const {
@@ -147,7 +151,7 @@ import {
         setDisabled(true)
         // analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16639218, mdaoEndBlock)
         analysisWallet(address, startBlockHeight, mdaoEndBlock).then( resultData => {
-          setTxRecord(resultData)
+          // setTxRecord(resultData)
           setDisabled(false)
           setProcessing(false)
         })
@@ -204,6 +208,7 @@ import {
                     />
                     <label className="label">
                         <span className="label-text-alt text-neutral">This operation might take a very long time, please be patient.</span>
+                        <span className="label-text-alt text-error">block scanning: {currentBlock}</span>
                     </label>
                 </div>
   
