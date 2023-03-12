@@ -155,10 +155,9 @@ import {
         setProcessing(true)
         setDisabled(true)
         setStatusText('block scanning')
-        // analysisWallet(address, startBlockHeight, mdaoEndBlock)
+        // analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16368128, 16368128 + 1)
         
-        analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16368128, 16368128 + 1).then( resultData => {
-          // setTxRecord(resultData)
+        analysisWallet(address, startBlockHeight, mdaoEndBlock).then( resultData => {
           setDisabled(false)
           setProcessing(false)
           setStatusText('block scan finish')
