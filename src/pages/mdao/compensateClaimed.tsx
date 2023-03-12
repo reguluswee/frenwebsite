@@ -1,17 +1,12 @@
 import {
     useNetwork,
     useAccount,
-    useContractWrite,
-    useWaitForTransaction,
-    usePrepareContractWrite,
-    erc20ABI,
-    useContractRead,
   } from "wagmi";
   
   import { serverSideTranslations } from "next-i18next/serverSideTranslations";
   import Container from "~/components/containers/Container";
   import { useRouter } from "next/router";
-  import { useEffect, useState, useContext } from "react";
+  import { useEffect, useState } from "react";
   import { useTranslation } from "next-i18next";
   
   import CardContainer from "~/components/containers/CardContainer";
@@ -37,6 +32,9 @@ import {
 
   const frenEventRewardMethod = ethers.utils.toUtf8Bytes('MintClaimed(address,uint256)')
   const frenEventRewardHash = ethers.utils.keccak256(frenEventRewardMethod)
+
+  const diffAmount = BigNumber.from(99999).mul(BigNumber.from(10 ** 18 + ''));
+  const diffTimes = BigNumber.from(99);
   
   const Compensate = () => {
     const { t } = useTranslation("common");
@@ -51,91 +49,98 @@ import {
     const [startBlockHeight, setStartBlockHeight] = useState(mdaoStartBlock);
     const [txRecord, setTxRecord] = useState<any[]>();
     const [currentBlock, setCurrentBlock] = useState(0);
+    const [statusText, setStatusText] = useState('');
 
     const getBlock = async(height: number) => {
       let block = await provider.getBlock(height);
       return block;
-  }
+    }
   
-  const getTxReceipt = async(tx: string) => {
-      let receipt = await provider.getTransactionReceipt(tx);
-      return receipt;
-  }
-  const getTxOriginal = async(tx: string) => {
-      let txInput = await provider.getTransaction(tx);
-      return txInput;
-  }
-  const analysisWallet = async (wallet: any, fromHeight: number, toHeight: any) => {
-    let txList : any[] = [];
-    if(!toHeight) {
-        toHeight = mdaoEndBlock;
+    const getTxReceipt = async(tx: string) => {
+        let receipt = await provider.getTransactionReceipt(tx);
+        return receipt;
     }
 
-    let diffAmount = BigNumber.from(99999).mul(BigNumber.from(10 ** 18 + ''));
-    let diffTimes = BigNumber.from(99);
+    const getTxOriginal = async(tx: string) => {
+        let txInput = await provider.getTransaction(tx);
+        return txInput;
+    }
 
-    for(; fromHeight <= toHeight; ) {
-      setCurrentBlock(fromHeight);
-      let blockInfo = await getBlock(fromHeight)
-      let txsInBlock = blockInfo.transactions;
+    const getTxInputAndReceipt = async(tx: string) => {
+      const txInput = await getTxOriginal(tx);
+      const txReceipt = await getTxReceipt(tx);
+      return {
+        input: txInput,
+        receipt: txReceipt
+      }
+    }
 
-      let tmpTxs = []
-      for(var i in txsInBlock) {
-        let txReceipt = await getTxReceipt(txsInBlock[i]);
-        let txInput = await getTxOriginal(txsInBlock[i]);
+    const sleep = (ms: number) => new Promise(
+      resolve => setTimeout(resolve, ms)
+    );
 
-        if(txReceipt.from.toLowerCase()==wallet.toLowerCase() 
-          && txReceipt.to.toLowerCase()==mdaoContractAddress.toLowerCase()
-          && txReceipt.status==1) {
-          if(txInput.data.substring(0, 10) == claimHash) {
-            let logs = []
-            let rewardsTotal = BigNumber.from(0)
-            let lossTotal = BigNumber.from(0)
+    const analysisWallet = async (wallet: any, fromHeight: number, toHeight: any) => {
+      let txList : any[] = [];
+      if(!toHeight) {
+          toHeight = mdaoEndBlock;
+      }
 
-            let minterNum = txInput.data.substring(10).substring(0, 64)
-            let term = txInput.data.substring(10).substring(64)
+      for(; fromHeight <= toHeight; ) {
+        setCurrentBlock(fromHeight);
+        let blockInfo = await getBlock(fromHeight)
+        let txsInBlock = blockInfo.transactions;
 
-            for(let j in txReceipt.logs) {
-              if(txReceipt.logs[j].address.toLowerCase() == '0x7127deeff734cE589beaD9C4edEFFc39C9128771'.toLowerCase() 
-                && txReceipt.logs[j].topics[0] == frenEventRewardHash.toLowerCase()) {
-                let singleData = BigNumber.from(txReceipt.logs[j].data);
+        let blockTxSize = txsInBlock.length
+        let index = -1
+        let executedIndex = 0;
+        while(++index <= blockTxSize - 1) {
+          let tx = txsInBlock[index];
+          getTxInputAndReceipt(tx).then(v => {
+            let txReceipt = v.receipt
+            let txInput = v.input
 
-                // logs.push(web3.utils.hexToNumberString(txReceipt.logs[j].data))
-                logs.push(singleData.toHexString())
-
-                rewardsTotal = singleData.add(rewardsTotal)
-
-                if(Number(term) > 10 && singleData.lt(diffAmount)) {
-                  lossTotal = singleData.mul(diffTimes).add(lossTotal);
+            if(txReceipt.from.toLowerCase()==wallet.toLowerCase() 
+              && txReceipt.to.toLowerCase()==mdaoContractAddress.toLowerCase()
+              && txReceipt.status==1) {
+              if(txInput.data.substring(0, 10) == claimHash) {
+                let logs = []
+                let rewardsTotal = BigNumber.from(0)
+                let lossTotal = BigNumber.from(0)
+                let minterNum = txInput.data.substring(10).substring(0, 64)
+                let term = BigNumber.from('0x' + txInput.data.substring(10).substring(64)).toNumber();
+                for(let j in txReceipt.logs) {
+                  if(txReceipt.logs[j].address.toLowerCase() == '0x7127deeff734cE589beaD9C4edEFFc39C9128771'.toLowerCase() && txReceipt.logs[j].topics[0] == frenEventRewardHash.toLowerCase()) {
+                    let singleData = BigNumber.from(txReceipt.logs[j].data);
+                    logs.push(singleData.toHexString())
+                    rewardsTotal = singleData.add(rewardsTotal)
+                    if(Number(term) > 10 && singleData.lt(diffAmount)) {
+                      lossTotal = singleData.mul(diffTimes).add(lossTotal);
+                    }
+                  }
                 }
+                let rewardsTotalNumber = (rewardsTotal.div(BigNumber.from(10**18 + ''))).toNumber()
+                let lossTotalNumber = lossTotal.div(BigNumber.from(10 ** 18 + '')).toNumber()
+                txList.push({
+                  hash: tx,
+                  timestamp: blockInfo.timestamp,
+                  minterNum: minterNum,
+                  term: term,
+                  rewardsTotal: rewardsTotalNumber,
+                  rewardsDetail: logs,
+                  rewardsLoss: lossTotalNumber
+                })
+                setTxRecord(txList);
               }
             }
-
-            let rewardsTotalNumber = (rewardsTotal.div(BigNumber.from(10**18 + ''))).toNumber()
-            let lossTotalNumber = lossTotal.div(BigNumber.from(10 ** 18 + '')).toNumber()
-            
-            tmpTxs.push({
-              hash: txsInBlock[i],
-              timestamp: blockInfo.timestamp,
-              minterNum: minterNum,
-              term: term,
-              rewardsTotal: rewardsTotalNumber,
-              rewardsDetail: logs,
-              rewardsLoss: lossTotalNumber
-            });
-          }
+            executedIndex++;
+          })
         }
+        while(executedIndex <= blockTxSize - 1) {
+          await sleep(50)
+        }
+        fromHeight++;
       }
-      if(tmpTxs.length > 0) {
-          //console.log('统计区块高：', fromHeight, " 包含交易数：", tmpTxs.length);
-          txList.push(...tmpTxs);
-      }
-      fromHeight++;
-      // txList.push(...tmpTxs);
-      setTxRecord(txList)
     }
-    // return txList;
-  }
 
     const {
         handleSubmit,
@@ -149,11 +154,14 @@ import {
         setTxRecord(undefined)
         setProcessing(true)
         setDisabled(true)
-        // analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16639218, mdaoEndBlock)
-        analysisWallet(address, startBlockHeight, mdaoEndBlock).then( resultData => {
+        setStatusText('block scanning')
+        // analysisWallet(address, startBlockHeight, mdaoEndBlock)
+        
+        analysisWallet('0xc5144c03b33dfbd8f55721f6c4c4a9eb2774d060', 16368128, 16368128 + 1).then( resultData => {
           // setTxRecord(resultData)
           setDisabled(false)
           setProcessing(false)
+          setStatusText('block scan finish')
         })
     };
   
@@ -208,7 +216,7 @@ import {
                     />
                     <label className="label">
                         <span className="label-text-alt text-neutral">This operation might take a very long time, please be patient.</span>
-                        <span className="label-text-alt text-error">block scanning: {currentBlock}</span>
+                        <span className="label-text-alt text-error">{statusText}: {currentBlock}</span>
                     </label>
                 </div>
   
@@ -250,7 +258,7 @@ import {
                         </a>
                       </td>
                       <td>{BigNumber.from('0x' + item.minterNum).toNumber()}</td>
-                      <td>{BigNumber.from('0x' + item.term).toNumber()}</td>
+                      <td>{item.term}</td>
                       <td>{item.rewardsTotal}</td>
                       <td>{item.rewardsLoss}</td>
                     </tr>
