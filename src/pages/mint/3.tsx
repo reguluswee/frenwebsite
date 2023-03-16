@@ -273,14 +273,14 @@ const Mint = () => {
                   <CountDataCard
                     title={t("card.reward")}
                     value={reward}
-                    description="XEN"
+                    description="FREN"
                   />
                   <CountDataCard
                     title={t("card.penalty")}
                     value={penaltyPercent}
                     suffix="%"
                     descriptionNumber={penaltyXEN}
-                    descriptionNumberSuffix=" XEN"
+                    descriptionNumberSuffix=" FREN"
                   />
                 </div>
 
@@ -320,14 +320,14 @@ const Mint = () => {
                   <CountDataCard
                     title={t("card.reward")}
                     value={reward}
-                    description="XEN"
+                    description="FREN"
                   />
                   <CountDataCard
                     title={t("card.penalty")}
                     value={penaltyPercent}
                     suffix="%"
                     descriptionNumber={penaltyXEN}
-                    descriptionNumberSuffix=" XEN"
+                    descriptionNumberSuffix=" FREN"
                   />
                 </div>
 
@@ -394,14 +394,14 @@ const Mint = () => {
                   <CountDataCard
                     title={t("card.reward")}
                     value={reward}
-                    description="XEN"
+                    description="FREN"
                   />
                   <CountDataCard
                     title={t("card.penalty")}
                     value={penaltyPercent}
                     suffix="%"
                     descriptionNumber={penaltyXEN}
-                    descriptionNumberSuffix=" XEN"
+                    descriptionNumberSuffix=" FREN"
                   />
                 </div>
 
