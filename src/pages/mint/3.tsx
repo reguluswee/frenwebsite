@@ -45,7 +45,7 @@ const Mint = () => {
   const [penaltyPercent, setPenaltyPercent] = useState(0);
   const [penaltyXEN, setPenaltyXEN] = useState(0);
   const [reward, setReward] = useState(0);
-  const { userMint, userStake, grossReward, feeData } = useContext(XENContext);
+  const { userMint, grossReward, feeData } = useContext(XENContext);
 
   /*** FORM SETUP ***/
 
@@ -225,16 +225,11 @@ const Mint = () => {
       setReward(reward);
       setPenaltyXEN(reward * (penalty / 100));
     }
-
-    if (address && userStake && userStake.term.toNumber() == 0) {
-      setActiveStakeDisabled(false);
-    }
   }, [
     activeStakeDisabled,
     address,
     processing,
     userMint,
-    userStake,
     grossReward,
     cShareIsValid,
     cStakeIsValid,

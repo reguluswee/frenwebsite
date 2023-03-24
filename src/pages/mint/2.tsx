@@ -26,12 +26,6 @@ const Mint = () => {
       decimals: 0,
     },
     {
-      title: t("card.amplifier"),
-      value: userMint?.amplifier.toNumber() ?? 0,
-      suffix: "",
-      decimals: 0,
-    },
-    {
       title: t("card.eaa-rate"),
       value: userMint?.eaaRate.toNumber() ?? 0 / 10,
       suffix: "%",

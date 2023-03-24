@@ -13,23 +13,13 @@ export const PortfolioAddressRow: NextPage<any> = (props) => {
   const [mintReward, setMintReward] = useState(0);
   const [stakeReward, setStakeReward] = useState(0);
 
-  const { mintData: userMintData, stakeData: userStakeData } =
+  const { mintData: userMintData } =
     useXENAddressBalance({
       address: props.item.address,
       chain: props.chain,
     });
 
   useEffect(() => {
-    if (userStakeData) {
-      const reward = estimatedStakeRewardXEN({
-        maturityTs: userStakeData.maturityTs,
-        term: userStakeData.term,
-        amount: userStakeData.amount,
-        apy: userStakeData.apy,
-      });
-      props.item.stake = reward;
-      setStakeReward(reward);
-    }
     if (userMintData && props && props.globalRankData) {
       const reward = estimatedXEN(props.globalRankData, userMintData);
       props.item.mint = reward;
@@ -37,7 +27,6 @@ export const PortfolioAddressRow: NextPage<any> = (props) => {
     }
   }, [
     userMintData,
-    userStakeData,
     props.globalRankData,
     props,
     props.index,
@@ -94,19 +83,6 @@ export const PortfolioAddressRow: NextPage<any> = (props) => {
             maximumFractionDigits: 2,
           })}
         </pre>
-      </td>
-      <td className="bg-transparent text-right">
-        {!userStakeData?.maturityTs.isZero() ? (
-          <>
-            <pre>{formatDate(userStakeData?.maturityTs.toNumber() ?? 0)}</pre>
-            <pre>{formatTime(userStakeData?.maturityTs.toNumber() ?? 0)}</pre>
-          </>
-        ) : (
-          <>
-            <pre>-</pre>
-            <pre>-</pre>
-          </>
-        )}
       </td>
     </>
   );
