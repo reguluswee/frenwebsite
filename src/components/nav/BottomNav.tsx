@@ -17,7 +17,7 @@ export const BottomNav: NextPage = () => {
   const [mintPageOverride, setMintPageOverride] = useState(1);
   const [stakePageOverride, setStakePageOverride] = useState(1);
 
-  const { userMint, userStake } = useContext(XENContext);
+  const { userMint } = useContext(XENContext);
 
   useEffect(() => {
     if (userMint && !userMint.term.isZero()) {
@@ -29,16 +29,7 @@ export const BottomNav: NextPage = () => {
     } else {
       setMintPageOverride(1);
     }
-    if (userStake && !userStake.term.isZero()) {
-      if (userStake.maturityTs.toNumber() > UTC_TIME) {
-        setStakePageOverride(2);
-      } else {
-        setStakePageOverride(3);
-      }
-    } else {
-      setStakePageOverride(1);
-    }
-  }, [userMint, userStake]);
+  }, [userMint]);
 
   return (
     <div

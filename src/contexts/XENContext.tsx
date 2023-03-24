@@ -32,17 +32,9 @@ export interface FopObj {
 
 export interface UserMint {
   user: string;
-  amplifier: BigNumber;
   eaaRate: BigNumber;
   maturityTs: BigNumber;
   rank: BigNumber;
-  term: BigNumber;
-}
-
-export interface UserStake {
-  amount: BigNumber;
-  apy: BigNumber;
-  maturityTs: BigNumber;
   term: BigNumber;
 }
 
@@ -79,72 +71,59 @@ const emptyBalance = () => {
 interface IXENContext {
   setChainOverride: (chain: Chain) => void;
   userMint?: UserMint;
-  userStake?: UserStake;
   feeData?: FeeData;
   xenBalance?: Balance;
   globalRank: number;
   activeMinters: number;
-  activeStakes: number;
-  totalXenStaked: number;
   totalSupply: number;
   genesisTs: number;
+  launchTs: number;
   currentMaxTerm: number;
-  currentAMP: number;
   currentEAAR: number;
-  currentAPY: number;
   grossReward: number;
-  mintValue: number;
-
   savingRounds: number[],
   treasuryBalance: Balance | undefined,
   latestBlock: number,
   multiRounds: number[],
+  mintValue: string,
 }
 
 const XENContext = createContext<IXENContext>({
   setChainOverride: (chain: Chain) => {},
   userMint: undefined,
-  userStake: undefined,
   feeData: undefined,
   xenBalance: undefined,
   globalRank: 0,
   activeMinters: 0,
-  activeStakes: 0,
-  totalXenStaked: 0,
   totalSupply: 0,
   genesisTs: 0,
+  launchTs: 0,
   currentMaxTerm: 0,
-  currentAMP: 0,
   currentEAAR: 0,
-  currentAPY: 0,
   grossReward: 0,
-  mintValue: 0,
 
   savingRounds: [],
   treasuryBalance: emptyBalance(),
   latestBlock: 0,
   multiRounds: [],
+  mintValue: "0",
 });
 
 export const XENProvider = ({ children }: any) => {
   const [chainOverride, setChainOverride] = useState<Chain | undefined>();
   const [userMint, setUserMint] = useState<UserMint | undefined>();
-  const [userStake, setUserStake] = useState<UserStake | undefined>();
   const [feeData, setFeeData] = useState<FeeData | undefined>();
   const [xenBalance, setXenBalance] = useState<Balance | undefined>();
   const [globalRank, setGlobalRank] = useState(0);
   const [activeMinters, setActiveMinters] = useState(0);
-  const [activeStakes, setActiveStakes] = useState(0);
-  const [totalXenStaked, setTotalXenStaked] = useState(0);
   const [totalSupply, setTotalSupply] = useState(0);
   const [genesisTs, setGenesisTs] = useState(0);
+  const [launchTs, setLaunchTs] = useState(0);
   const [currentMaxTerm, setCurrentMaxTerm] = useState(0);
-  const [currentAMP, setCurrentAMP] = useState(0);
   const [currentEAAR, setCurrentEAAR] = useState(0);
-  const [currentAPY, setCurrentAPY] = useState(0);
   const [grossReward, setGrossReward] = useState(0);
+  const [mintValue, setMintValue] = useState("0");
 
-  const [mintValue, setMintValue] = useState(0);
   const [treasuryBalance, setTreasuryBalance] = useState<Balance>();
 
   const [savingRounds, setSavingRounds] = useState<number[]>([]);
@@ -189,27 +168,9 @@ export const XENProvider = ({ children }: any) => {
     onSuccess(data) {
       setUserMint({
         user: data.user,
-        amplifier: data.amplifier,
         eaaRate: data.eaaRate,
         maturityTs: data.maturityTs,
         rank: data.rank,
-        term: data.term,
-      });
-    },
-    enabled: address != null,
-    cacheOnBlock: true,
-    // watch: true,
-  });
-
-  useContractRead({
-    ...xenContract(chain),
-    functionName: "getUserStake",
-    overrides: { from: address },
-    onSuccess(data) {
-      setUserStake({
-        amount: data.amount,
-        apy: data.apy,
-        maturityTs: data.maturityTs,
         term: data.term,
       });
     },
@@ -230,14 +191,6 @@ export const XENProvider = ({ children }: any) => {
       },
       {
         ...xenContract(chain),
-        functionName: "activeStakes",
-      },
-      {
-        ...xenContract(chain),
-        functionName: "totalXenStaked",
-      },
-      {
-        ...xenContract(chain),
         functionName: "totalSupply",
       },
       {
@@ -246,11 +199,7 @@ export const XENProvider = ({ children }: any) => {
       },
       {
         ...xenContract(chain),
-        functionName: "getCurrentMaxTerm",
-      },
-      {
-        ...xenContract(chain),
-        functionName: "getCurrentAMP",
+        functionName: "launchTs",
       },
       {
         ...xenContract(chain),
@@ -258,36 +207,35 @@ export const XENProvider = ({ children }: any) => {
       },
       {
         ...xenContract(chain),
-        functionName: "getCurrentAPY",
-      },
-      {
-        ...xenContract(chain),
         functionName: "getGrossReward",
         args: [
           Number(globalRank) - (userMint?.rank.toNumber() ?? 0),
-          Number(userMint?.amplifier ?? 0),
           Number(userMint?.term ?? 0),
           1000 + Number(userMint?.eaaRate ?? 0),
         ],
       },
       {
         ...xenContract(chain),
-        functionName: "mintValue",
+        functionName: "getCurrentMaxTerm",
       },
+      {
+        ...xenContract(chain),
+        functionName: "timePrice",
+      }
     ],
     onSuccess(data) {
+      console.log('读出来的总数据', data);
       setGlobalRank(Number(data[0]));
       setActiveMinters(Number(data[1]));
-      setActiveStakes(Number(data[2]));
-      setTotalXenStaked(Number(data[3]));
-      setTotalSupply(Number(data[4]));
-      setGenesisTs(Number(data[5]));
-      setCurrentMaxTerm(Number(data[6] ?? 100 * 86400));
-      setCurrentAMP(Number(data[7]));
-      setCurrentEAAR(Number(data[8]));
-      setCurrentAPY(Number(data[9]));
-      setGrossReward(Number(data[10]));
-      setMintValue(Number(data[11]));
+      setTotalSupply(Number(data[2]));
+      setGenesisTs(Number(data[3]));
+      setLaunchTs(Number(data[4]));
+      setCurrentEAAR(Number(data[5]));
+      setGrossReward(Number(data[6]));
+      setCurrentMaxTerm(Number(data[7] ?? 100 * 86400));
+      // setStableTreasury(data[8].toString());
+      setMintValue(data[8].toString());
+
     },
     cacheOnBlock: true,
     watch: true,
@@ -390,21 +338,17 @@ export const XENProvider = ({ children }: any) => {
       value={{
         setChainOverride,
         userMint,
-        userStake,
         feeData,
         xenBalance,
         globalRank,
         activeMinters,
-        activeStakes,
-        totalXenStaked,
         totalSupply,
         genesisTs,
+        launchTs,
         currentMaxTerm,
-        currentAMP,
-        currentEAAR,
-        currentAPY,
-        grossReward,
         mintValue,
+        currentEAAR,
+        grossReward,
         savingRounds,
         treasuryBalance,
         latestBlock,

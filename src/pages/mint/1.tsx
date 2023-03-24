@@ -4,6 +4,7 @@ import {
   useContractWrite,
   useWaitForTransaction,
   usePrepareContractWrite,
+  useContractRead,
 } from "wagmi";
 import Container from "~/components/containers/Container";
 import { MaxValueField } from "~/components/FormFields";
@@ -23,7 +24,6 @@ import * as yup from "yup";
 import GasEstimate from "~/components/GasEstimate";
 import CardContainer from "~/components/containers/CardContainer";
 import XENContext from "~/contexts/XENContext";
-//import XENCryptoABI from "~/abi/XENCryptoABI";
 import FRENCryptoABI from "~/abi/FRENCryptoABI";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -42,8 +42,7 @@ const Mint = () => {
   const [processing, setProcessing] = useState(false);
   const [maturity, setMaturity] = useState<number>(UTC_TIME);
 
-  const { userMint, currentMaxTerm, globalRank, feeData, mintValue } =
-    useContext(XENContext);
+  const { userMint, currentMaxTerm, globalRank, feeData, launchTs, mintValue } = useContext(XENContext);
   /*** FORM SETUP ***/
 
   const numberOfDays = 100;
@@ -83,7 +82,10 @@ const Mint = () => {
     args: [watchAllFields.startMintDays ?? 0],
     enabled: !disabled,
     overrides: {
-      value: BigNumber.from(mintValue + ''),
+      value: mintValue//BigNumber.from(mintValue.toString()),
+    },
+    onError(e) {
+      console.log('报错了', mintValue)
     }
   });
   const { data: claimRankData, write } = useContractWrite({

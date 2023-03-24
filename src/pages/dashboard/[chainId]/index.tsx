@@ -32,14 +32,11 @@ const Dashboard: NextPage = () => {
     setChainOverride,
     globalRank,
     activeMinters,
-    activeStakes,
-    totalXenStaked,
     totalSupply,
     currentMaxTerm,
     genesisTs,
-    currentAMP,
+    launchTs,
     currentEAAR,
-    currentAPY,
   } = useContext(XENContext);
 
   const { data: token } = useToken({
@@ -57,10 +54,6 @@ const Dashboard: NextPage = () => {
       value: activeMinters,
     },
     {
-      title: t("card.active-stakes"),
-      value: activeStakes,
-    },
-    {
       title: t("card.max-mint-term"),
       value: currentMaxTerm / 86400,
       suffix: " Days",
@@ -70,38 +63,17 @@ const Dashboard: NextPage = () => {
   const stakeItems = [
     {
       title: t("card.total"),
-      value: (totalSupply + totalXenStaked) / 1e18,
-    },
-    {
-      title: t("card.liquid"),
-      value: totalSupply / 1e18,
-    },
-    {
-      title: t("card.staked"),
-      value: totalXenStaked / 1e18,
+      value: (totalSupply) / 1e18,
     },
   ];
 
   const rewardsItems = [
-    {
-      title: t("dashboard.amp"),
-      value: currentAMP,
-      decimals: 0,
-      tooltip: t("dashboard.amp-description"),
-    },
     {
       title: t("dashboard.eaa"),
       value: currentEAAR / 10.0,
       decimals: 2,
       suffix: "%",
       tooltip: t("dashboard.eaa-description"),
-    },
-    {
-      title: t("dashboard.apy"),
-      value: currentAPY,
-      decimals: 0,
-      suffix: "%",
-      tooltip: t("dashboard.apy-description"),
     },
   ];
 
@@ -148,6 +120,11 @@ const Dashboard: NextPage = () => {
               <DateStatCard
                 title={t("dashboard.days-since-launch")}
                 dateTs={genesisTs}
+                isPast={true}
+              />
+              <DateStatCard
+                title={t("dashboard.days-since-upgrade")}
+                dateTs={launchTs}
                 isPast={true}
               />
               {token && (

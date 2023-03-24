@@ -35,6 +35,7 @@
     "supply": "供应量",
     "rewards": "奖励",
     "days-since-launch": "创世天数",
+    "days-since-upgrade": "升级天数",
     "token-address": "代币/地址",
     "select-chain": "选择区块链",
     "chain-id": "区块链ID: {{chainId}}",

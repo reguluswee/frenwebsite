@@ -33,7 +33,7 @@ export const Navbar: NextPage = () => {
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
-  const { userMint, userStake } = useContext(XENContext);
+  const { userMint } = useContext(XENContext);
   const chainDropdown = useRef<HTMLDivElement>(null);
   const menuDropdown = useRef<HTMLDivElement>(null);
 
@@ -96,16 +96,7 @@ export const Navbar: NextPage = () => {
     } else {
       setMintPageOverride(1);
     }
-    if (userStake && !userStake.term.isZero()) {
-      if (userStake.maturityTs.toNumber() > UTC_TIME) {
-        setStakePageOverride(2);
-      } else {
-        setStakePageOverride(3);
-      }
-    } else {
-      setStakePageOverride(1);
-    }
-  }, [userMint, userStake]);
+  }, [userMint]);
 
   const ChainList: NextPage<{ chains: Chain[] }> = ({ chains }) => {
     return (

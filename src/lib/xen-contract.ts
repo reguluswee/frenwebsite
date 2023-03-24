@@ -19,7 +19,7 @@ export const xenContract = (contractChain?: Chain) => {
   switch (contractChain?.id) {
     case ethfMainnet.id:
       return {
-        addressOrName: "0x7127deeff734cE589beaD9C4edEFFc39C9128771",
+        addressOrName: "0x5c287AF40731D928402B00B224519A390747563c",
         contractInterface: FRENCryptoABI,
         chainId: contractChain.id,
       };

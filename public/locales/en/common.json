@@ -35,6 +35,7 @@
     "supply": "Supply",
     "rewards": "Rewards",
     "days-since-launch": "Days Since Launch",
+    "days-since-upgrade": "Days Since Upgrade",
     "token-address": "Token/Address",
     "select-chain": "Select Chain",
     "chain-id": "Chain ID: {{chainId}}",

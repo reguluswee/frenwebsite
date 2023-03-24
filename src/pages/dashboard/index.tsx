@@ -39,9 +39,9 @@ const Chains: NextPage = () => {
     setChainOverride,
     globalRank,
     activeMinters,
-    activeStakes,
     currentMaxTerm,
     genesisTs,
+    launchTs,
     treasuryBalance,
   } = useContext(XENContext);
 
@@ -59,10 +59,6 @@ const Chains: NextPage = () => {
     {
       title: t("card.active-mints"),
       value: activeMinters,
-    },
-    {
-      title: t("card.active-stakes"),
-      value: activeStakes,
     },
     {
       title: t("card.max-mint-term"),
@@ -123,12 +119,6 @@ const Chains: NextPage = () => {
       address: xenContract(chain).addressOrName,
       chainId: chain?.id,
     });
-
-    // const { data: globalRank } = useContractRead({
-    //   ...xenContract(chain),
-    //   functionName: "globalRank",
-    //   // watch: true,
-    // });
 
     const tempMintAddresses = mintAddresses;
     tempMintAddresses[chain.id] = Number(globalRank);
@@ -289,6 +279,11 @@ const Chains: NextPage = () => {
               <DateStatCard
                 title={t("dashboard.days-since-launch")}
                 dateTs={genesisTs}
+                isPast={true}
+              />
+              <DateStatCard
+                title={t("dashboard.days-since-upgrade")}
+                dateTs={launchTs}
                 isPast={true}
               />
               {token && (
