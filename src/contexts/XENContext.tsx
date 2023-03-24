@@ -224,7 +224,6 @@ export const XENProvider = ({ children }: any) => {
       }
     ],
     onSuccess(data) {
-      console.log('读出来的总数据', data);
       setGlobalRank(Number(data[0]));
       setActiveMinters(Number(data[1]));
       setTotalSupply(Number(data[2]));

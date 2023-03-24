@@ -46,9 +46,9 @@ export const estimatedXEN = (globalRank: number, data?: any) => {
   if (data) {
     const EAA = 0.1 - 0.001 * (data.rank.toNumber() / 1e5);
     const XEN =
-      Math.log2(globalRank - data.rank.toNumber()) *
+      Math.log2(globalRank - data.rank.toNumber() > 2 ? globalRank - data.rank.toNumber() : 2) *
       data.term.toNumber() *
-      data.amplifier.toNumber() *
+      // data.amplifier.toNumber() *
       (1 + EAA);
 
     return XEN;
