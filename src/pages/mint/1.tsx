@@ -83,9 +83,6 @@ const Mint = () => {
     enabled: !disabled,
     overrides: {
       value: mintValue//BigNumber.from(mintValue.toString()),
-    },
-    onError(e) {
-      console.log('报错了', mintValue)
     }
   });
   const { data: claimRankData, write } = useContractWrite({
