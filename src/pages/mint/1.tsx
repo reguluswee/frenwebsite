@@ -149,6 +149,11 @@ const Mint = () => {
               <h2 className="card-title text-neutral">
                 {t("mint.claim-rank")}
               </h2>
+              <label className="label">
+                <span className="label-text-alt text-neutral">{t("mint.claim-price")}/小时</span>
+                <span className="label-text-alt text-neutral">{(Number(mintValue) / 10**18).toFixed(8)} ETHF</span>
+              </label>
+              
               <MaxValueField
                 title={t("form-field.days").toUpperCase()}
                 description={t("form-field.days-description")}
