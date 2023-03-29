@@ -38,6 +38,13 @@ export interface UserMint {
   term: BigNumber;
 }
 
+export interface UserStake {
+  amount: BigNumber;
+  apy: BigNumber;
+  maturityTs: BigNumber;
+  term: BigNumber;
+}
+
 export interface Formatted {
   gasPrice: string;
   maxFeePerGas: string;
@@ -71,6 +78,7 @@ const emptyBalance = () => {
 interface IXENContext {
   setChainOverride: (chain: Chain) => void;
   userMint?: UserMint;
+  userStake?: UserStake;
   feeData?: FeeData;
   xenBalance?: Balance;
   globalRank: number;
@@ -86,11 +94,17 @@ interface IXENContext {
   latestBlock: number,
   multiRounds: number[],
   mintValue: string,
+
+  activeStakes: number;
+  totalFrenStakedAmount: number;
+  totalFrenStakedTerm: number;
+  currentAPY: number;
 }
 
 const XENContext = createContext<IXENContext>({
   setChainOverride: (chain: Chain) => {},
   userMint: undefined,
+  userStake: undefined,
   feeData: undefined,
   xenBalance: undefined,
   globalRank: 0,
@@ -107,11 +121,17 @@ const XENContext = createContext<IXENContext>({
   latestBlock: 0,
   multiRounds: [],
   mintValue: "0",
+
+  activeStakes: 0,
+  totalFrenStakedAmount: 0,
+  totalFrenStakedTerm: 0,
+  currentAPY: 0,
 });
 
 export const XENProvider = ({ children }: any) => {
   const [chainOverride, setChainOverride] = useState<Chain | undefined>();
   const [userMint, setUserMint] = useState<UserMint | undefined>();
+  const [userStake, setUserStake] = useState<UserStake | undefined>();
   const [feeData, setFeeData] = useState<FeeData | undefined>();
   const [xenBalance, setXenBalance] = useState<Balance | undefined>();
   const [globalRank, setGlobalRank] = useState(0);
@@ -130,6 +150,11 @@ export const XENProvider = ({ children }: any) => {
   const [latestBlock, setLatestBlock] = useState<number>(0);
 
   const [multiRounds, setMultiRounds] = useState<number[]>([]);
+
+  const [activeStakes, setActiveStakes] = useState(0);
+  const [totalFrenStakedAmount, setTotalFrenStakedAmount] = useState(0);
+  const [totalFrenStakedTerm, setTotalFrenStakedTerm] = useState(0);
+  const [currentAPY, setCurrentAPY] = useState(0);
 
   const { address } = useAccount();
   const { chain: networkChain } = useNetwork();
@@ -171,6 +196,22 @@ export const XENProvider = ({ children }: any) => {
         eaaRate: data.eaaRate,
         maturityTs: data.maturityTs,
         rank: data.rank,
+        term: data.term,
+      });
+    },
+    enabled: address != null,
+    cacheOnBlock: true,
+    // watch: true,
+  });
+  useContractRead({
+    ...xenContract(chain),
+    functionName: "getUserStake",
+    overrides: { from: address },
+    onSuccess(data) {
+      setUserStake({
+        amount: data.amount,
+        apy: data.apy,
+        maturityTs: data.maturityTs,
         term: data.term,
       });
     },
@@ -221,7 +262,23 @@ export const XENProvider = ({ children }: any) => {
       {
         ...xenContract(chain),
         functionName: "timePrice",
-      }
+      },
+      {
+        ...xenContract(chain),
+        functionName: "activeStakes",
+      },
+      {
+        ...xenContract(chain),
+        functionName: "totalFrenStakedAmount",
+      },
+      {
+        ...xenContract(chain),
+        functionName: "totalFrenStakedTerm",
+      },
+      {
+        ...xenContract(chain),
+        functionName: "getCurrentAPY",
+      },
     ],
     onSuccess(data) {
       setGlobalRank(Number(data[0]));
@@ -232,9 +289,12 @@ export const XENProvider = ({ children }: any) => {
       setCurrentEAAR(Number(data[5]));
       setGrossReward(Number(data[6]));
       setCurrentMaxTerm(Number(data[7] ?? 100 * 86400));
-      // setStableTreasury(data[8].toString());
       setMintValue(data[8].toString());
 
+      setActiveStakes(Number(data[9]));
+      setTotalFrenStakedAmount(Number(data[10]));
+      setTotalFrenStakedTerm(Number(data[11]));
+      setCurrentAPY(Number(data[12]));
     },
     cacheOnBlock: true,
     watch: true,
@@ -337,6 +397,7 @@ export const XENProvider = ({ children }: any) => {
       value={{
         setChainOverride,
         userMint,
+        userStake,
         feeData,
         xenBalance,
         globalRank,
@@ -352,6 +413,10 @@ export const XENProvider = ({ children }: any) => {
         treasuryBalance,
         latestBlock,
         multiRounds,
+        activeStakes,
+        totalFrenStakedAmount,
+        totalFrenStakedTerm,
+        currentAPY,
       }}
     >
       {children}

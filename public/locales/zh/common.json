@@ -83,6 +83,7 @@
     "global-rank": "全球排名",
     "active-mints": "活跃铸造",
     "active-stakes": "活跃质押",
+    "average-stake-term": "平均质押天数",
     "max-mint-term": "最大铸造期限",
 
     "treasury-balance": "金库余额",

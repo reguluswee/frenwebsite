@@ -39,6 +39,7 @@ const Chains: NextPage = () => {
     setChainOverride,
     globalRank,
     activeMinters,
+    activeStakes,
     currentMaxTerm,
     genesisTs,
     launchTs,
@@ -59,6 +60,10 @@ const Chains: NextPage = () => {
     {
       title: t("card.active-mints"),
       value: activeMinters,
+    },
+    {
+      title: t("card.active-stakes"),
+      value: activeStakes,
     },
     {
       title: t("card.max-mint-term"),
@@ -289,7 +294,7 @@ const Chains: NextPage = () => {
               {token && (
                 <DataCard
                   title={t("dashboard.token-address")}
-                  value={token?.symbol ?? "XEN"}
+                  value={token?.symbol ?? "FREN"}
                   description={xenContract(chainFromId).addressOrName}
                 />
               )}

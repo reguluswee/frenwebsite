@@ -33,10 +33,14 @@ const Dashboard: NextPage = () => {
     globalRank,
     activeMinters,
     totalSupply,
+    activeStakes,
+    totalFrenStakedAmount,
+    totalFrenStakedTerm,
     currentMaxTerm,
     genesisTs,
     launchTs,
     currentEAAR,
+    currentAPY,
   } = useContext(XENContext);
 
   const { data: token } = useToken({
@@ -54,6 +58,14 @@ const Dashboard: NextPage = () => {
       value: activeMinters,
     },
     {
+      title: t("card.active-stakes"),
+      value: activeStakes,
+    },
+    {
+      title: t("card.average-stake-term"),
+      value: totalFrenStakedTerm,
+    },
+    {
       title: t("card.max-mint-term"),
       value: currentMaxTerm / 86400,
       suffix: " Days",
@@ -63,7 +75,15 @@ const Dashboard: NextPage = () => {
   const stakeItems = [
     {
       title: t("card.total"),
-      value: (totalSupply) / 1e18,
+      value: (totalSupply + totalFrenStakedAmount) / 1e18,
+    },
+    {
+      title: t("card.liquid"),
+      value: totalSupply / 1e18,
+    },
+    {
+      title: t("card.staked"),
+      value: totalFrenStakedAmount / 1e18,
     },
   ];
 
@@ -74,6 +94,13 @@ const Dashboard: NextPage = () => {
       decimals: 2,
       suffix: "%",
       tooltip: t("dashboard.eaa-description"),
+    },
+    {
+      title: t("dashboard.apy"),
+      value: currentAPY,
+      decimals: 0,
+      suffix: "%",
+      tooltip: t("dashboard.apy-description"),
     },
   ];
 

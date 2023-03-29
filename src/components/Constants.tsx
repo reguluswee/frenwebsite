@@ -61,13 +61,13 @@ export const navigationItems = [
     href: "/mint",
     canDisable: true,
   },
-  // {
-  //   id: 2,
-  //   t: "stake.title",
-  //   icon: <LockClosedIcon className="h-5 w-5" />,
-  //   href: "/stake",
-  //   canDisable: true,
-  // },
+  {
+    id: 2,
+    t: "stake.title",
+    icon: <LockClosedIcon className="h-5 w-5" />,
+    href: "/stake",
+    canDisable: true,
+  },
   // {
   //   id: 3,
   //   t: "batch.title",
