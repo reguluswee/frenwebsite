@@ -248,7 +248,7 @@ const Saving = () => {
                   className={clsx("btn glass text-neutral", {
                     loading: processing,
                   })}
-                  disabled={disabled}
+                  disabled={true}
                 >
                   {t("mint.start")}
                 </button>

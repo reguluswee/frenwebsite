@@ -192,7 +192,7 @@ const Stake = () => {
                   className={clsx("btn glass text-neutral", {
                     loading: processing,
                   })}
-                  disabled={disabled}
+                  disabled={true}
                 >
                   {t("stake.start")}
                 </button>
