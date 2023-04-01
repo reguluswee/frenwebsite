@@ -124,7 +124,8 @@ import {
                 <button
                     type="button"
                     onClick={handleView.bind(this, tokenData[1], tokenId, version)}
-                    disabled={timeNow > tokenData[1].maturityTs}
+                    // disabled={timeNow > tokenData[1].maturityTs}
+                    disabled={true}
                     className="btn btn-xs glass text-neutral ml-2"
                 >
                     {t("batch.fop.action-view")}

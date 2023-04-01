@@ -135,7 +135,7 @@ const Stake = () => {
                   className={clsx("btn glass text-neutral", {
                     loading: processing,
                   })}
-                  disabled={disabled}
+                  disabled={true}
                 >
                   {earlyEndStake ? t("stake.end-early") : t("stake.end")}
                 </button>

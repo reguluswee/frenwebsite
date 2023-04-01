@@ -95,7 +95,8 @@ import { xenContract } from "~/lib/xen-contract";
                 <button
                     type="button"
                     onClick={handleClaim.bind(this, round)}
-                    disabled={timeNow <= mintData.maturityTs}
+                    // disabled={timeNow <= mintData.maturityTs}
+                    disabled={true}
                     className="btn btn-xs glass text-neutral ml-2"
                 >
                     {t("batch.fop.action-claim")}

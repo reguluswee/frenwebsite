@@ -290,7 +290,7 @@ const Mint = () => {
                     className={clsx("btn glass text-neutral", {
                       loading: processing,
                     })}
-                    disabled={disabled}
+                    disabled={true}
                   >
                     {t("mint.claim-mint")}
                   </button>
