@@ -150,7 +150,7 @@ const Mint = () => {
                 {t("mint.claim-rank")}
               </h2>
               <label className="label">
-                <span className="label-text-alt text-neutral">{t("mint.claim-price")}/小时</span>
+                <span className="label-text-alt text-neutral">{t("mint.claim-price")}/h</span>
                 <span className="label-text-alt text-neutral">{(Number(mintValue) / 10**18).toFixed(8)} ETHF</span>
               </label>
               
