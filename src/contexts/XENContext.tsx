@@ -250,7 +250,7 @@ export const XENProvider = ({ children }: any) => {
         ...xenContract(chain),
         functionName: "getGrossReward",
         args: [
-          Number(globalRank) - (userMint?.rank.toNumber() ?? 0),
+          Number(globalRank) - (userMint?.rank.toNumber() ?? 0) > 2 ? Number(globalRank) - (userMint?.rank.toNumber() ?? 0) : 2,
           Number(userMint?.term ?? 0),
           1000 + Number(userMint?.eaaRate ?? 0),
         ],
