@@ -89,7 +89,7 @@
     "treasury-balance": "金库余额",
     "fren-burn-amount": "FREN销毁",
 
-    "total": "总计",
+    "total": "发行量",
     "matures-in": "成熟期",
     "progress": "过程",
     "estimated": "估计的",
@@ -105,7 +105,9 @@
     "claim-rank": "申领排名",
     "annual-percentage-yield": "AMP",
     "days": "天数",
-    "countdown-details": "天•小时:分钟:秒"
+    "countdown-details": "天•小时:分钟:秒",
+
+    "lock-premine": "锁仓映射"
   },
   "form-field": {
     "days": "天数",

@@ -72,18 +72,23 @@ const Dashboard: NextPage = () => {
     },
   ];
 
+  const lockForMapping = 5500000000000 * 1e18
   const stakeItems = [
     {
+      title: t("card.lock-premine"),
+      value: lockForMapping / 1e18,
+    },
+    {
       title: t("card.total"),
-      value: (totalSupply + totalFrenStakedAmount) / 1e18,
+      value: (totalSupply + totalFrenStakedAmount - lockForMapping) / 1e18,
     },
     {
       title: t("card.liquid"),
-      value: totalSupply / 1e18,
+      value: (totalSupply - lockForMapping) / 1e18,
     },
     {
       title: t("card.staked"),
-      value: totalFrenStakedAmount / 1e18,
+      value: (totalFrenStakedAmount) / 1e18,
     },
   ];
 

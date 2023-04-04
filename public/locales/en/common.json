@@ -89,7 +89,7 @@
     "treasury-balance": "Treasury Balance",
     "fren-burn-amount": "FREN Burned",
 
-    "total": "Total",
+    "total": "Circulation",
     "matures-in": "Matures in",
     "progress": "Progress",
     "estimated": "Estimated",
@@ -105,7 +105,9 @@
     "claim-rank": "Claim Rank",
     "annual-percentage-yield": "APY",
     "days": "Days",
-    "countdown-details": "Day•Hours:Minutes:Seconds"
+    "countdown-details": "Day•Hours:Minutes:Seconds",
+
+    "lock-premine": "Lock for Mapping"
   },
   "form-field": {
     "days": "Days",
