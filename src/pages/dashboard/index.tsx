@@ -17,6 +17,8 @@ import Breadcrumbs from "~/components/Breadcrumbs";
 import { useEnvironmentChains } from "~/hooks/useEnvironmentChains";
 import XENContext from "~/contexts/XENContext";
 
+import PopupBox from "~/components/popup/PopupBox";
+
 import {
   NumberStatCard,
   ChainStatCard,
@@ -224,6 +226,12 @@ const Chains: NextPage = () => {
     );
   };
 
+  const [showPopup, setShowPopup] = useState(true);
+
+  const handleClose = () => {
+    setShowPopup(false);
+  };
+
   useEffect(() => {
     const chains = Object.keys(mintAddresses).length;
     setTotalChainCount(chains);
@@ -251,6 +259,16 @@ const Chains: NextPage = () => {
   return (
     <Container className="max-w-5xl">
       <Breadcrumbs />
+
+      {showPopup && (
+        <PopupBox title={t("upgrade.title")} onClose={handleClose} 
+        contents={t("upgrade.content")} 
+        items={[
+          t("upgrade.items.it1"),
+          t("upgrade.items.it2"),
+          t("upgrade.items.it3")
+        ]}/>
+      )}
 
       <div className="space-y-4 w-full">
         <CardContainer>

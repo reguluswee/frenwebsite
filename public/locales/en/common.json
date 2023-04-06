@@ -187,5 +187,34 @@
     "fren": {
       "tip": "Designed to allow creation of innovative \n structured and collateralized spot and option products by POWP(Proof of \n Work and Proof of Participation)"
     }
+  },
+  "mapping": {
+    "general": {
+      "amount": "Available Amount"
+    },
+    "direct": {
+      "title": "Holding Swap",
+      "tip": "Holders of Pre-Fren can directly swap their FrenV1 to new $fren at here, and the quantity is counted until block height 16807817.",
+      "btn": {
+        "confirm-and-claim": "Confirm and Claim"
+      }
+    },
+    "staking": {
+      "title": "Staking Swap",
+      "tip": "Stakers of Pre-Fren could confirm their amount of staking and expired date to claim, and the quantity is counted until block height 16807817."
+    },
+    "mining": {
+      "title": "Mining Swap",
+      "tip": "Mining of Pre-Fren could confirm their amount of staking and expired date to claim, and the quantity is counted until block height 16807817."
+    }
+  },
+  "upgrade": {
+    "title":"About FREN Upgrade",
+    "content": "Fren's upgrade has been completely redesigned, including the introduction of a time model, a significant reduction in production and inflation, and more future empowerment for Fren. Fren Labs has completed the snapshot for existing holding, minting, and staking users at block height 16807817. We will soon launch a coin swap function, details as follows:",
+    "items": {
+      "it1": "Existing direct holding users can directly swap old $Fren for new $Fren at a 1:1 ratio by burning their old $Fren and receiving the same amount of new $Fren.",
+      "it2": "Existing staking users can claim new $Fren at a 1:1 ratio based on the original staking algorithm and parameters of old $Fren at the expiration date of their staking.",
+      "it3": "Existing minting users can claim new $Fren at a 1:1 ratio based on the original minting algorithm and parameters of old $Fren at the expiration date of their minting."
+    }
   }
 }
