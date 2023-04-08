@@ -195,7 +195,8 @@
       "title": "持仓换币",
       "tip": "原Fren的持仓用户可以在这里直接将V1版本的fren代币转换为新的token，数量统计截止于区块高度16807817.",
       "btn": {
-        "confirm-and-claim": "确认并领取"
+        "confirm": "登记确认",
+        "claim": "领取"
       }
     },
     "staking": {

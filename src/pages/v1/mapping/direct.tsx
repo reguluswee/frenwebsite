@@ -1,5 +1,4 @@
 import {
-    useNetwork,
     useAccount,
     useContractWrite,
     useWaitForTransaction,
@@ -10,8 +9,7 @@ import {
   
   import { serverSideTranslations } from "next-i18next/serverSideTranslations";
   import Container from "~/components/containers/Container";
-  import { useRouter } from "next/router";
-  import { useEffect, useState, useContext } from "react";
+  import { useEffect, useState } from "react";
   import { useTranslation } from "next-i18next";
   
   import CardContainer from "~/components/containers/CardContainer";
@@ -21,25 +19,27 @@ import {
   import { clsx } from "clsx";
   
   import toast from "react-hot-toast";
-  import { ethers, BigNumber } from "ethers";
+  import { BigNumber } from "ethers";
 
-  const comAbi = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"wallet","type":"address"},{"indexed":true,"internalType":"uint256","name":"term","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethfCost","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"frenLoss","type":"uint256"}],"name":"ClaimCompensate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"wallet","type":"address"},{"indexed":true,"internalType":"uint256","name":"term","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethfCost","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"frenLoss","type":"uint256"}],"name":"GetCompensate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"CUTOFFTS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"FRENPROXY","outputs":[{"internalType":"contract FrenMint","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"MAX_PENALTY_PCT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"MDAOPROXY","outputs":[{"internalType":"contract MdaoBathProxy","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PENALTY_DAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"SECONDS_IN_DAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"WITHDRAWAL_WINDOW_DAYS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"ethCostData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"frenLossData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"recordData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"stage","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"startBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive","payable":true},{"inputs":[{"internalType":"uint256","name":"term","type":"uint256"}],"name":"computeTermIssue","outputs":[{"internalType":"uint256","name":"ethfCost","type":"uint256"},{"internalType":"uint256","name":"frenLoss","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"term","type":"uint256"}],"name":"claimTermIssue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"term","type":"uint256"}],"name":"getTermIssue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_stage","type":"uint256"}],"name":"coolStage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-  const comAddr = "0x2b3A420591a8be037AbE6DDf9Af4Ec7b433e0492";
+  const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"transferAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"transfer","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+  const comAddr = "0x827f2f104E2f364C5423054921732aa54B51F37B";
   
   const Compensate = () => {
     const { t } = useTranslation("common");
   
     const { address } = useAccount();
-    const { chain } = useNetwork();
-    const router = useRouter();
     const [disabled, setDisabled] = useState(true);
     const [processing, setProcessing] = useState(false);
 
-    const [term, setTerm] = useState(0);
-    const [termAmount, setTermAmount] = useState(0);
-    const [termFrenAmount, setTermFrenAmount] = useState(0);
-
     const [errMsg, setErrMsg] = useState("");
+
+    const [availableAmountStr, setAvailableAmountStr] = useState("");
+    const [availableAmount, setAvailableAmount] = useState(0);
+    const [proof, setProof] = useState<string>("")
+
+    const [approveProcessing, setApproveProcessing] = useState(false);
+    const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
+    const [claimStatus, setClaimStatus] = useState(0);
 
     const {
         handleSubmit,
@@ -49,47 +49,114 @@ import {
   
     /*** CONTRACT WRITE SETUP ***/
     const { config: _20config, error: _20error } = usePrepareContractWrite({
-      addressOrName: comAddr,
-      contractInterface: comAbi,
-      functionName: "claimTermIssue",
-      args: [term],
+      addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
+      contractInterface: erc20ABI,
+      functionName: "approve",
+      args: [comAddr, availableAmountStr],
+    })
+    const { data: approveData, write: approveWrite } = useContractWrite({
+      ..._20config,
+      onSuccess(data) {
+        setProcessing(true);
+        setApproveProcessing(true);
+        setDisabled(true);
+      },
+    });
+
+    const {} = useContractRead({
+      addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
+      contractInterface: erc20ABI,
+      functionName: "allowance",
+      overrides: { from: address },
+      args: [address, comAddr],
+      onSuccess(data) {
+        setTokenAllowance(BigNumber.from(data));
+      }
     })
 
     const {} = useContractRead({
       addressOrName: comAddr,
       contractInterface: comAbi,
-      functionName: "computeTermIssue",
-      overrides: { from: '0x10ECA8820477f05d99AB99A78aFb2FA26b00e7B1' },
-      args: [term],
+      functionName: "transferAddress",
+      overrides: { from: address },
+      args: [address],
       onSuccess(data) {
-        console.log('结果', data, '0x10ECA8820477f05d99AB99A78aFb2FA26b00e7B1', term)
-        let result = data as number[];
-        if(term != 0) {
-          setTermAmount(Number(result[0]))
-          setTermFrenAmount(Number(result[1]))
-        }
-      },
-      onError(e) {
-        console.log('错误',e)
+        setClaimStatus(Number(data))
       }
     })
 
-    const { data: cliamIssueData, write } = useContractWrite({
-      ..._20config,
+    const {} = useContractRead({
+      addressOrName: comAddr,
+      contractInterface: comAbi,
+      functionName: "checkHolder",
+      overrides: { from: address },
+      args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
+      onSuccess(data) {
+        if(!data) {
+          setErrMsg("no available tokens")
+        } else {
+          setDisabled(false)
+          //setErrMsg("success to check")
+        }
+      },
+      onError(e) {
+        console.log('error', availableAmountStr, proof)
+      }
+    })
+
+    const { config: _claimConfig, error: _claimerror } = usePrepareContractWrite({
+      addressOrName: comAddr,
+      contractInterface: comAbi,
+      functionName: "claim",
+      args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
+      onSuccess(data) {
+      },
+    })
+
+    const { data: cliamata, write } = useContractWrite({
+      ..._claimConfig,
       onSuccess(data) {
         setProcessing(true);
         setDisabled(true);
       },
     });
+
+    const { config: _tranConfig, error: _transferError } = usePrepareContractWrite({
+      addressOrName: comAddr,
+      contractInterface: comAbi,
+      functionName: "transfer",
+      overrides: { from: address },
+      onError(e) {
+        setErrMsg("not enough balance")
+      }
+    })
+
+    const { data: _tranCData, write: writeTransfer } = useContractWrite({
+      ..._tranConfig,
+      onSuccess(data) {
+        setProcessing(true);
+        setDisabled(true);
+      },
+    });
+
     const {} = useWaitForTransaction({
-      hash: cliamIssueData?.hash,
+      hash: cliamata?.hash,
       onSuccess(data) {
         toast(t("toast.approve-successful"));
       },
 
     });
     const onSubmit = () => {
-        write?.();
+      console.log('claim的status===', claimStatus)
+      if(claimStatus==0) {
+        if(BigNumber.from(availableAmountStr).gt(tokenAllowance)) {
+          approveWrite?.();
+        } else {
+          write?.();
+        }
+      } else if(claimStatus==1) {
+        writeTransfer?.()
+      }
     };
   
     /*** USE EFFECT ****/
@@ -98,12 +165,37 @@ import {
       if (!processing) {
         setDisabled(false);
       }
-
-      setDisabled(true);
+      
+      fetch("/apc/upgrade/getamount", {
+        method: "POST",
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'address=' + address
+      }).then( res => {
+        if(res.ok) {
+          return res.json()
+        }
+        throw res;
+      }).then( data => {
+        if(data.Code == 0) {
+          const bgdec = BigNumber.from(10**18 + '');
+          setAvailableAmount(BigNumber.from(data.Data.Amount).div(bgdec).toNumber())
+          setAvailableAmountStr(data.Data.Amount)
+          setProof(JSON.stringify(data.Data.Proof))
+        }
+      }).catch(err => {
+        console.log(':::', err)
+        setErrMsg(err)
+      })
     }, [
       address,
       _20config,
       processing,
+      availableAmount,
+      availableAmountStr,
+      proof
     ]);
   
     return (
@@ -135,7 +227,7 @@ import {
                         <span className="label-text-alt text-error">{errMsg}</span>
                     </label>
                     <label className="label">
-                        <span className="input input-bordered w-full text-neutral">{termAmount}</span>
+                        <span className="input input-bordered w-full text-neutral">{availableAmount}</span>
                     </label>
                 </div>
   
@@ -147,7 +239,7 @@ import {
                     })}
                     disabled={disabled}
                   >
-                    {t("mapping.direct.btn.confirm-and-claim")}
+                    {claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")}
                   </button>
                 </div>
               </div>

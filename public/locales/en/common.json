@@ -196,7 +196,8 @@
       "title": "Holding Swap",
       "tip": "Holders of Pre-Fren can directly swap their FrenV1 to new $fren at here, and the quantity is counted until block height 16807817.",
       "btn": {
-        "confirm-and-claim": "Confirm and Claim"
+        "confirm": "Confirm",
+        "claim": "claim"
       }
     },
     "staking": {

@@ -4,12 +4,14 @@ const { i18n } = require("./next-i18next.config");
 const nextConfig = {
   i18n,
   reactStrictMode: true,
+  trailingSlash: true,
   swcMinify: true,
   async rewrites() {
     return [
       {
         source: '/apc/:path*',
         destination: 'https://fenus.xyz/dalink/api/:path*',
+        // destination: 'http://localhost:18080/dalink/api/:path*',
       },
     ]
   },
