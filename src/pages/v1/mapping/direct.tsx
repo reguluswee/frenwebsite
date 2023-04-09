@@ -225,7 +225,7 @@ import {
       } else if(claimStatus==1) {
         setBtnName(t("mapping.direct.btn.claim"))
       } else {
-        console.log("可领金额:", availableAmount)
+        console.log("可领金额:", availableAmount, availableAmount.eq(BigNumber.from("0")))
         if(availableAmount.eq(BigNumber.from("0"))) {
           setDisabled(true)
         }
