@@ -34,7 +34,7 @@ import {
 
     const [errMsg, setErrMsg] = useState("");
 
-    const [availableAmountStr, setAvailableAmountStr] = useState("");
+    const [availableAmountStr, setAvailableAmountStr] = useState("0");
     const [availableAmount, setAvailableAmount] = useState(0);
     const [proof, setProof] = useState<string>("")
 
@@ -127,7 +127,10 @@ import {
       args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
       onSuccess(data) {
         if(!data) {
-          setErrMsg("no available tokens")
+          setTipMsg(t("mapping.general.no-available"))
+          setAvailableAmount(0)
+          setAvailableAmountStr("0")
+          setDisabled(true)
         } else {
           setDisabled(false)
         }
@@ -259,7 +262,7 @@ import {
                     className={clsx("btn glass text-neutral", {
                       loading: processing,
                     })}
-                    disabled={claimStatus==2 ? true : disabled}
+                    disabled={claimStatus==2 || availableAmount==0 ? true : disabled}
                   >
                     {claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")}
                   </button>
