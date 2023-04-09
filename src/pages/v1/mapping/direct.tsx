@@ -38,7 +38,6 @@ import {
     const [availableAmount, setAvailableAmount] = useState(BigNumber.from("0"));
     const [proof, setProof] = useState<string>("")
 
-    const [approveProcessing, setApproveProcessing] = useState(false);
     const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
     const [claimStatus, setClaimStatus] = useState(0);
     const [tipMsg, setTipMsg] = useState("");
@@ -63,7 +62,6 @@ import {
       ..._20config,
       onSuccess(data) {
         setProcessing(true);
-        setApproveProcessing(true);
         setDisabled(true);
       },
     });
@@ -130,6 +128,7 @@ import {
       functionName: "transfer",
       overrides: { from: address },
       onError(e) {
+        console.log("地址：", address, e)
       }
     })
 
@@ -141,26 +140,50 @@ import {
       },
     });
 
+    // const {} = useWaitForTransaction({
+    //   hash: approveProcessing ? approveData?.hash : (claimStatus==0 ? _claimData?.hash : (claimStatus==1 ? _tranData?.hash : "")),
+    //   onSuccess(data) {
+    //     //toast(t("toast.approve-successful"));
+    //     if(approveProcessing) {
+    //       setApproveProcessing(false)
+    //       //writeClaim?.()
+    //       setDisabled(false)
+    //       setClaimStatus(0)
+    //       setBtnName(t("mapping.direct.btn.confirm"))
+    //     } else {
+    //       //claim over
+    //       toast(t("toast.approve-successful"));
+    //       setProcessing(false)
+    //       setDisabled(false)
+    //     }
+    //   },
+    // });
     const {} = useWaitForTransaction({
-      // hash: cliamata?.hash,
-      hash: approveProcessing ? approveData?.hash : (claimStatus==0 ? _claimData?.hash : (claimStatus==1 ? _tranData?.hash : "")),
+      hash: step==1 ? approveData?.hash : (step==2 ? _claimData?.hash : _tranData?.hash),
       onSuccess(data) {
-        //toast(t("toast.approve-successful"));
-        if(approveProcessing) {
-          setApproveProcessing(false)
-          //writeClaim?.()
+        if(step==1) {
+          setStep(2)
           setDisabled(false)
-          setClaimStatus(0)
-          setBtnName(t("mapping.direct.btn.confirm"))
-        } else {
-          //claim over
-          toast(t("toast.approve-successful"));
           setProcessing(false)
+          setBtnName(t("mapping.direct.btn.confirm"))
+        } else if(step==2) {
+          setStep(3)
           setDisabled(false)
+          setProcessing(false)
+          setClaimStatus(1)
+          setBtnName(t("mapping.direct.btn.claim"))
+        } else {
+          setDisabled(true)
+          setProcessing(false)
+          setClaimStatus(2)
+          setBtnName(t("mapping.direct.btn.claim"))
+          setTipMsg(t("mapping.general.transfered"))
+          setAvailableAmount(BigNumber.from("0"))
+          setAvailableAmountStr("0")
         }
       },
-
     });
+
     const onSubmit = () => {
       if(claimStatus==2) {
         toast(t("mapping.general.transfered"));
@@ -200,31 +223,54 @@ import {
           setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))
 
           // console.log("看几个数据", available, claimStatus, btnName, BigNumber.from(availableAmountStr), tokenAllowance, BigNumber.from(availableAmountStr).gt(tokenAllowance))
-          if(!available) {
-            setDisabled(true)
-            setTipMsg(t("mapping.general.noavailable"))
-          } else {
-            setTipMsg("")
-            if(claimStatus==0) {
-              if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
-                setDisabled(false)
-                setBtnName(t("mapping.direct.btn.confirm"))
-                setStep(2)
-              }
-            } else if(claimStatus==1) {
-              setBtnName(t("mapping.direct.btn.claim"))
-              setStep(3)
-            } else {
-              setDisabled(true)
-              setTipMsg(t("mapping.general.transfered"))
-              setAvailableAmount(BigNumber.from("0"))
-              setAvailableAmountStr("0")
-            }
-          }
+          // if(!available) {
+          //   setDisabled(true)
+          //   setTipMsg(t("mapping.general.noavailable"))
+          // } else {
+          //   setTipMsg("")
+          //   if(claimStatus==0) {
+          //     if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
+          //       setDisabled(false)
+          //       setBtnName(t("mapping.direct.btn.confirm"))
+          //       setStep(2)
+          //     }
+          //   } else if(claimStatus==1) {
+          //     setBtnName(t("mapping.direct.btn.claim"))
+          //     setStep(3)
+          //   } else {
+          //     setDisabled(true)
+          //     setTipMsg(t("mapping.general.transfered"))
+          //     setAvailableAmount(BigNumber.from("0"))
+          //     setAvailableAmountStr("0")
+          //   }
+          // }
         }
       }).catch(err => {
         setErrMsg(err)
       })
+
+      if(!available) {
+        setDisabled(true)
+        setTipMsg(t("mapping.general.noavailable"))
+      } else {
+        setTipMsg("")
+        if(claimStatus==0) {
+          let avBig = BigNumber.from(availableAmountStr).add(BigNumber.from("1"))
+          if(!(avBig.gt(tokenAllowance))) {
+            setDisabled(false)
+            setBtnName(t("mapping.direct.btn.confirm"))
+            setStep(2)
+          }
+        } else if(claimStatus==1) {
+          setBtnName(t("mapping.direct.btn.claim"))
+          setStep(3)
+        } else {
+          setDisabled(true)
+          setTipMsg(t("mapping.general.transfered"))
+          setAvailableAmount(BigNumber.from("0"))
+          setAvailableAmountStr("0")
+        }
+      }
     }, [
       address,
       _20config,
@@ -236,7 +282,7 @@ import {
       // btnName,
       // tipMsg,
       // errMsg,
-      // step,
+      step,
       tokenAllowance,
       claimStatus,
       available
