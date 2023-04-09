@@ -228,12 +228,12 @@ import {
               <a className="step step-neutral">{t("mapping.direct.title")}</a>
             </Link>
   
-            <Link href="/mapping/staking">
-              <a className="step">{t("mapping.staking.title")}</a>
+            <Link href="">
+              <a className="step">{t("mapping.staking.title")}(coming)</a>
             </Link>
 
-            <Link href="/mapping/mining">
-              <a className="step">{t("mapping.mining.title")}</a>
+            <Link href="">
+              <a className="step">{t("mapping.mining.title")}(coming)</a>
             </Link>
           </ul>
   
