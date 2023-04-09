@@ -64,7 +64,8 @@ import {
     }).then( data => {
       if(data.Code == 0) {
         if(claimStatus!=2) {
-          setAvailableAmount(BigNumber.from(data.Data.Amount).div(bgdec).toNumber())
+          // setAvailableAmount(BigNumber.from(data.Data.Amount).div(bgdec).toNumber())
+          setAvailableAmount(BigNumber.from(data.Data.Amount).toNumber())
           setAvailableAmountStr(data.Data.Amount)
           setProof(JSON.stringify(data.Data.Proof))
         }
@@ -268,7 +269,7 @@ import {
                         <span className="label-text-alt text-error">{errMsg}</span>
                     </label>
                     <label className="label">
-                        <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : availableAmount}</span>
+                        <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : (availableAmount / (10**18)).toFixed(2)}</span>
                     </label>
                 </div>
   
