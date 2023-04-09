@@ -97,6 +97,11 @@ import {
       args: [address, comAddr],
       onSuccess(data) {
         setTokenAllowance(BigNumber.from(data));
+        if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
+          setDisabled(false)
+          //setClaimStatus(0)
+          setBtnName(t("mapping.direct.btn.confirm"))
+        }
       }
     })
 
@@ -108,6 +113,7 @@ import {
       overrides: { from: address },
       args: [address],
       onSuccess(data) {
+        console.log("状态：", data)
         let status = Number(data)
         setClaimStatus(status)
         if(status==2) {
