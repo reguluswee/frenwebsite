@@ -97,11 +97,6 @@ import {
       args: [address, comAddr],
       onSuccess(data) {
         setTokenAllowance(BigNumber.from(data));
-        if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
-          setDisabled(false)
-          //setClaimStatus(0)
-          setBtnName(t("mapping.direct.btn.confirm"))
-        }
       }
     })
 
@@ -230,8 +225,14 @@ import {
       } else if(claimStatus==1) {
         setBtnName(t("mapping.direct.btn.claim"))
       } else {
+        console.log("可领金额:", availableAmount)
         if(availableAmount.eq(BigNumber.from("0"))) {
           setDisabled(true)
+        }
+        if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
+          setDisabled(false)
+          //setClaimStatus(0)
+          setBtnName(t("mapping.direct.btn.confirm"))
         }
       }
     }, [
