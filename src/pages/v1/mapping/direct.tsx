@@ -42,6 +42,7 @@ import {
     const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
     const [claimStatus, setClaimStatus] = useState(0);
     const [tipMsg, setTipMsg] = useState("");
+    const [btnName, setBtnName] = useState<string>(t("mapping.direct.btn.approve"));
 
     const {
         handleSubmit,
@@ -178,7 +179,10 @@ import {
         //toast(t("toast.approve-successful"));
         if(approveProcessing) {
           setApproveProcessing(false)
-          writeClaim?.()
+          //writeClaim?.()
+          setDisabled(false)
+          setClaimStatus(0)
+          setBtnName(t("mapping.direct.btn.confirm"))
         } else {
           //claim over
           toast(t("toast.approve-successful"));
@@ -190,6 +194,10 @@ import {
     });
     const onSubmit = () => {
       if(claimStatus==0) {
+        if(availableAmount==0) {
+          toast.error(t("mapping.general.noavailable"))
+          return
+        }
         if(BigNumber.from(availableAmountStr).gt(tokenAllowance)) {
           approveWrite?.();
         } else {
@@ -207,6 +215,17 @@ import {
     useEffect(() => {
       if (!processing) {
         setDisabled(false);
+      }
+      //claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")
+      if(claimStatus==2) {
+        setBtnName("Claimed")
+        setDisabled(true)
+      } else if(claimStatus==1) {
+        setBtnName(t("mapping.direct.btn.claim"))
+      } else {
+        if(availableAmount==0) {
+          setDisabled(true)
+        }
       }
     }, [
       address,
@@ -262,9 +281,11 @@ import {
                     className={clsx("btn glass text-neutral", {
                       loading: processing,
                     })}
-                    disabled={claimStatus==2 || availableAmount==0 ? true : disabled}
+                    disabled= {disabled}
+                    // {claimStatus==2 || availableAmount==0 ? true : disabled}
                   >
-                    {claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")}
+                    {/* {claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")} */}
+                    {btnName}
                   </button>
                 </div>
               </div>
