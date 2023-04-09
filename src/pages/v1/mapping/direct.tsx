@@ -127,7 +127,7 @@ import {
       args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
       onSuccess(data) {
         if(!data) {
-          setTipMsg(t("mapping.general.no-available"))
+          setTipMsg(t("mapping.general.noavailable"))
           setAvailableAmount(0)
           setAvailableAmountStr("0")
           setDisabled(true)

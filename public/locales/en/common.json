@@ -192,7 +192,8 @@
     "general": {
       "amount": "Available Amount",
       "claimed": "Had confirmed, could claim transfer",
-      "transfered": "Had claimed new $fren"
+      "transfered": "Had claimed new $fren",
+      "noavailable": "No Available Token"
     },
     "direct": {
       "title": "Holding Swap",
