@@ -187,7 +187,7 @@ import {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'address=0x39f0357140C66629E3640cc767F6F18b4A4D6a33'// + address
+        body: 'address=' + address
       }).then( res => {
         if(res.ok) {
           return res.json()
