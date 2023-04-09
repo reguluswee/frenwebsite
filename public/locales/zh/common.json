@@ -189,7 +189,9 @@
   },
   "mapping": {
     "general": {
-      "amount": "可用数量"
+      "amount": "可用数量",
+      "claimed": "已经完成登记，可以领取",
+      "transfered": "已经领取完成新 $fren"
     },
     "direct": {
       "title": "持仓换币",

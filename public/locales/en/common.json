@@ -190,7 +190,9 @@
   },
   "mapping": {
     "general": {
-      "amount": "Available Amount"
+      "amount": "Available Amount",
+      "claimed": "Had confirmed, could claim transfer",
+      "transfered": "Had claimed new $fren"
     },
     "direct": {
       "title": "Holding Swap",
