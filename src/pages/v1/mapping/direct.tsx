@@ -43,36 +43,14 @@ import {
     const [claimStatus, setClaimStatus] = useState(0);
     const [tipMsg, setTipMsg] = useState("");
     const [btnName, setBtnName] = useState<string>(t("mapping.direct.btn.approve"));
+    const [available, setAvailable] = useState(false)
+    const [step, setStep] = useState(1)
 
     const {
-        handleSubmit,
-      } = useForm({
-        mode: "onChange",
-      });
-    const {} = fetch("/apc/upgrade/getamount", {
-      method: "POST",
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: 'address=' + address
-    }).then( res => {
-      if(res.ok) {
-        return res.json()
-      }
-      throw res;
-    }).then( data => {
-      if(data.Code == 0) {
-        if(claimStatus!=2) {
-          // setAvailableAmount(BigNumber.from(data.Data.Amount).div(bgdec).toNumber())
-          setAvailableAmount(BigNumber.from(data.Data.Amount))
-          setAvailableAmountStr(data.Data.Amount)
-          setProof(JSON.stringify(data.Data.Proof))
-        }
-      }
-    }).catch(err => {
-      setErrMsg(err)
-    })
+      handleSubmit,
+    } = useForm({
+      mode: "onChange",
+    });
   
     /*** CONTRACT WRITE SETUP ***/
     const { config: _20config, error: _20error } = usePrepareContractWrite({
@@ -108,17 +86,8 @@ import {
       overrides: { from: address },
       args: [address],
       onSuccess(data) {
-        console.log("状态：", data)
         let status = Number(data)
         setClaimStatus(status)
-        if(status==2) {
-          setTipMsg(t("mapping.general.transfered"))
-          setAvailableAmount(BigNumber.from("0"))
-          setAvailableAmountStr("0")
-          setDisabled(true)
-        } else if(status==1) {
-          setTipMsg(t("mapping.general.claimed"))
-        }
       }
     })
 
@@ -129,14 +98,12 @@ import {
       overrides: { from: address },
       args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
       onSuccess(data) {
-        if(!data) {
-          setTipMsg(t("mapping.general.noavailable"))
-          setAvailableAmount(BigNumber.from("0"))
-          setAvailableAmountStr("0")
-          setDisabled(true)
-        } else {
-          setDisabled(false)
+        if(data) {
+          setAvailable(true)
         }
+      },
+      onError(e) {
+        console.log("checkholder error", e)
       }
     })
 
@@ -195,20 +162,16 @@ import {
 
     });
     const onSubmit = () => {
-      if(claimStatus==0) {
-        if(availableAmount.eq(BigNumber.from(0))) {
-          toast.error(t("mapping.general.noavailable"))
-          return
-        }
-        if(BigNumber.from(availableAmountStr).gt(tokenAllowance)) {
-          approveWrite?.();
-        } else {
-          writeClaim?.();
-        }
-      } else if(claimStatus==1) {
-        writeTransfer?.()
-      } else {
+      if(claimStatus==2) {
         toast(t("mapping.general.transfered"));
+        return;
+      }
+      if(step==1) {
+        approveWrite?.();
+      } else if(step==2) {
+        writeClaim?.();
+      } else if(step==3) {
+        writeTransfer?.();
       }
     };
   
@@ -218,33 +181,65 @@ import {
       if (!processing) {
         setDisabled(false);
       }
-      //claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")
-      if(claimStatus==2) {
-        setBtnName("Claimed")
-        setDisabled(true)
-      } else if(claimStatus==1) {
-        setBtnName(t("mapping.direct.btn.claim"))
-      } else {
-        console.log("可领金额:", availableAmount, availableAmount.eq(BigNumber.from("0")))
-        if(availableAmount.eq(BigNumber.from("0"))) {
-          setDisabled(true)
+      fetch("/apc/upgrade/getamount", {
+        method: "POST",
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'address=0x39f0357140C66629E3640cc767F6F18b4A4D6a33'// + address
+      }).then( res => {
+        if(res.ok) {
+          return res.json()
         }
-        if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
-          setDisabled(false)
-          //setClaimStatus(0)
-          setBtnName(t("mapping.direct.btn.confirm"))
+        throw res;
+      }).then( data => {
+        if(data.Code == 0) {
+          setAvailableAmount(BigNumber.from(data.Data.Amount))
+          setAvailableAmountStr(data.Data.Amount)
+          setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))
+
+          // console.log("看几个数据", available, claimStatus, btnName, BigNumber.from(availableAmountStr), tokenAllowance, BigNumber.from(availableAmountStr).gt(tokenAllowance))
+          if(!available) {
+            setDisabled(true)
+            setTipMsg(t("mapping.general.noavailable"))
+          } else {
+            setTipMsg("")
+            if(claimStatus==0) {
+              if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
+                setDisabled(false)
+                setBtnName(t("mapping.direct.btn.confirm"))
+                setStep(2)
+              }
+            } else if(claimStatus==1) {
+              setBtnName(t("mapping.direct.btn.claim"))
+              setStep(3)
+            } else {
+              setDisabled(true)
+              setTipMsg(t("mapping.general.transfered"))
+              setAvailableAmount(BigNumber.from("0"))
+              setAvailableAmountStr("0")
+            }
+          }
         }
-      }
+      }).catch(err => {
+        setErrMsg(err)
+      })
     }, [
       address,
       _20config,
       processing,
-      availableAmount,
-      availableAmountStr,
-      proof,
+      // disabled,
+      // availableAmount,
+      // availableAmountStr,
+      // proof,
+      // btnName,
+      // tipMsg,
+      // errMsg,
+      // step,
+      tokenAllowance,
       claimStatus,
-      _claimConfig,
-      _tranConfig
+      available
     ]);
   
     return (
