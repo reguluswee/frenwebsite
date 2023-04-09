@@ -35,7 +35,7 @@ import {
     const [errMsg, setErrMsg] = useState("");
 
     const [availableAmountStr, setAvailableAmountStr] = useState("0");
-    const [availableAmount, setAvailableAmount] = useState(0);
+    const [availableAmount, setAvailableAmount] = useState(BigNumber.from("0"));
     const [proof, setProof] = useState<string>("")
 
     const [approveProcessing, setApproveProcessing] = useState(false);
@@ -65,7 +65,7 @@ import {
       if(data.Code == 0) {
         if(claimStatus!=2) {
           // setAvailableAmount(BigNumber.from(data.Data.Amount).div(bgdec).toNumber())
-          setAvailableAmount(BigNumber.from(data.Data.Amount).toNumber())
+          setAvailableAmount(BigNumber.from(data.Data.Amount))
           setAvailableAmountStr(data.Data.Amount)
           setProof(JSON.stringify(data.Data.Proof))
         }
@@ -112,7 +112,7 @@ import {
         setClaimStatus(status)
         if(status==2) {
           setTipMsg(t("mapping.general.transfered"))
-          setAvailableAmount(0)
+          setAvailableAmount(BigNumber.from("0"))
           setAvailableAmountStr("0")
           setDisabled(true)
         } else if(status==1) {
@@ -130,7 +130,7 @@ import {
       onSuccess(data) {
         if(!data) {
           setTipMsg(t("mapping.general.noavailable"))
-          setAvailableAmount(0)
+          setAvailableAmount(BigNumber.from("0"))
           setAvailableAmountStr("0")
           setDisabled(true)
         } else {
@@ -195,7 +195,7 @@ import {
     });
     const onSubmit = () => {
       if(claimStatus==0) {
-        if(availableAmount==0) {
+        if(availableAmount.eq(BigNumber.from(0))) {
           toast.error(t("mapping.general.noavailable"))
           return
         }
@@ -224,7 +224,7 @@ import {
       } else if(claimStatus==1) {
         setBtnName(t("mapping.direct.btn.claim"))
       } else {
-        if(availableAmount==0) {
+        if(availableAmount.eq(BigNumber.from("0"))) {
           setDisabled(true)
         }
       }
@@ -269,7 +269,7 @@ import {
                         <span className="label-text-alt text-error">{errMsg}</span>
                     </label>
                     <label className="label">
-                        <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : (availableAmount / (10**18)).toFixed(2)}</span>
+                        <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : (availableAmount.div(bgdec)).toString()}</span>
                     </label>
                 </div>
   
