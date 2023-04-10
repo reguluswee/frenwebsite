@@ -72,7 +72,7 @@ const Dashboard: NextPage = () => {
     },
   ];
 
-  const lockForMapping = 5500000000000 * 1e18
+  const lockForMapping = 3900000000000 * 1e18
   const stakeItems = [
     {
       title: t("card.lock-premine"),
