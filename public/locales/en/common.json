@@ -189,6 +189,7 @@
     }
   },
   "mapping": {
+    "title": "Exchange",
     "general": {
       "amount": "Available Amount",
       "claimed": "Had confirmed, could claim transfer",

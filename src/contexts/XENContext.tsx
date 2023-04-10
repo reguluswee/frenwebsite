@@ -289,7 +289,7 @@ export const XENProvider = ({ children }: any) => {
       setCurrentEAAR(Number(data[5]));
       setGrossReward(Number(data[6]));
       setCurrentMaxTerm(Number(data[7] ?? 100 * 86400));
-      setMintValue(data[8].toString());
+      setMintValue(data[8] + "");
 
       setActiveStakes(Number(data[9]));
       setTotalFrenStakedAmount(Number(data[10]));

@@ -188,6 +188,7 @@
     }
   },
   "mapping": {
+    "title": "换币",
     "general": {
       "amount": "可用数量",
       "claimed": "已经完成登记，可以领取",

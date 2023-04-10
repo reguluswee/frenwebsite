@@ -75,6 +75,13 @@ export const navigationItems = [
   //   href: "/batch/fop",
   //   canDisable: true,
   // },
+  {
+    id: 9,
+    t: "mapping.title",
+    icon: <CashIcon className="h-5 w-5" />,
+    href: "/v1/mapping/direct",
+    canDisable: true,
+  },
 ];
 
 export const textLinkItems = [
