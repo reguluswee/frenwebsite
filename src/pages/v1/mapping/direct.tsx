@@ -139,25 +139,6 @@ import {
         setDisabled(true);
       },
     });
-
-    // const {} = useWaitForTransaction({
-    //   hash: approveProcessing ? approveData?.hash : (claimStatus==0 ? _claimData?.hash : (claimStatus==1 ? _tranData?.hash : "")),
-    //   onSuccess(data) {
-    //     //toast(t("toast.approve-successful"));
-    //     if(approveProcessing) {
-    //       setApproveProcessing(false)
-    //       //writeClaim?.()
-    //       setDisabled(false)
-    //       setClaimStatus(0)
-    //       setBtnName(t("mapping.direct.btn.confirm"))
-    //     } else {
-    //       //claim over
-    //       toast(t("toast.approve-successful"));
-    //       setProcessing(false)
-    //       setDisabled(false)
-    //     }
-    //   },
-    // });
     const {} = useWaitForTransaction({
       hash: step==1 ? approveData?.hash : (step==2 ? _claimData?.hash : _tranData?.hash),
       onSuccess(data) {
@@ -220,30 +201,7 @@ import {
         if(data.Code == 0) {
           setAvailableAmount(BigNumber.from(data.Data.Amount))
           setAvailableAmountStr(data.Data.Amount)
-          setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))
-
-          // console.log("看几个数据", available, claimStatus, btnName, BigNumber.from(availableAmountStr), tokenAllowance, BigNumber.from(availableAmountStr).gt(tokenAllowance))
-          // if(!available) {
-          //   setDisabled(true)
-          //   setTipMsg(t("mapping.general.noavailable"))
-          // } else {
-          //   setTipMsg("")
-          //   if(claimStatus==0) {
-          //     if(!(BigNumber.from(availableAmountStr).gt(tokenAllowance))) {
-          //       setDisabled(false)
-          //       setBtnName(t("mapping.direct.btn.confirm"))
-          //       setStep(2)
-          //     }
-          //   } else if(claimStatus==1) {
-          //     setBtnName(t("mapping.direct.btn.claim"))
-          //     setStep(3)
-          //   } else {
-          //     setDisabled(true)
-          //     setTipMsg(t("mapping.general.transfered"))
-          //     setAvailableAmount(BigNumber.from("0"))
-          //     setAvailableAmountStr("0")
-          //   }
-          // }
+          setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))          
         }
       }).catch(err => {
         setErrMsg(err)
