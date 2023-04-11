@@ -207,7 +207,17 @@
     },
     "staking": {
       "title": "Staking Swap",
-      "tip": "Stakers of Pre-Fren could confirm their amount of staking and expired date to claim, and the quantity is counted until block height 16807817."
+      "tip": "Stakers of Pre-Fren could confirm their amount of staking and expired date to claim, and the quantity is counted until block height 16807817.",
+      "form": {
+        "amount": "Staking Amount",
+        "stakeTs": "Staked Date",
+        "maturityTs": "Maturity Date"
+      },
+      "btn": {
+        "approve": "授权操作旧fren",
+        "confirm": "登记确认",
+        "claim": "领取"
+      }
     },
     "mining": {
       "title": "Mining Swap",

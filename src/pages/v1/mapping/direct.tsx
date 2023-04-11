@@ -231,9 +231,9 @@ import {
       }
     }, [
       address,
-      _20config,
+      // _20config,
       processing,
-      // disabled,
+      disabled,
       // availableAmount,
       // availableAmountStr,
       // proof,

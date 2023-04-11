@@ -1,176 +1,323 @@
 import {
-    useNetwork,
-    useAccount,
-    useContractWrite,
-    useWaitForTransaction,
-    usePrepareContractWrite,
-    erc20ABI,
-    useContractRead,
-  } from "wagmi";
-  
-  import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-  import Container from "~/components/containers/Container";
-  import { useRouter } from "next/router";
-  import { useEffect, useState, useContext } from "react";
-  import { useTranslation } from "next-i18next";
-  
-  import CardContainer from "~/components/containers/CardContainer";
-  import Link from "next/link";
-  
-  import { useForm } from "react-hook-form";
-  import { clsx } from "clsx";
-  
-  import toast from "react-hot-toast";
-  import { ethers, BigNumber } from "ethers";
+  useAccount,
+  useContractWrite,
+  useWaitForTransaction,
+  usePrepareContractWrite,
+  erc20ABI,
+  useContractRead,
+} from "wagmi";
 
-  const comAbi = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"wallet","type":"address"},{"indexed":true,"internalType":"uint256","name":"term","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethfCost","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"frenLoss","type":"uint256"}],"name":"ClaimCompensate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"wallet","type":"address"},{"indexed":true,"internalType":"uint256","name":"term","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"ethfCost","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"frenLoss","type":"uint256"}],"name":"GetCompensate","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"CUTOFFTS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"FRENPROXY","outputs":[{"internalType":"contract FrenMint","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"MAX_PENALTY_PCT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"MDAOPROXY","outputs":[{"internalType":"contract MdaoBathProxy","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PENALTY_DAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"SECONDS_IN_DAY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"WITHDRAWAL_WINDOW_DAYS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"ethCostData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"frenLossData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"recordData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"stage","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"startBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive","payable":true},{"inputs":[{"internalType":"uint256","name":"term","type":"uint256"}],"name":"computeTermIssue","outputs":[{"internalType":"uint256","name":"ethfCost","type":"uint256"},{"internalType":"uint256","name":"frenLoss","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"term","type":"uint256"}],"name":"claimTermIssue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"term","type":"uint256"}],"name":"getTermIssue","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_stage","type":"uint256"}],"name":"coolStage","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-  const comAddr = "0x2b3A420591a8be037AbE6DDf9Af4Ec7b433e0492";
-  
-  const Compensate = () => {
-    const { t } = useTranslation("common");
-  
-    const { address } = useAccount();
-    const { chain } = useNetwork();
-    const router = useRouter();
-    const [disabled, setDisabled] = useState(true);
-    const [processing, setProcessing] = useState(false);
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Container from "~/components/containers/Container";
+import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 
-    const [term, setTerm] = useState(0);
-    const [termAmount, setTermAmount] = useState(0);
-    const [termFrenAmount, setTermFrenAmount] = useState(0);
+import CardContainer from "~/components/containers/CardContainer";
+import Link from "next/link";
 
-    const [errMsg, setErrMsg] = useState("");
+import { useForm } from "react-hook-form";
+import { clsx } from "clsx";
 
-    const {
-        handleSubmit,
-      } = useForm({
-        mode: "onChange",
-      });
-  
-    /*** CONTRACT WRITE SETUP ***/
-    const { config: _20config, error: _20error } = usePrepareContractWrite({
-      addressOrName: comAddr,
-      contractInterface: comAbi,
-      functionName: "claimTermIssue",
-      args: [term],
-    })
+import toast from "react-hot-toast";
+import { BigNumber } from "ethers";
 
-    const {} = useContractRead({
-      addressOrName: comAddr,
-      contractInterface: comAbi,
-      functionName: "computeTermIssue",
-      overrides: { from: '0x10ECA8820477f05d99AB99A78aFb2FA26b00e7B1' },
-      args: [term],
-      onSuccess(data) {
-        console.log('结果', data, '0x10ECA8820477f05d99AB99A78aFb2FA26b00e7B1', term)
-        let result = data as number[];
-        if(term != 0) {
-          setTermAmount(Number(result[0]))
-          setTermFrenAmount(Number(result[1]))
-        }
-      },
-      onError(e) {
-        console.log('错误',e)
-      }
-    })
+const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"transferAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"transfer","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+const comAddr = "0x827f2f104E2f364C5423054921732aa54B51F37B";
+const bgdec = BigNumber.from(10**18 + '');
 
-    const { data: cliamIssueData, write } = useContractWrite({
-      ..._20config,
-      onSuccess(data) {
-        setProcessing(true);
-        setDisabled(true);
-      },
-    });
-    const {} = useWaitForTransaction({
-      hash: cliamIssueData?.hash,
-      onSuccess(data) {
-        toast(t("toast.approve-successful"));
-      },
+const MapStake = () => {
+  const { t } = useTranslation("common");
 
-    });
-    const onSubmit = () => {
-        write?.();
-    };
-  
-    /*** USE EFFECT ****/
-  
-    useEffect(() => {
-      if (!processing) {
-        setDisabled(false);
-      }
+  const { address } = useAccount();
+  const [disabled, setDisabled] = useState(true);
+  const [processing, setProcessing] = useState(false);
 
+  const [errMsg, setErrMsg] = useState("");
+
+  const [availableAmountStr, setAvailableAmountStr] = useState("0");
+  const [availableAmount, setAvailableAmount] = useState(BigNumber.from("0"));
+  const [proof, setProof] = useState<string>("")
+
+  const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
+  const [claimStatus, setClaimStatus] = useState(0);
+  const [tipMsg, setTipMsg] = useState("");
+  const [btnName, setBtnName] = useState<string>(t("mapping.direct.btn.approve"));
+  const [available, setAvailable] = useState(false)
+  const [step, setStep] = useState(1)
+
+  const {
+    handleSubmit,
+  } = useForm({
+    mode: "onChange",
+  });
+
+  /*** CONTRACT WRITE SETUP ***/
+  const { config: _20config, error: _20error } = usePrepareContractWrite({
+    addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
+    contractInterface: erc20ABI,
+    functionName: "approve",
+    args: [comAddr, availableAmountStr],
+  })
+  const { data: approveData, write: approveWrite } = useContractWrite({
+    ..._20config,
+    onSuccess(data) {
+      setProcessing(true);
       setDisabled(true);
-    }, [
-      address,
-      _20config,
-      processing,
-    ]);
-  
-    return (
-      <Container className="max-w-2xl">
-        <div className="flew flex-row space-y-8 ">
-          <ul className="steps w-full">
-            <Link href="/batch/fop">
-              <a className="step step-neutral">test and compute</a>
-            </Link>
-  
-            <Link href="/batch/saving">
-              <a className="step">collecting</a>
-            </Link>
-
-            <Link href="/multi/tokens">
-              <a className="step">compensate</a>
-            </Link>
-          </ul>
-  
-          <CardContainer>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col space-y-4">
-                <h2 className="card-title text-neutral">
-                Fren labs creates this tool as a one time compensation for our loyal users who losed their $fren for using MemorySwap Batch Tool
-                </h2>
-                <div className="form-control w-full">
-                    <label className="label text-neutral">
-                        <span className="label-text text-neutral">Term</span>
-                        <span className="label-text-alt text-error">{errMsg}</span>
-                    </label>
-                    <input
-                        type="number"
-                        placeholder="1"
-                        className="input input-bordered w-full text-neutral"
-                        value={term}
-                        onChange={e => setTerm(Number(e.target.value))}
-                    />
-                    <label className="label">
-                        <span className="label-text-alt text-neutral">Total Term Loss</span>
-                        <span className="label-text-alt text-neutral">{termAmount}</span>
-                    </label>
-                </div>
-  
-                <div className="form-control w-full">
-                  <button
-                    type="submit"
-                    className={clsx("btn glass text-neutral", {
-                      loading: processing,
-                    })}
-                    disabled={disabled}
-                  >
-                    Claim My Loss
-                  </button>
-                </div>
-              </div>
-            </form>
-          </CardContainer>
-        </div>
-      </Container>
-    );
-  }
-export async function getStaticProps({ locale }: any) {
-      return {
-        props: {
-          ...(await serverSideTranslations(locale, ["common"])),
-        },
-      };
+    },
+  });
+  const {} = useContractRead({
+    addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
+    contractInterface: erc20ABI,
+    functionName: "allowance",
+    overrides: { from: address },
+    args: [address, comAddr],
+    onSuccess(data) {
+      setTokenAllowance(BigNumber.from(data));
     }
-    
-export default Compensate;
+  })
+
+
+  const {} = useContractRead({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "transferAddress",
+    overrides: { from: address },
+    args: [address],
+    onSuccess(data) {
+      let status = Number(data)
+      setClaimStatus(status)
+    }
+  })
+
+  const {} = useContractRead({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "checkHolder",
+    overrides: { from: address },
+    args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
+    onSuccess(data) {
+      if(data) {
+        setAvailable(true)
+      }
+    },
+    onError(e) {
+      console.log("checkholder error", e)
+    }
+  })
+
+  const { config: _claimConfig, error: _claimerror } = usePrepareContractWrite({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "claim",
+    args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
+    onSuccess(data) {
+    }
+  })
+
+  const { data: _claimData, write: writeClaim } = useContractWrite({
+    ..._claimConfig,
+    onSuccess(data) {
+      setProcessing(true);
+      setDisabled(true);
+    },
+  });
+
+  const { config: _tranConfig, error: _transferError } = usePrepareContractWrite({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "transfer",
+    overrides: { from: address },
+    onError(e) {
+      console.log("地址：", address, e)
+    }
+  })
+
+  const { data: _tranData, write: writeTransfer } = useContractWrite({
+    ..._tranConfig,
+    onSuccess(data) {
+      setProcessing(true);
+      setDisabled(true);
+    },
+  });
+  const {} = useWaitForTransaction({
+    hash: step==1 ? approveData?.hash : (step==2 ? _claimData?.hash : _tranData?.hash),
+    onSuccess(data) {
+      if(step==1) {
+        setStep(2)
+        setDisabled(false)
+        setProcessing(false)
+        setBtnName(t("mapping.direct.btn.confirm"))
+      } else if(step==2) {
+        setStep(3)
+        setDisabled(false)
+        setProcessing(false)
+        setClaimStatus(1)
+        setBtnName(t("mapping.direct.btn.claim"))
+      } else {
+        setDisabled(true)
+        setProcessing(false)
+        setClaimStatus(2)
+        setBtnName(t("mapping.direct.btn.claim"))
+        setTipMsg(t("mapping.general.transfered"))
+        setAvailableAmount(BigNumber.from("0"))
+        setAvailableAmountStr("0")
+      }
+    },
+  });
+
+  const onSubmit = () => {
+    if(claimStatus==2) {
+      toast(t("mapping.general.transfered"));
+      return;
+    }
+    if(step==1) {
+      approveWrite?.();
+    } else if(step==2) {
+      writeClaim?.();
+    } else if(step==3) {
+      writeTransfer?.();
+    }
+  };
+
+  /*** USE EFFECT ****/
+
+  useEffect(() => {
+    if (!processing) {
+      setDisabled(false);
+    }
+    fetch("/apc/upgrade/getstake", {
+      method: "POST",
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'address=' + address
+    }).then( res => {
+      if(res.ok) {
+        return res.json()
+      }
+      throw res;
+    }).then( data => {
+      if(data.Code == 0) {
+        setAvailableAmount(BigNumber.from(data.Data.Amount))
+        setAvailableAmountStr(data.Data.Amount)
+        setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))          
+      }
+    }).catch(err => {
+      setErrMsg(err)
+    })
+
+    if(!available) {
+      setDisabled(true)
+      setTipMsg(t("mapping.general.noavailable"))
+    } else {
+      setTipMsg("")
+      if(claimStatus==0) {
+        let avBig = BigNumber.from(availableAmountStr).add(BigNumber.from("1"))
+        if(!(avBig.gt(tokenAllowance))) {
+          setDisabled(false)
+          setBtnName(t("mapping.direct.btn.confirm"))
+          setStep(2)
+        }
+      } else if(claimStatus==1) {
+        setBtnName(t("mapping.direct.btn.claim"))
+        setStep(3)
+      } else {
+        setDisabled(true)
+        setTipMsg(t("mapping.general.transfered"))
+        setAvailableAmount(BigNumber.from("0"))
+        setAvailableAmountStr("0")
+      }
+    }
+  }, [
+    address,
+    // _20config,
+    processing,
+    disabled,
+    // availableAmount,
+    // availableAmountStr,
+    // proof,
+    // btnName,
+    // tipMsg,
+    // errMsg,
+    step,
+    tokenAllowance,
+    claimStatus,
+    available
+  ]);
+
+  return (
+    <Container className="max-w-2xl">
+      <div className="flew flex-row space-y-8 ">
+        <ul className="steps w-full">
+          <Link href="/mapping/direct">
+            <a className="step">{t("mapping.direct.title")}</a>
+          </Link>
+
+          <Link href="/mapping/staking">
+            <a className="step step-neutral">{t("mapping.staking.title")}</a>
+          </Link>
+
+          <Link href="">
+            <a className="step">{t("mapping.mining.title")}(coming)</a>
+          </Link>
+        </ul>
+
+        <CardContainer>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col space-y-4">
+              <h2 className="card-title text-neutral">
+              {t("mapping.staking.tip")}
+              </h2>
+              <div className="form-control w-full">
+                  <label className="label text-neutral">
+                      <span className="label-text text-neutral">{t("mapping.staking.form.amount")}</span>
+                      <span className="label-text-alt text-error">{errMsg}</span>
+                  </label>
+                  <label className="label">
+                      <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : (availableAmount.div(bgdec)).toString()}</span>
+                  </label>
+              </div>
+              <div className="form-control w-full">
+                  <label className="label text-neutral">
+                      <span className="label-text text-neutral">{t("mapping.staking.form.maturityTs")}</span>
+                      <span className="label-text-alt text-error">{errMsg}</span>
+                  </label>
+                  <label className="label">
+                      <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : (availableAmount.div(bgdec)).toString()}</span>
+                  </label>
+              </div>
+              
+
+              <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text-alt text-neutral">{tipMsg}</span>
+                </label>
+                <button
+                  type="submit"
+                  className={clsx("btn glass text-neutral", {
+                    loading: processing,
+                  })}
+                  disabled= {disabled}
+                  // {claimStatus==2 || availableAmount==0 ? true : disabled}
+                >
+                  {/* {claimStatus == 0 ? t("mapping.direct.btn.confirm") : (claimStatus==1 ? t("mapping.direct.btn.claim") : "claimed")} */}
+                  {btnName}
+                </button>
+              </div>
+            </div>
+          </form>
+        </CardContainer>
+      </div>
+    </Container>
+  );
+}
+export async function getStaticProps({ locale }: any) {
+    return {
+      props: {
+        ...(await serverSideTranslations(locale, ["common"])),
+      },
+    };
+  }
+  
+export default MapStake;
