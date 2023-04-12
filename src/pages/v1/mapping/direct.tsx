@@ -198,10 +198,11 @@ import {
         }
         throw res;
       }).then( data => {
+        console.log("返回的：", data)
         if(data.Code == 0) {
-          setAvailableAmount(BigNumber.from(data.Data.Amount))
-          setAvailableAmountStr(data.Data.Amount)
-          setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))          
+          setAvailableAmount(data.Data?.Amount ? BigNumber.from(data.Data?.Amount) : BigNumber.from(0))
+          setAvailableAmountStr(data.Data?.Amount)
+          setProof(JSON.stringify(data.Data?.Proof ? data.Data?.Proof : "[]"))          
         }
       }).catch(err => {
         setErrMsg(err)
@@ -255,7 +256,7 @@ import {
             </Link>
   
             <Link href="/v1/mapping/staking">
-              <a className="step">{t("mapping.staking.title")}(coming)</a>
+              <a className="step">{t("mapping.staking.title")}</a>
             </Link>
 
             <Link href="">
