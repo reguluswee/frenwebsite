@@ -128,7 +128,6 @@ import {
       functionName: "transfer",
       overrides: { from: address },
       onError(e) {
-        console.log("地址：", address, e)
       }
     })
 
@@ -198,7 +197,6 @@ import {
         }
         throw res;
       }).then( data => {
-        console.log("返回的：", data)
         if(data.Code == 0) {
           setAvailableAmount(data.Data?.Amount ? BigNumber.from(data.Data?.Amount) : BigNumber.from(0))
           setAvailableAmountStr(data.Data?.Amount)
