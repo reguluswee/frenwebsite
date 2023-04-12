@@ -250,7 +250,7 @@ import {
       <Container className="max-w-2xl">
         <div className="flew flex-row space-y-8 ">
           <ul className="steps w-full">
-            <Link href="/mapping/direct">
+            <Link href="/v1/mapping/direct">
               <a className="step step-neutral">{t("mapping.direct.title")}</a>
             </Link>
   
