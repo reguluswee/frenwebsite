@@ -213,10 +213,10 @@ const MapStake = () => {
       throw res;
     }).then( data => {
       if(data.Code == 0) {
-        setAvailableAmount(BigNumber.from(data.Data.RewardAmount))
-        setAvailableAmountStr(data.Data.RewardAmount)
-        setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))          
-        setMaturityTs(Number(data.Data.MaturityTs))
+        setAvailableAmount(data.Data?.RewardAmount? BigNumber.from(data.Data.RewardAmount) : BigNumber.from(0))
+        setAvailableAmountStr(data.Data?.RewardAmount)
+        setProof(JSON.stringify(data.Data?.Proof ? data.Data.Proof : "[]"))          
+        setMaturityTs(data.Data?.MaturityTs ? Number(data.Data?.MaturityTs) : 0)
       }
     }).catch(err => {
       setErrMsg(err)
