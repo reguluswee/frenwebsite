@@ -254,7 +254,7 @@ import {
               <a className="step step-neutral">{t("mapping.direct.title")}</a>
             </Link>
   
-            <Link href="">
+            <Link href="/v1/mapping/staking">
               <a className="step">{t("mapping.staking.title")}(coming)</a>
             </Link>
 

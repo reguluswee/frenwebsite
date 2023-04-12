@@ -194,7 +194,8 @@
       "amount": "Available Amount",
       "claimed": "Had confirmed, could claim transfer",
       "transfered": "Had claimed new $fren",
-      "noavailable": "No Available Token"
+      "noavailable": "No Available Token",
+      "not-in-time": "Claiming time has not yet arrived"
     },
     "direct": {
       "title": "Holding Swap",
@@ -214,9 +215,9 @@
         "maturityTs": "Maturity Date"
       },
       "btn": {
-        "approve": "授权操作旧fren",
-        "confirm": "登记确认",
-        "claim": "领取"
+        "approve": "Approve Old Fren",
+        "confirm": "Confirm",
+        "claim": "claim"
       }
     },
     "mining": {

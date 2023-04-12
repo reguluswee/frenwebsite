@@ -18,11 +18,13 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { clsx } from "clsx";
 
+import { UTC_TIME, formatFullDate } from "~/lib/helpers";
+
 import toast from "react-hot-toast";
 import { BigNumber } from "ethers";
 
-const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimedAmount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"transferAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"transfer","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-const comAddr = "0x827f2f104E2f364C5423054921732aa54B51F37B";
+const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimData","outputs":[{"internalType":"uint256","name":"maturityTs","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bool","name":"done","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"transfer","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+const comAddr = "0x37d34272956290B80D0279B42B6eF720F9416A1D";
 const bgdec = BigNumber.from(10**18 + '');
 
 const MapStake = () => {
@@ -37,11 +39,12 @@ const MapStake = () => {
   const [availableAmountStr, setAvailableAmountStr] = useState("0");
   const [availableAmount, setAvailableAmount] = useState(BigNumber.from("0"));
   const [proof, setProof] = useState<string>("")
+  const [maturityTs, setMaturityTs] = useState(0);
 
   const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
   const [claimStatus, setClaimStatus] = useState(0);
   const [tipMsg, setTipMsg] = useState("");
-  const [btnName, setBtnName] = useState<string>(t("mapping.direct.btn.approve"));
+  const [btnName, setBtnName] = useState<string>(t("mapping.staking.btn.approve"));
   const [available, setAvailable] = useState(false)
   const [step, setStep] = useState(1)
 
@@ -76,16 +79,27 @@ const MapStake = () => {
     }
   })
 
-
   const {} = useContractRead({
     addressOrName: comAddr,
     contractInterface: comAbi,
-    functionName: "transferAddress",
+    functionName: "claimData",
     overrides: { from: address },
     args: [address],
     onSuccess(data) {
-      let status = Number(data)
-      setClaimStatus(status)
+      console.log("状态：", data)
+      if(data.done) {
+        setClaimStatus(2)
+        setStep(3)
+      } else {
+        if(Number(data.amount)==0) {
+          setClaimStatus(0)
+          setStep(1)
+        } else {
+          setClaimStatus(1)
+          setStep(2)
+        }
+      }
+      
     }
   })
 
@@ -94,7 +108,7 @@ const MapStake = () => {
     contractInterface: comAbi,
     functionName: "checkHolder",
     overrides: { from: address },
-    args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
+    args: [availableAmountStr, maturityTs, JSON.parse(proof=="" ? "[]" : proof)],
     onSuccess(data) {
       if(data) {
         setAvailable(true)
@@ -109,7 +123,7 @@ const MapStake = () => {
     addressOrName: comAddr,
     contractInterface: comAbi,
     functionName: "claim",
-    args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
+    args: [availableAmountStr, maturityTs, JSON.parse(proof==""?"[]":proof)],
     onSuccess(data) {
     }
   })
@@ -128,7 +142,7 @@ const MapStake = () => {
     functionName: "transfer",
     overrides: { from: address },
     onError(e) {
-      console.log("地址：", address, e)
+      console.log("address error:", address, e)
     }
   })
 
@@ -146,19 +160,19 @@ const MapStake = () => {
         setStep(2)
         setDisabled(false)
         setProcessing(false)
-        setBtnName(t("mapping.direct.btn.confirm"))
+        setBtnName(t("mapping.staking.btn.confirm"))
       } else if(step==2) {
         setStep(3)
         setDisabled(false)
         setProcessing(false)
         setClaimStatus(1)
-        setBtnName(t("mapping.direct.btn.claim"))
+        setBtnName(t("mapping.staking.btn.claim"))
       } else {
         setDisabled(true)
         setProcessing(false)
         setClaimStatus(2)
-        setBtnName(t("mapping.direct.btn.claim"))
-        setTipMsg(t("mapping.general.transfered"))
+        setBtnName(t("mapping.staking.btn.claim"))
+        setTipMsg(t("mapping.staking.transfered"))
         setAvailableAmount(BigNumber.from("0"))
         setAvailableAmountStr("0")
       }
@@ -199,9 +213,10 @@ const MapStake = () => {
       throw res;
     }).then( data => {
       if(data.Code == 0) {
-        setAvailableAmount(BigNumber.from(data.Data.Amount))
-        setAvailableAmountStr(data.Data.Amount)
+        setAvailableAmount(BigNumber.from(data.Data.RewardAmount))
+        setAvailableAmountStr(data.Data.RewardAmount)
         setProof(JSON.stringify(data.Data.Proof ? data.Data.Proof : "[]"))          
+        setMaturityTs(Number(data.Data.MaturityTs))
       }
     }).catch(err => {
       setErrMsg(err)
@@ -211,16 +226,16 @@ const MapStake = () => {
       setDisabled(true)
       setTipMsg(t("mapping.general.noavailable"))
     } else {
-      setTipMsg("")
+      setTipMsg("" + claimStatus + ":" + step)
       if(claimStatus==0) {
         let avBig = BigNumber.from(availableAmountStr).add(BigNumber.from("1"))
         if(!(avBig.gt(tokenAllowance))) {
           setDisabled(false)
-          setBtnName(t("mapping.direct.btn.confirm"))
+          setBtnName(t("mapping.staking.btn.confirm"))
           setStep(2)
         }
       } else if(claimStatus==1) {
-        setBtnName(t("mapping.direct.btn.claim"))
+        setBtnName(t("mapping.staking.btn.claim"))
         setStep(3)
       } else {
         setDisabled(true)
@@ -228,6 +243,9 @@ const MapStake = () => {
         setAvailableAmount(BigNumber.from("0"))
         setAvailableAmountStr("0")
       }
+    }
+    if(maturityTs > new Date().getTime()/1000) {
+      setTipMsg(t("mapping.general.not-in-time"));
     }
   }, [
     address,
@@ -250,11 +268,11 @@ const MapStake = () => {
     <Container className="max-w-2xl">
       <div className="flew flex-row space-y-8 ">
         <ul className="steps w-full">
-          <Link href="/mapping/direct">
+          <Link href="/v1/mapping/direct">
             <a className="step">{t("mapping.direct.title")}</a>
           </Link>
 
-          <Link href="/mapping/staking">
+          <Link href="/v1/mapping/staking">
             <a className="step step-neutral">{t("mapping.staking.title")}</a>
           </Link>
 
@@ -284,7 +302,7 @@ const MapStake = () => {
                       <span className="label-text-alt text-error">{errMsg}</span>
                   </label>
                   <label className="label">
-                      <span className="input input-bordered w-full text-neutral">{claimStatus==2 ? 0 : (availableAmount.div(bgdec)).toString()}</span>
+                      <span className="input input-bordered w-full text-neutral">{formatFullDate(maturityTs)}</span>
                   </label>
               </div>
               
