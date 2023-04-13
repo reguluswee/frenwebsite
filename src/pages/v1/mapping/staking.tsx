@@ -228,7 +228,7 @@ const MapStake = () => {
     } else {
       setTipMsg("" + claimStatus + ":" + step)
       if(claimStatus==0) {
-        let avBig = BigNumber.from(availableAmountStr).add(BigNumber.from("1"))
+        let avBig = BigNumber.from(availableAmountStr)
         if(!(avBig.gt(tokenAllowance))) {
           setDisabled(false)
           setBtnName(t("mapping.staking.btn.confirm"))
