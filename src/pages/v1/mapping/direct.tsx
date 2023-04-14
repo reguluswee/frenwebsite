@@ -111,6 +111,11 @@ import {
       functionName: "claim",
       args: [availableAmountStr, JSON.parse(proof==""?"[]":proof)],
       onSuccess(data) {
+      },
+      onError(e) {
+        if(step==2) {
+          setErrMsg(t("mapping.general.old-balance-burn-invalid"))
+        }
       }
     })
 
@@ -212,7 +217,7 @@ import {
       } else {
         setTipMsg("")
         if(claimStatus==0) {
-          let avBig = BigNumber.from(availableAmountStr).add(BigNumber.from("1"))
+          let avBig = BigNumber.from(availableAmountStr)
           if(!(avBig.gt(tokenAllowance))) {
             setDisabled(false)
             setBtnName(t("mapping.direct.btn.confirm"))
@@ -233,8 +238,8 @@ import {
       // _20config,
       processing,
       disabled,
+      availableAmountStr,
       // availableAmount,
-      // availableAmountStr,
       // proof,
       // btnName,
       // tipMsg,
