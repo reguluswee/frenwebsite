@@ -262,8 +262,8 @@ import {
               <a className="step">{t("mapping.staking.title")}</a>
             </Link>
 
-            <Link href="">
-              <a className="step">{t("mapping.mining.title")}(coming)</a>
+            <Link href="/v1/mapping/mining">
+              <a className="step">{t("mapping.mining.title")}</a>
             </Link>
           </ul>
   
