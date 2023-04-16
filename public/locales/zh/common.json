@@ -194,7 +194,8 @@
       "claimed": "已经完成登记，可以领取",
       "transfered": "已经领取完成新 $fren",
       "noavailable": "没有可领取Token",
-      "not-in-time": "请到期后来领取"
+      "not-in-time": "请到期后来领取",
+      "old-balance-burn-invalid": "钱包内需要有对应金额的旧fren以对应发行新的fren"
     },
     "direct": {
       "title": "持仓换币",
@@ -221,7 +222,25 @@
     },
     "mining": {
       "title": "铸造换币",
-      "tip": "原Fren铸币用户在这里确认金额和到期领取日期，数量统计截止于区块高度16807817."
+      "tip": "原Fren铸币用户在这里确认金额和到期领取日期，数量统计截止于区块高度16807817.",
+      "form": {
+        "mine-type": "铸造类型",
+        "single-mine":"普通铸造",
+        "saving-mine":"省Gas批量铸造",
+        "multitoken-mine":"多币种批量铸造"
+      },
+      "tb": {
+        "owner": "铸造人",
+        "count": "铸造数",
+        "term": "Term",
+        "maturity":"成熟期",
+        "reward":"奖励"
+      },
+      "btn": {
+        "approve": "授权操作旧fren",
+        "query": "查询并登记",
+        "claim": "申领"
+      }
     }
   },
   "upgrade": {

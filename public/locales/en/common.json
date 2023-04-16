@@ -195,7 +195,8 @@
       "claimed": "Had confirmed, could claim transfer",
       "transfered": "Had claimed new $fren",
       "noavailable": "No Available Token",
-      "not-in-time": "Claiming time has not yet arrived"
+      "not-in-time": "Claiming time has not yet arrived",
+      "old-balance-burn-invalid": "Old fren balance of this wallet is not enough to issue new one"
     },
     "direct": {
       "title": "Holding Swap",
@@ -222,7 +223,25 @@
     },
     "mining": {
       "title": "Mining Swap",
-      "tip": "Mining of Pre-Fren could confirm their amount of staking and expired date to claim, and the quantity is counted until block height 16807817."
+      "tip": "Mining of Pre-Fren could confirm their amount of staking and expired date to claim, and the quantity is counted until block height 16807817.",
+      "form": {
+        "mine-type": "Mine Type",
+        "single-mine":"General Mine",
+        "saving-mine":"Saving-Gas Batch Mine",
+        "multitoken-mine":"Multi-Token Batch Mine"
+      },
+      "tb": {
+        "owner": "Owner",
+        "count": "Minters",
+        "term": "Term",
+        "maturity":"Maturity",
+        "reward":"Reward"
+      },
+      "btn": {
+        "approve": "Approve Old Fren",
+        "query": "Query and Claim",
+        "claim": "Claim"
+      }
     }
   },
   "upgrade": {
