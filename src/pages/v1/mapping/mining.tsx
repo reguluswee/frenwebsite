@@ -45,8 +45,8 @@ const MiningSelect2 = ({ value, options, onChange } : any) => {
   return (
     <label className="label text-neutral">
       <select value={value} onChange={onChange} className="input input-bordered w-full text-neutral">
-        {options.map((option:any) => (
-          <option value={option.value}>{option.label}</option>
+        {options.map((option:any, index: any) => (
+          <option key={index} value={option.value}>{option.label}</option>
         ))}
       </select>
     </label>
