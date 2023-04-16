@@ -246,11 +246,11 @@ const MapMining = () => {
 
         <CardContainer>
           <h2 className="card-title">{t("batch.record")}</h2>
-          <div className="text-right">
+          {/* <div className="text-right">
             <button type="button" className="btn btn-xs glass text-neutral ml-2" onClick={handleApprove.bind(this)}>
               {t("mapping.mining.btn.approve")}
             </button>
-          </div>
+          </div> */}
 
           <div className="overflow-x-auto">
             <table className="table w-full">
