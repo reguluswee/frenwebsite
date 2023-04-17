@@ -304,7 +304,6 @@ const MapStake = () => {
               <div className="form-control w-full">
                   <label className="label text-neutral">
                       <span className="label-text text-neutral">{t("mapping.staking.form.maturityTs")}</span>
-                      <span className="label-text-alt text-error">{errMsg}</span>
                   </label>
                   <label className="label">
                       <span className="input input-bordered w-full text-neutral">{formatFullDate(maturityTs)}</span>
