@@ -115,6 +115,28 @@ const MapMining = () => {
     setTypeValue(event.target.value);
   };
 
+  const mintName = (t : number) => {
+    if(t==0) {
+      return (
+        <>
+        <span>General</span>
+        </>
+      )
+    } else if(t==1) {
+      return (
+        <>
+        <span>Saving</span>
+        </>
+      )
+    } else if(t==2) {
+      return (
+        <>
+        <span>MultiToken</span>
+        </>
+      )
+    }
+  }
+
   const {
     handleSubmit,
   } = useForm({
@@ -260,6 +282,7 @@ const MapMining = () => {
                   <th className="lg:table-cell">{t("mapping.mining.tb.term")}</th>
                   <th className="lg:table-cell">{t("mapping.mining.tb.maturity")}</th>
                   <th className="lg:table-cell">{t("mapping.mining.tb.reward")}</th>
+                  <th className="lg:table-cell">类型</th>
                   <th className="lg:table-cell">{t("batch.tb.action")}</th>
                 </tr>
               </thead>
@@ -271,6 +294,7 @@ const MapMining = () => {
                       <td>{item.Term}</td>
                       <td>{formatDate(Number(item.MaturityTs))}</td>
                       <td>{item.Rewards}</td>
+                      <td>{mintName(item.Tc)}</td>
                       <td>
                         <button
                             type="button"
