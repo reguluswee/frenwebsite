@@ -32,7 +32,7 @@ const bgdec = BigNumber.from(10**18 + '');
 const MapStake = () => {
   const { t } = useTranslation("common");
 
-  // const { address } = useAccount();
+  const { address } = useAccount();
   const [disabled, setDisabled] = useState(true);
   const [processing, setProcessing] = useState(false);
 
