@@ -235,7 +235,9 @@
         "count": "Minters",
         "term": "Term",
         "maturity":"Maturity",
-        "reward":"Reward"
+        "reward":"Reward",
+        "round": "Round",
+        "type": "Type"
       },
       "btn": {
         "approve": "Approve Old Fren",

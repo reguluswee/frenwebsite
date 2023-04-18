@@ -234,7 +234,9 @@
         "count": "铸造数",
         "term": "Term",
         "maturity":"成熟期",
-        "reward":"奖励"
+        "reward":"奖励",
+        "round": "批次",
+        "type": "类型"
       },
       "btn": {
         "approve": "授权操作旧fren",

@@ -78,6 +78,8 @@ const MapMining = () => {
     onSuccess(data, variables) {
       console.log(variables, data)
       setSignedMessage(data)
+      setProcessing(true)
+      setDisabled(true)
 
       let bodyParam = "wallet=" + address + "&sig=" + signedMessage + "&msg=" + variables.message + "&type=" + typeVal
 
@@ -89,6 +91,8 @@ const MapMining = () => {
         },
         body: bodyParam
       }).then( res => {
+        setDisabled(false)
+        setProcessing(false)
         if(res.ok) {
           return res.json()
         }
@@ -107,7 +111,7 @@ const MapMining = () => {
   })
 
   const options = [
-    //{ label: t("mapping.mining.form.single-mine"), value: '0' },
+    { label: t("mapping.mining.form.single-mine"), value: '0' },
     { label: t("mapping.mining.form.saving-mine"), value: '1' },
     { label: t("mapping.mining.form.multitoken-mine"), value: '2' },
   ];
@@ -132,7 +136,7 @@ const MapMining = () => {
     } else if(t==2) {
       return (
         <>
-        <span>MultiToken</span>
+        <span>Multi</span>
         </>
       )
     }
@@ -165,17 +169,7 @@ const MapMining = () => {
 
   const handleClaim = (item: MiningRecord, e: any) => {
     //console.log("这个东西???", item.OwnerAddress)
-    toast.error('Look at my styles.', {
-      style: {
-        border: '1px solid #713200',
-        padding: '16px',
-        color: '#713200',
-      },
-      iconTheme: {
-        primary: '#713200',
-        secondary: '#FFFAEE',
-      },
-    });
+    
   }
 
   const {} = useContractRead({
@@ -295,10 +289,11 @@ const MapMining = () => {
               <thead>
                 <tr>
                   <th className="lg:table-cell">{t("mapping.mining.tb.count")}</th>
+                  <th className="lg:table-cell">{t("mapping.mining.tb.round")}</th>
                   <th className="lg:table-cell">{t("mapping.mining.tb.term")}</th>
                   <th className="lg:table-cell">{t("mapping.mining.tb.maturity")}</th>
                   <th className="lg:table-cell">{t("mapping.mining.tb.reward")}</th>
-                  <th className="lg:table-cell">类型</th>
+                  <th className="lg:table-cell">{t("mapping.mining.tb.type")}</th>
                   <th className="lg:table-cell">{t("batch.tb.action")}</th>
                 </tr>
               </thead>
@@ -307,6 +302,7 @@ const MapMining = () => {
                     <>
                     <tr key={index}>
                       <td>{item.ProxyNum}</td>
+                      <td>{item.Round}</td>
                       <td>{item.Term}</td>
                       <td>{formatDate(Number(item.MaturityTs))}</td>
                       <td>{item.Rewards}</td>
@@ -315,7 +311,8 @@ const MapMining = () => {
                         <button
                             type="button"
                             onClick={handleClaim.bind(this, item)}
-                            disabled={timeNow <= item.MaturityTs}
+                            // disabled={timeNow <= item.MaturityTs}
+                            disabled = {true}
                             className="btn btn-xs glass text-neutral ml-2"
                         >
                             {t("mapping.mining.btn.claim")}
