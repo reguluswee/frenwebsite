@@ -27,7 +27,7 @@ const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"byte
 const comAddr = "0x37d34272956290B80D0279B42B6eF720F9416A1D";
 const bgdec = BigNumber.from(10**18 + '');
 
-const address = "0x437F552E716B15074689A7635a820b3Df4201994"
+//const address = "0x437F552E716B15074689A7635a820b3Df4201994"
 
 const MapStake = () => {
   const { t } = useTranslation("common");

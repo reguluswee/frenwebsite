@@ -33,12 +33,13 @@ const bgdec = BigNumber.from(10**18 + '');
 const timeNow = new Date().getTime() / 1000;
 
 export interface MiningRecord {
-  owner: string,
-  proxyNum: number,
-  round: number,
-  term: number,
-  maturityTs: number,
-  rewards: BigNumber,
+  OwnerAddress: string,
+  ProxyNum: number,
+  Round: number,
+  Term: number,
+  MaturityTs: number,
+  Rewards: BigNumber,
+  Tc: number,
 }
 
 const MiningSelect2 = ({ value, options, onChange } : any) => {
@@ -161,6 +162,21 @@ const MapMining = () => {
   const handleApprove = (e: any) => {
     approveWrite?.()
   };
+
+  const handleClaim = (item: MiningRecord, e: any) => {
+    //console.log("这个东西???", item.OwnerAddress)
+    toast.error('Look at my styles.', {
+      style: {
+        border: '1px solid #713200',
+        padding: '16px',
+        color: '#713200',
+      },
+      iconTheme: {
+        primary: '#713200',
+        secondary: '#FFFAEE',
+      },
+    });
+  }
 
   const {} = useContractRead({
     addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
@@ -298,6 +314,7 @@ const MapMining = () => {
                       <td>
                         <button
                             type="button"
+                            onClick={handleClaim.bind(this, item)}
                             disabled={timeNow <= item.MaturityTs}
                             className="btn btn-xs glass text-neutral ml-2"
                         >
