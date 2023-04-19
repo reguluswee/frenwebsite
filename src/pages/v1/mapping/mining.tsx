@@ -10,7 +10,7 @@ import {
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Container from "~/components/containers/Container";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "next-i18next";
 
 import CardContainer from "~/components/containers/CardContainer";
@@ -19,16 +19,14 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { clsx } from "clsx";
 
-import { WSavingItem } from "~/components/MultiList";
-
-import { UTC_TIME, formatDate } from "~/lib/helpers";
+import { formatDate } from "~/lib/helpers";
 
 import toast from "react-hot-toast";
 import { BigNumber } from "ethers";
 import { sign } from "crypto";
 
-const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"MULTI","outputs":[{"internalType":"contract BatchLogic","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PAGESIZE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"SAVING","outputs":[{"internalType":"contract BatchLogic","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"claimData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_page","type":"uint256"}],"name":"uniQueryRounds","outputs":[{"internalType":"uint256","name":"len","type":"uint256"},{"internalType":"uint256[]","name":"rounds","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"}],"name":"uniQueryProxies","outputs":[{"internalType":"address[]","name":"proxies","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-const comAddr = "0x016a8acb9d6342C1435536c1DfC76BD21A33Cc63";
+const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"MULTI","outputs":[{"internalType":"contract BatchLogic","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PAGESIZE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"SAVING","outputs":[{"internalType":"contract BatchLogic","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"claimData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_page","type":"uint256"}],"name":"uniQueryRounds","outputs":[{"internalType":"uint256","name":"len","type":"uint256"},{"internalType":"uint256[]","name":"rounds","type":"uint256[]"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"}],"name":"uniQueryProxies","outputs":[{"internalType":"address[]","name":"proxies","type":"address[]"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"}];
+const comAddr = "0x3948EcBE2B42FE3E39fba5649cDD0A4C18ba0071";
 const bgdec = BigNumber.from(10**18 + '');
 const timeNow = new Date().getTime() / 1000;
 
@@ -40,6 +38,8 @@ export interface MiningRecord {
   MaturityTs: number,
   Rewards: BigNumber,
   Tc: number,
+  claimProcessing: boolean,
+  claimDisabled: boolean,
 }
 
 const MiningSelect2 = ({ value, options, onChange } : any) => {
@@ -63,12 +63,18 @@ const MapMining = () => {
   const [disabled, setDisabled] = useState(true);
   const [processing, setProcessing] = useState(false);
 
+  const [claiming, setClaiming] = useState(0);
+  const [claimRound, setClaimClaimRound] = useState(0);
+  const [claimType, setClaimType] = useState(0);
+  const [claimAmount, setClaimAmount] = useState(0)
+  const [claimMaturity, setClaimMaturity] = useState(0);
+  const [claimProof, setClaimProof] = useState<string[]>();
+
   const [errMsg, setErrMsg] = useState("");
 
   const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
   
   const [tipMsg, setTipMsg] = useState("");
-  const [btnName, setBtnName] = useState<string>(t("mapping.staking.btn.approve"));
 
   const [signedMessage, setSignedMessage] = useState("");
 
@@ -82,7 +88,6 @@ const MapMining = () => {
       setDisabled(true)
 
       let bodyParam = "wallet=" + address + "&sig=" + signedMessage + "&msg=" + variables.message + "&type=" + typeVal
-
       fetch("/apc/upgrade/claimowner", {
         method: "POST",
         mode: 'no-cors',
@@ -105,7 +110,7 @@ const MapMining = () => {
           setErrMsg(data.Msg)
         }
       }).catch(err => {
-        //setErrMsg(err)
+        setErrMsg("server error")
       })
     },
   })
@@ -163,13 +168,94 @@ const MapMining = () => {
     },
   });
 
+  const {} = useContractRead({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "claimData",
+    overrides: { from: address },
+    args: [address, claimType, claimRound],
+    onSuccess(data) {
+      console.log("Number(data)==", Number(data))
+      setClaimAmount(Number(data))
+    }
+  })
+
+  const { config: _claimConfig, error: _claimerror } = usePrepareContractWrite({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "claim",
+    overrides: { from: address },
+    args: [claimType, claimRound, claimAmount, claimMaturity, claimProof],
+    onSuccess(data) {
+    },
+    onError(e) {
+      // updateClaimItem(claimingItem, false, false)
+      setErrMsg(t("mapping.general.old-balance-burn-invalid"))
+    }
+  })
+
+  const { data: _claimData, write: claimWrite } = useContractWrite({
+    ..._claimConfig,
+    onSuccess(data) {
+      // updateClaimItem(claimingItem, true, true)
+    },
+    onError(e) {
+      // updateClaimItem(claimingItem, false, false)
+    }
+  });
+
+  const {} = useWaitForTransaction({
+    hash: _claimData?.hash,
+    onSuccess(data) {
+      // updateClaimItem(claimingItem, false, true)
+      toast("Success")
+    },
+  });
+
   const handleApprove = (e: any) => {
     approveWrite?.()
   };
 
+  const updateClaimItem = (d : MiningRecord | undefined, processing: boolean, disabled: boolean) => {
+    console.log("操作对象前", d, processing, disabled)
+    if(d) {
+      d.claimDisabled = disabled
+      d.claimProcessing = processing
+    }
+    console.log("操作对象后", d, processing, disabled)
+    // setClaimingItem(d)
+  }
+
   const handleClaim = (item: MiningRecord, e: any) => {
-    //console.log("这个东西???", item.OwnerAddress)
-    
+    //updateClaimItem(item, true, true)
+    let bodyParam = "address=" + address + "&type=" + item.Tc + "&round=" + item.Round
+    fetch("/apc/upgrade/getminingproof", {
+      method: "POST",
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: bodyParam
+    }).then( res => {
+      if(res.ok) {
+        return res.json()
+      }
+      //updateClaimItem(item, false, false)
+      throw res;
+    }).then( data => {
+      if(data.Code == 0) {
+        setClaimType(item.Tc)
+        setClaimClaimRound(item.Round)
+        setClaimAmount(Number(data.Data.Amount))
+        setClaimMaturity(item.MaturityTs)
+        setClaimProof(data.Data.Proof)
+        
+      } else {
+        setErrMsg(data.Msg)
+      }
+    }).catch(err => {
+      //setErrMsg(err)
+    })
   }
 
   const {} = useContractRead({
@@ -210,21 +296,34 @@ const MapMining = () => {
       throw res;
     }).then( data => {
       if(data.Code == 0) {
-        setErrMsg("")
-        setDataJson(JSON.stringify(data.Data))
+        // setDataJson(JSON.stringify(data.Data))
+
+        let d : MiningRecord[] = data.Data
+
+        for(var i in d) {
+          d[i].claimDisabled = false
+          d[i].claimProcessing = false
+        }
+        let localDataJson = JSON.stringify(d)
+        setDataJson(localDataJson)
       } else {
         setErrMsg(data.Msg)
       }
     }).catch(err => {
       //setErrMsg(err)
     })
+
+    if(claimAmount > 0) {
+      claimWrite?.()
+    }
   }, [
     address,
-    // _20config,
+    _20config,
     processing,
     disabled,
     typeVal,
     dataJson,
+    claimAmount,
   ]);
 
   return (
@@ -278,11 +377,11 @@ const MapMining = () => {
 
         <CardContainer>
           <h2 className="card-title">{t("batch.record")}</h2>
-          {/* <div className="text-right">
+          <div className="text-right">
             <button type="button" className="btn btn-xs glass text-neutral ml-2" onClick={handleApprove.bind(this)}>
               {t("mapping.mining.btn.approve")}
             </button>
-          </div> */}
+          </div>
 
           <div className="overflow-x-auto">
             <table className="table w-full">
@@ -298,22 +397,23 @@ const MapMining = () => {
                 </tr>
               </thead>
               <tbody>
-                {JSON.parse(dataJson)?.map((item: any, index: any) => (
+                {JSON.parse(dataJson)?.map((item: MiningRecord, index: any) => (
                     <>
                     <tr key={index}>
                       <td>{item.ProxyNum}</td>
                       <td>{item.Round}</td>
                       <td>{item.Term}</td>
                       <td>{formatDate(Number(item.MaturityTs))}</td>
-                      <td>{item.Rewards}</td>
+                      <td>{item.Rewards.toString()}</td>
                       <td>{mintName(item.Tc)}</td>
                       <td>
                         <button
                             type="button"
+                            className={clsx("btn btn-xs glass text-neutral ml-2", {
+                              loading: item.claimProcessing,
+                            })}
                             onClick={handleClaim.bind(this, item)}
-                            // disabled={timeNow <= item.MaturityTs}
-                            disabled = {true}
-                            className="btn btn-xs glass text-neutral ml-2"
+                            disabled={timeNow <= item.MaturityTs ? true : item.claimDisabled}
                         >
                             {t("mapping.mining.btn.claim")}
                         </button>
