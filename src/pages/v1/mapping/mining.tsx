@@ -190,7 +190,10 @@ const MapMining = () => {
     },
     onError(e) {
       // updateClaimItem(claimingItem, false, false)
-      setErrMsg(t("mapping.general.old-balance-burn-invalid"))
+      let startIndex = e.message.indexOf("reason=")
+      let endIndex = e.message.indexOf("method=")
+      let errorMessage = e.message.substring(startIndex, endIndex)
+      setErrMsg(errorMessage)
     }
   })
 
@@ -314,7 +317,7 @@ const MapMining = () => {
     })
 
     if(claimAmount > 0) {
-      claimWrite?.()
+      //claimWrite?.()
     }
   }, [
     address,
