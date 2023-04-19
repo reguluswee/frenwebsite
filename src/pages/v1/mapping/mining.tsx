@@ -23,10 +23,9 @@ import { formatDate } from "~/lib/helpers";
 
 import toast from "react-hot-toast";
 import { BigNumber } from "ethers";
-import { sign } from "crypto";
 
 const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Claimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"uint256","name":"code","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Transfered","type":"event"},{"inputs":[],"name":"MULTI","outputs":[{"internalType":"contract BatchLogic","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"NEWFREN","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PAGESIZE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PREFREN","outputs":[{"internalType":"contract PreFren","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"SAVING","outputs":[{"internalType":"contract BatchLogic","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"claimData","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"root","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"strictTrans","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"_check","type":"bool"}],"name":"modifyStrict","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"_root","type":"bytes32"}],"name":"modifyRoot","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"drawback","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_holder","type":"address"},{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"}],"name":"leaf","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"checkHolder","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_page","type":"uint256"}],"name":"uniQueryRounds","outputs":[{"internalType":"uint256","name":"len","type":"uint256"},{"internalType":"uint256[]","name":"rounds","type":"uint256[]"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"}],"name":"uniQueryProxies","outputs":[{"internalType":"address[]","name":"proxies","type":"address[]"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_type","type":"uint256"},{"internalType":"uint256","name":"_round","type":"uint256"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_maturityTs","type":"uint256"},{"internalType":"bytes32[]","name":"_proof","type":"bytes32[]"}],"name":"claim","outputs":[],"stateMutability":"nonpayable","type":"function"}];
-const comAddr = "0x3948EcBE2B42FE3E39fba5649cDD0A4C18ba0071";
+const comAddr = "0xD559e112233a70ca5Af58393A13a300f32326C7A";
 const bgdec = BigNumber.from(10**18 + '');
 const timeNow = new Date().getTime() / 1000;
 
@@ -63,12 +62,15 @@ const MapMining = () => {
   const [disabled, setDisabled] = useState(true);
   const [processing, setProcessing] = useState(false);
 
-  const [claiming, setClaiming] = useState(0);
   const [claimRound, setClaimClaimRound] = useState(0);
   const [claimType, setClaimType] = useState(0);
-  const [claimAmount, setClaimAmount] = useState(0)
+  const [claimAmount, setClaimAmount] = useState(BigNumber.from(0))
   const [claimMaturity, setClaimMaturity] = useState(0);
   const [claimProof, setClaimProof] = useState<string[]>();
+
+  const [claimedAmount, setClaimedAmount] = useState(BigNumber.from(0))
+
+  const [claiming, setClaiming] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
 
@@ -175,8 +177,8 @@ const MapMining = () => {
     overrides: { from: address },
     args: [address, claimType, claimRound],
     onSuccess(data) {
-      console.log("Number(data)==", Number(data))
-      setClaimAmount(Number(data))
+      setClaimedAmount(BigNumber.from(data));
+      setClaimAmount(BigNumber.from(data))
     }
   })
 
@@ -187,9 +189,9 @@ const MapMining = () => {
     overrides: { from: address },
     args: [claimType, claimRound, claimAmount, claimMaturity, claimProof],
     onSuccess(data) {
+      console.log("参数", claimAmount)
     },
     onError(e) {
-      // updateClaimItem(claimingItem, false, false)
       let startIndex = e.message.indexOf("reason=")
       let endIndex = e.message.indexOf("method=")
       let errorMessage = e.message.substring(startIndex, endIndex)
@@ -200,18 +202,18 @@ const MapMining = () => {
   const { data: _claimData, write: claimWrite } = useContractWrite({
     ..._claimConfig,
     onSuccess(data) {
-      // updateClaimItem(claimingItem, true, true)
+      console.log("成功？")
     },
     onError(e) {
-      // updateClaimItem(claimingItem, false, false)
+      console.log("???", e)
     }
   });
 
   const {} = useWaitForTransaction({
     hash: _claimData?.hash,
     onSuccess(data) {
-      // updateClaimItem(claimingItem, false, true)
       toast("Success")
+      setClaiming(false)
     },
   });
 
@@ -219,18 +221,15 @@ const MapMining = () => {
     approveWrite?.()
   };
 
-  const updateClaimItem = (d : MiningRecord | undefined, processing: boolean, disabled: boolean) => {
-    console.log("操作对象前", d, processing, disabled)
-    if(d) {
-      d.claimDisabled = disabled
-      d.claimProcessing = processing
-    }
-    console.log("操作对象后", d, processing, disabled)
-    // setClaimingItem(d)
-  }
-
   const handleClaim = (item: MiningRecord, e: any) => {
-    //updateClaimItem(item, true, true)
+    if(claimedAmount.gt(BigNumber.from(0))) {
+      setErrMsg("had already claimed")
+      return
+    }
+    if(claiming) {
+      setErrMsg("please don't repeat operation")
+      return
+    }
     let bodyParam = "address=" + address + "&type=" + item.Tc + "&round=" + item.Round
     fetch("/apc/upgrade/getminingproof", {
       method: "POST",
@@ -243,16 +242,14 @@ const MapMining = () => {
       if(res.ok) {
         return res.json()
       }
-      //updateClaimItem(item, false, false)
       throw res;
     }).then( data => {
       if(data.Code == 0) {
         setClaimType(item.Tc)
         setClaimClaimRound(item.Round)
-        setClaimAmount(Number(data.Data.Amount))
+        setClaimAmount(BigNumber.from(data.Data.Amount).mul(bgdec))
         setClaimMaturity(item.MaturityTs)
         setClaimProof(data.Data.Proof)
-        
       } else {
         setErrMsg(data.Msg)
       }
@@ -299,8 +296,6 @@ const MapMining = () => {
       throw res;
     }).then( data => {
       if(data.Code == 0) {
-        // setDataJson(JSON.stringify(data.Data))
-
         let d : MiningRecord[] = data.Data
 
         for(var i in d) {
@@ -315,18 +310,24 @@ const MapMining = () => {
     }).catch(err => {
       //setErrMsg(err)
     })
-
-    if(claimAmount > 0) {
-      //claimWrite?.()
+    // setClaimMaturity(1)
+    if(claimAmount.gt(BigNumber.from(0))) {
+      if(!claiming && claimWrite) {
+        setClaiming(true)
+        console.log("claimwrite", claimWrite)
+        claimWrite?.()
+      }
     }
   }, [
     address,
     _20config,
+    _claimConfig,
     processing,
     disabled,
     typeVal,
     dataJson,
     claimAmount,
+    claimWrite
   ]);
 
   return (
