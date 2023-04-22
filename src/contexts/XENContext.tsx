@@ -15,7 +15,8 @@ const provider = new ethers.providers.JsonRpcProvider("https://rpc.etherfair.org
 const nftV2 = new ethers.Contract(optNFTV2Address, optNFTV2Abi, provider);
 const nftV1 = new ethers.Contract(optNFTV1Address, optNFTV1Abi, provider);
 
-const treasuryContract = "0x73d24160cBE2145c68466cc8940fcd34f6614576";
+// const treasuryContract = "0x73d24160cBE2145c68466cc8940fcd34f6614576";
+const treasuryContract = "0x1be251511C54E4BE38059c25fAEB9d2848d5dBC6";
 
 export interface FopObj {
   minter: string,
