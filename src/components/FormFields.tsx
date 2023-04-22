@@ -185,10 +185,10 @@ export const TokenSelection: NextPage<any> = (props) => {
       <select className="input input-bordered w-full text-neutral" onChange={(e) => handleChange(e)}>
           <option value="0x0000000000000000000000000000000000000000">ETHF</option>
           <option value="0x6593900a9BEc57c5B80a12d034d683e2B89b7C99">FCZZ</option>
-          <option value="0x7127deeff734cE589beaD9C4edEFFc39C9128771">FREN</option>
+          {/* <option value="0xf81ed9cecFE069984690A30b64c9AAf5c0245C9F">FREN</option> */}
       </select>
       <label className="label">
-        <a href="https://www.oklink.com/zh-cn/ethf/address/0x8e3f39Beb44758C004F856E1E7498bAB26CD3F3F" rel="noopener" className="label-text-alt text-neutral">{props.description}{estimateAmount}</a>
+        <a href="https://www.oklink.com/zh-cn/ethf/address/0x2283b492353Bbb955268812FfB200C724fc0Bd49" rel="noopener" className="label-text-alt text-neutral">{props.description}{estimateAmount}</a>
       </label>
     </div>
   );

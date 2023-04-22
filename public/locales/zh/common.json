@@ -131,9 +131,9 @@
     "amount-description": "最大数量",
     "max": "最大值",
     "coins": "币种",
-    "coins-description": "支付的币种",
+    "coins-description": "币种/ETHF汇率",
     "coins-consume-total": "总消耗代币",
-    "coins-credit-quota": "可用授信额度",
+    "coins-credit-quota": "可用额度",
     "limit-exceed": "超过可用限额"
   },
   "toast": {
@@ -195,7 +195,8 @@
       "transfered": "已经领取完成新 $fren",
       "noavailable": "没有可领取Token",
       "not-in-time": "请到期后来领取",
-      "old-balance-burn-invalid": "钱包内需要有对应金额的旧fren以对应发行新的fren"
+      "old-balance-burn-invalid": "钱包内需要有对应金额的旧fren以对应发行新的fren",
+      "remain-balance": "合约剩余余额"
     },
     "direct": {
       "title": "持仓换币",

@@ -251,10 +251,6 @@ import {
       <Container className="max-w-2xl">
         <div className="flew flex-row space-y-8 ">
           <ul className="steps w-full">
-            <Link href="/batch/fop">
-              <a className="step">{t("batch.fop.title")}</a>
-            </Link>
-  
             <Link href="/batch/saving">
               <a className="step">{t("batch.gas.title")}</a>
             </Link>

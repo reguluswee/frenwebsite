@@ -32,11 +32,11 @@ const nextConfig = {
         destination: "/stake/1",
         permanent: false,
       },
-      {
-        source: "/batch",
-        destination: "/batch/fop",
-        permanent: false,
-      },
+      // {
+      //   source: "/batch",
+      //   destination: "/batch/fop",
+      //   permanent: false,
+      // },
       {
         source: "/multitoken",
         destination: "/multi/tokens",

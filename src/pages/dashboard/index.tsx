@@ -260,7 +260,7 @@ const Chains: NextPage = () => {
     <Container className="max-w-5xl">
       <Breadcrumbs />
 
-      {showPopup && (
+      {/* {showPopup && (
         <PopupBox title={t("upgrade.title")} onClose={handleClose} 
         contents={t("upgrade.content")} 
         items={[
@@ -268,7 +268,7 @@ const Chains: NextPage = () => {
           t("upgrade.items.it2"),
           t("upgrade.items.it3")
         ]}/>
-      )}
+      )} */}
 
       <div className="space-y-4 w-full">
         <CardContainer>

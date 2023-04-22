@@ -82,6 +82,8 @@ const MapMining = () => {
 
   const [dataJson, setDataJson] = useState("[]");
 
+  const [remainBalance, setRemainBalance] = useState(BigNumber.from(0));
+
   const { data, error, isLoading, signMessage } = useSignMessage({
     onSuccess(data, variables) {
       console.log(variables, data)
@@ -179,6 +181,16 @@ const MapMining = () => {
     onSuccess(data) {
       setClaimedAmount(BigNumber.from(data));
       setClaimAmount(BigNumber.from(data))
+    }
+  })
+
+  const {} = useContractRead({
+    addressOrName: "0xf81ed9cecFE069984690A30b64c9AAf5c0245C9F",
+    contractInterface: erc20ABI,
+    functionName: "balanceOf",
+    args: [comAddr],
+    onSuccess(data) {
+      setRemainBalance(BigNumber.from(data))
     }
   })
 
@@ -353,6 +365,13 @@ const MapMining = () => {
               <h2 className="card-title text-neutral">
               {t("mapping.mining.tip")}
               </h2>
+
+              <div className="form-control w-full">
+                  <label className="label text-neutral">
+                      <span className="label-text text-neutral">{t("mapping.general.remain-balance")}</span>
+                      <span className="label-text-alt text-error">{remainBalance.div(bgdec).toString()}</span>
+                  </label>
+              </div>
               
               <div className="form-control w-full">
                   <label className="label text-neutral">

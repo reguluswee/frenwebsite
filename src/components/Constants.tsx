@@ -68,13 +68,13 @@ export const navigationItems = [
     href: "/stake",
     canDisable: true,
   },
-  // {
-  //   id: 3,
-  //   t: "batch.title",
-  //   icon: <CashIcon className="h-5 w-5" />,
-  //   href: "/batch/fop",
-  //   canDisable: true,
-  // },
+  {
+    id: 3,
+    t: "batch.title",
+    icon: <CashIcon className="h-5 w-5" />,
+    href: "/batch/saving",
+    canDisable: true,
+  },
   {
     id: 9,
     t: "mapping.title",
@@ -127,7 +127,7 @@ export const linkItems = [
     name: "Version Switch",
     t: "link.version-old",
     icon: <BookOpenIcon className="h-5 w-5" />,
-    href: "https://pre.fenus.xyz/",
+    href: "https://v1.fenus.xyz/",
   },
   {
     name: "Treasury Information",

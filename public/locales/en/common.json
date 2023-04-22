@@ -131,7 +131,7 @@
     "amount-description": "Maximum amount",
     "max": "Max",
     "coins": "Coins",
-    "coins-description": "Alternative Token for minting",
+    "coins-description": "Currency Exchange Rate/ETHF",
     "coins-consume-total": "Total consume tokens",
     "coins-credit-quota": "Available credit quota",
     "limit-exceed": "limit exceeded"
@@ -196,7 +196,8 @@
       "transfered": "Had claimed new $fren",
       "noavailable": "No Available Token",
       "not-in-time": "Claiming time has not yet arrived",
-      "old-balance-burn-invalid": "Old fren balance of this wallet is not enough to issue new one"
+      "old-balance-burn-invalid": "Old fren balance of this wallet is not enough to issue new one",
+      "remain-balance": "Contract Remaining Balance"
     },
     "direct": {
       "title": "Holding Swap",

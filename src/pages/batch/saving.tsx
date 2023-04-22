@@ -20,7 +20,6 @@ import { MaxValueField, MaxMinterField } from "~/components/FormFields";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { DateStatCard, NumberStatCard } from "~/components/StatCards";
 import { useForm } from "react-hook-form";
-import { xenContract } from "~/lib/xen-contract";
 import { ErrorMessage } from "@hookform/error-message";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { clsx } from "clsx";
@@ -29,9 +28,8 @@ import toast from "react-hot-toast";
 import GasEstimate from "~/components/GasEstimate";
 
 import { WSavingItem } from "~/components/SavingList";
-import { ethers, BigNumber } from "ethers";
+import { BigNumber } from "ethers";
 
-import FRENCryptoABI from "~/abi/FRENCryptoABI";
 import { batchSavingContract } from "~/lib/batch-contract";
 
 const Saving = () => {
@@ -171,10 +169,6 @@ const Saving = () => {
     <Container className="max-w-2xl">
       <div className="flew flex-row space-y-8 ">
         <ul className="steps w-full">
-          <Link href="/batch/fop">
-            <a className="step">{t("batch.fop.title")}</a>
-          </Link>
-
           <Link href="/batch/saving">
             <a className="step step-neutral">{t("batch.gas.title")}</a>
           </Link>

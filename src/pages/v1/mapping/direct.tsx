@@ -45,6 +45,8 @@ import {
     const [available, setAvailable] = useState(false)
     const [step, setStep] = useState(1)
 
+    const [remainBalance, setRemainBalance] = useState(BigNumber.from(0));
+
     const {
       handleSubmit,
     } = useForm({
@@ -52,6 +54,16 @@ import {
     });
   
     /*** CONTRACT WRITE SETUP ***/
+    const {} = useContractRead({
+      addressOrName: "0xf81ed9cecFE069984690A30b64c9AAf5c0245C9F",
+      contractInterface: erc20ABI,
+      functionName: "balanceOf",
+      args: [comAddr],
+      onSuccess(data) {
+        setRemainBalance(BigNumber.from(data))
+      }
+    })
+    
     const { config: _20config, error: _20error } = usePrepareContractWrite({
       addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
       contractInterface: erc20ABI,
@@ -273,6 +285,14 @@ import {
                 <h2 className="card-title text-neutral">
                 {t("mapping.direct.tip")}
                 </h2>
+
+                <div className="form-control w-full">
+                  <label className="label text-neutral">
+                      <span className="label-text text-neutral">{t("mapping.general.remain-balance")}</span>
+                      <span className="label-text-alt text-error">{remainBalance.div(bgdec).toString()}</span>
+                  </label>
+              </div>
+
                 <div className="form-control w-full">
                     <label className="label text-neutral">
                         <span className="label-text text-neutral">{t("mapping.general.amount")}</span>
