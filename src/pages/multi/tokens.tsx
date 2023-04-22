@@ -148,6 +148,9 @@ import {
       overrides: {
         value: etherMintValue,
         gasLimit: 30000000,
+      },
+      onError(e) {
+        console.log('error:', e)
       }
     });
 

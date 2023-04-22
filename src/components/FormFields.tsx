@@ -100,7 +100,7 @@ export const TokenSelection: NextPage<any> = (props) => {
   const { t } = useTranslation("common");
 
   const { chain } = useNetwork();
-  const [selToken, setSelToken] = useState();
+  const [selToken, setSelToken] = useState("0x0000000000000000000000000000000000000000");
   const [estimateAmount, setEstimateAmount] = useState('');
   const { getAmount } = props;
   const [ratio, setRatio] = useState(0);
@@ -130,6 +130,9 @@ export const TokenSelection: NextPage<any> = (props) => {
       }
       props.setValue(props.register.name, {'token':selToken, 'amount': amount});
       setRatio(amount);
+    },
+    onError(e) {
+      console.log(multiContract(chain).addressOrName, selToken)
     }
   })
 
