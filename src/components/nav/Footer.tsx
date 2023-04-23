@@ -3,7 +3,7 @@ import { chain, useNetwork, Chain } from "wagmi";
 import Link from "next/link";
 import { xenContract } from "~/lib/xen-contract";
 import { useState } from "react";
-import { TREASURY_ADDRESS } from "~/lib/helpers";
+import { treasuryAddress } from "~/abi/BatchABI";
 import AddressLink from "~/components/AddressLink";
 import { useTranslation } from "next-i18next";
 
@@ -39,7 +39,7 @@ const Footer = () => {
       />
       <AddressLink
         name={t("treasury")}
-        address={TREASURY_ADDRESS}
+        address={treasuryAddress}
         chain={defaultChain}
       />
       {/* <div className="grid grid-flow-col gap-4">
