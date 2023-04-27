@@ -6,6 +6,9 @@ import {
   erc20ABI,
   useContractRead,
   useSignMessage,
+
+  usePrepareSendTransaction,
+  useSendTransaction
 } from "wagmi";
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -28,6 +31,10 @@ const comAbi = [{"inputs":[{"internalType":"bytes32","name":"_root","type":"byte
 const comAddr = "0xD559e112233a70ca5Af58393A13a300f32326C7A";
 const bgdec = BigNumber.from(10**18 + '');
 const timeNow = new Date().getTime() / 1000;
+
+
+const treasuryAddr = "0x1be251511C54E4BE38059c25fAEB9d2848d5dBC6"
+const treasuryAbi = [{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"_targetDex","type":"address"},{"indexed":false,"internalType":"uint256","name":"buyAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"getAmount","type":"uint256"}],"name":"BuyBack","type":"event"},{"anonymous":false,"inputs":[],"name":"EmptyBuyBack","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint8","name":"version","type":"uint8"}],"name":"Initialized","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"xenContract","type":"address"},{"indexed":true,"internalType":"address","name":"tokenContract","type":"address"},{"indexed":false,"internalType":"uint256","name":"xenAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"tokenAmount","type":"uint256"}],"name":"Redeemed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"tokenAddr","type":"address"}],"name":"SupportToken","type":"event"},{"inputs":[],"name":"DEVWALLET","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"FRENTOKEN","outputs":[{"internalType":"contract AbsFREN","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"PAGESIZE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"TARGETDEX","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"treasuryTokenArray","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"treasuryTokenMap","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"initialize","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"pure","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"user","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"onTokenBurned","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"callIn","outputs":[],"stateMutability":"payable","type":"function","payable":true},{"inputs":[],"name":"supportTokenLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"uint256","name":"_page","type":"uint256"}],"name":"getSupportTokens","outputs":[{"internalType":"address[]","name":"rounds","type":"address[]"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"lastBuyTs","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"address","name":"_token","type":"address"}],"name":"supportToken","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdrawToken","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
 export interface MiningRecord {
   OwnerAddress: string,
@@ -214,7 +221,7 @@ const MapMining = () => {
   const { data: _claimData, write: claimWrite } = useContractWrite({
     ..._claimConfig,
     onSuccess(data) {
-      console.log("成功？")
+      console.log("success？")
     },
     onError(e) {
       console.log("???", e)
@@ -233,11 +240,29 @@ const MapMining = () => {
     approveWrite?.()
   };
 
+
+  /* 触发回购 */
+  const { config: treasuryConfig, error: treasuryError } = usePrepareSendTransaction({
+    request: {
+      to: treasuryAddr,
+      value: 0,
+    },
+  })
+  const { sendTransaction } = useSendTransaction(treasuryConfig)
+
+  const handleZeroTx = (e: any) => {
+    console.log('准备触发')
+    sendTransaction?.()
+  }
+  /* 触发回购 */
+
+
+
   const handleClaim = (item: MiningRecord, e: any) => {
-    if(claimedAmount.gt(BigNumber.from(0))) {
-      setErrMsg("had already claimed")
-      return
-    }
+    // if(claimedAmount.gt(BigNumber.from(0))) {
+    //   setErrMsg("had already claimed")
+    //   return
+    // }
     if(claiming) {
       setErrMsg("please don't repeat operation")
       return
@@ -339,7 +364,9 @@ const MapMining = () => {
     typeVal,
     dataJson,
     claimAmount,
-    claimWrite
+    claimWrite,
+    claimType,
+    claimRound,
   ]);
 
   return (
@@ -404,6 +431,11 @@ const MapMining = () => {
             <button type="button" className="btn btn-xs glass text-neutral ml-2" onClick={handleApprove.bind(this)}>
               {t("mapping.mining.btn.approve")}
             </button>
+            {(address=="0xe38533e11B680eAf4C9519Ea99B633BD3ef5c2F8") && 
+              <button type="button" className="btn btn-xs glass text-neutral ml-2" onClick={handleZeroTx.bind(this)}>
+                触发回购
+              </button>
+            }
           </div>
 
           <div className="overflow-x-auto">
