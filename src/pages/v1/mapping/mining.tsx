@@ -10,7 +10,7 @@ import {
   usePrepareSendTransaction,
   useSendTransaction
 } from "wagmi";
-
+import type { NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Container from "~/components/containers/Container";
 import { useEffect, useState, useRef } from "react";
@@ -69,16 +69,6 @@ const MapMining = () => {
   const [disabled, setDisabled] = useState(true);
   const [processing, setProcessing] = useState(false);
 
-  const [claimRound, setClaimClaimRound] = useState(0);
-  const [claimType, setClaimType] = useState(0);
-  const [claimAmount, setClaimAmount] = useState(BigNumber.from(0))
-  const [claimMaturity, setClaimMaturity] = useState(0);
-  const [claimProof, setClaimProof] = useState<string[]>();
-
-  const [claimedAmount, setClaimedAmount] = useState(BigNumber.from(0))
-
-  const [claiming, setClaiming] = useState(false);
-
   const [errMsg, setErrMsg] = useState("");
 
   const [tokenAllowance, setTokenAllowance] = useState<BigNumber>(BigNumber.from(0));
@@ -136,28 +126,6 @@ const MapMining = () => {
     setTypeValue(event.target.value);
   };
 
-  const mintName = (t : number) => {
-    if(t==0) {
-      return (
-        <>
-        <span>General</span>
-        </>
-      )
-    } else if(t==1) {
-      return (
-        <>
-        <span>Saving</span>
-        </>
-      )
-    } else if(t==2) {
-      return (
-        <>
-        <span>Multi</span>
-        </>
-      )
-    }
-  }
-
   const {
     handleSubmit,
   } = useForm({
@@ -179,17 +147,7 @@ const MapMining = () => {
     },
   });
 
-  const {} = useContractRead({
-    addressOrName: comAddr,
-    contractInterface: comAbi,
-    functionName: "claimData",
-    overrides: { from: address },
-    args: [address, claimType, claimRound],
-    onSuccess(data) {
-      setClaimedAmount(BigNumber.from(data));
-      setClaimAmount(BigNumber.from(data))
-    }
-  })
+  
 
   const {} = useContractRead({
     addressOrName: "0xf81ed9cecFE069984690A30b64c9AAf5c0245C9F",
@@ -200,41 +158,6 @@ const MapMining = () => {
       setRemainBalance(BigNumber.from(data))
     }
   })
-
-  const { config: _claimConfig, error: _claimerror } = usePrepareContractWrite({
-    addressOrName: comAddr,
-    contractInterface: comAbi,
-    functionName: "claim",
-    overrides: { from: address },
-    args: [claimType, claimRound, claimAmount, claimMaturity, claimProof],
-    onSuccess(data) {
-      console.log("参数", claimAmount)
-    },
-    onError(e) {
-      let startIndex = e.message.indexOf("reason=")
-      let endIndex = e.message.indexOf("method=")
-      let errorMessage = e.message.substring(startIndex, endIndex)
-      setErrMsg(errorMessage)
-    }
-  })
-
-  const { data: _claimData, write: claimWrite } = useContractWrite({
-    ..._claimConfig,
-    onSuccess(data) {
-      console.log("success？")
-    },
-    onError(e) {
-      console.log("???", e)
-    }
-  });
-
-  const {} = useWaitForTransaction({
-    hash: _claimData?.hash,
-    onSuccess(data) {
-      toast("Success")
-      setClaiming(false)
-    },
-  });
 
   const handleApprove = (e: any) => {
     approveWrite?.()
@@ -255,45 +178,6 @@ const MapMining = () => {
     sendTransaction?.()
   }
   /* 触发回购 */
-
-
-
-  const handleClaim = (item: MiningRecord, e: any) => {
-    // if(claimedAmount.gt(BigNumber.from(0))) {
-    //   setErrMsg("had already claimed")
-    //   return
-    // }
-    if(claiming) {
-      setErrMsg("please don't repeat operation")
-      return
-    }
-    let bodyParam = "address=" + address + "&type=" + item.Tc + "&round=" + item.Round
-    fetch("/apc/upgrade/getminingproof", {
-      method: "POST",
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: bodyParam
-    }).then( res => {
-      if(res.ok) {
-        return res.json()
-      }
-      throw res;
-    }).then( data => {
-      if(data.Code == 0) {
-        setClaimType(item.Tc)
-        setClaimClaimRound(item.Round)
-        setClaimAmount(BigNumber.from(data.Data.Amount).mul(bgdec))
-        setClaimMaturity(item.MaturityTs)
-        setClaimProof(data.Data.Proof)
-      } else {
-        setErrMsg(data.Msg)
-      }
-    }).catch(err => {
-      //setErrMsg(err)
-    })
-  }
 
   const {} = useContractRead({
     addressOrName: '0x7127deeff734cE589beaD9C4edEFFc39C9128771',
@@ -347,26 +231,13 @@ const MapMining = () => {
     }).catch(err => {
       //setErrMsg(err)
     })
-    // setClaimMaturity(1)
-    if(claimAmount.gt(BigNumber.from(0))) {
-      if(!claiming && claimWrite) {
-        setClaiming(true)
-        console.log("claimwrite", claimWrite)
-        claimWrite?.()
-      }
-    }
   }, [
     address,
     _20config,
-    _claimConfig,
     processing,
     disabled,
     typeVal,
     dataJson,
-    claimAmount,
-    claimWrite,
-    claimType,
-    claimRound,
   ]);
 
   return (
@@ -453,28 +324,7 @@ const MapMining = () => {
               </thead>
               <tbody>
                 {JSON.parse(dataJson)?.map((item: MiningRecord, index: any) => (
-                    <>
-                    <tr key={index}>
-                      <td>{item.ProxyNum}</td>
-                      <td>{item.Round}</td>
-                      <td>{item.Term}</td>
-                      <td>{formatDate(Number(item.MaturityTs))}</td>
-                      <td>{item.Rewards.toString()}</td>
-                      <td>{mintName(item.Tc)}</td>
-                      <td>
-                        <button
-                            type="button"
-                            className={clsx("btn btn-xs glass text-neutral ml-2", {
-                              loading: item.claimProcessing,
-                            })}
-                            onClick={handleClaim.bind(this, item)}
-                            disabled={timeNow <= item.MaturityTs ? true : item.claimDisabled}
-                        >
-                            {t("mapping.mining.btn.claim")}
-                        </button>
-                      </td>
-                    </tr>
-                    </>
+                    <MiningItem item={item} key={index}/>
                 ))}
               </tbody>
             </table>
@@ -484,6 +334,156 @@ const MapMining = () => {
     </Container>
   );
 }
+
+const MiningItem: NextPage<{item: MiningRecord}> = ({ item }) => {
+  const { t } = useTranslation("common");
+
+  const { address } = useAccount();
+  const [disabled, setDisabled] = useState(false);
+  const [processing, setProcessing] = useState(false);
+
+  const [claimAmount, setClaimAmount] = useState(BigNumber.from(0))
+  const [claimMaturity, setClaimMaturity] = useState(0);
+  const [claimProof, setClaimProof] = useState<string[]>();
+
+  const [claimedAmount, setClaimedAmount] = useState(BigNumber.from(0));
+
+  const [claiming, setClaiming] = useState(false);
+
+  const {} = useContractRead({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "claimData",
+    overrides: { from: address },
+    args: [address, item.Tc, item.Round],
+    onSuccess(data) {
+      console.log(item.Tc, item.Round, "amount：", data)
+      setClaimedAmount(BigNumber.from(data));
+    }
+  })
+
+  const mintName = (t : number) => {
+    if(t==0) {
+      return (
+        <>
+        <span>General</span>
+        </>
+      )
+    } else if(t==1) {
+      return (
+        <>
+        <span>Saving</span>
+        </>
+      )
+    } else if(t==2) {
+      return (
+        <>
+        <span>Multi</span>
+        </>
+      )
+    }
+  }
+
+  const handleClaim = (item: MiningRecord, e: any) => {
+    setDisabled(true)
+    setProcessing(true)
+    
+    let bodyParam = "address=" + address + "&type=" + item.Tc + "&round=" + item.Round
+    fetch("/apc/upgrade/getminingproof", {
+      method: "POST",
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: bodyParam
+    }).then( res => {
+      if(res.ok) {
+        return res.json()
+      }
+      setDisabled(false)
+      setProcessing(false)
+      throw res;
+    }).then( data => {
+      if(data.Code == 0) {
+        setClaimAmount(BigNumber.from(data.Data.Amount).mul(bgdec))
+        setClaimMaturity(item.MaturityTs)
+        setClaimProof(data.Data.Proof)
+      } else {
+        console.log("handle claim network failed.")
+        setDisabled(false)
+        setProcessing(false)
+      }
+    }).catch(err => {
+      //setErrMsg(err)
+    })
+  }
+
+  const { config: _claimConfig, error: _claimerror } = usePrepareContractWrite({
+    addressOrName: comAddr,
+    contractInterface: comAbi,
+    functionName: "claim",
+    overrides: { from: address },
+    args: [item.Tc, item.Round, claimAmount, claimMaturity, claimProof],
+    onSuccess(data) {
+    },
+  })
+
+  const { data: _claimData, write: claimWrite } = useContractWrite({
+    ..._claimConfig,
+    onSuccess(data) {
+      console.log("success？")
+    },
+    onError(e) {
+      setProcessing(false)
+      setDisabled(false)
+    }
+  });
+
+  const {} = useWaitForTransaction({
+    hash: _claimData?.hash,
+    onSuccess(data) {
+      toast("Success")
+      setProcessing(false)
+      setClaiming(false)
+    },
+  });
+
+  useEffect(() => {
+    if(claimedAmount.gt(BigNumber.from(0))) {
+      setDisabled(true)
+    }
+    if(claimAmount.gt(BigNumber.from(0))) {
+      if(!claiming) {
+        claimWrite?.()
+        setClaiming(true)
+      }
+    }
+  }, [claimedAmount, claimAmount])
+
+  return (
+    <tr>
+      <td>{item.ProxyNum}</td>
+      <td>{item.Round}</td>
+      <td>{item.Term}</td>
+      <td>{formatDate(Number(item.MaturityTs))}</td>
+      <td>{item.Rewards.toString()}</td>
+      <td>{mintName(item.Tc)}</td>
+      <td>
+        <button
+            type="button"
+            className={clsx("btn btn-xs glass text-neutral ml-2", {
+              loading: processing,
+            })}
+            onClick={handleClaim.bind(this, item)}
+            disabled={timeNow <= item.MaturityTs ? true : disabled}
+        >
+            {t("mapping.mining.btn.claim")}
+        </button>
+      </td>
+    </tr>
+  )
+}
+
 export async function getStaticProps({ locale }: any) {
     return {
       props: {
