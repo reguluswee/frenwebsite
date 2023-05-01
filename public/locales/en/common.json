@@ -245,6 +245,15 @@
         "query": "Query and Claim",
         "claim": "Claim"
       }
+    },
+    "fop": {
+      "title": "FOP Swap",
+      "title-v1": "FOP V1 Record",
+      "title-v2": "FOP V2 Record",
+      "btn": {
+        "approve-v1": "approve to operate FOP V1",
+        "approve-v2": "approve to operate FOP V2"
+      }
     }
   },
   "upgrade": {

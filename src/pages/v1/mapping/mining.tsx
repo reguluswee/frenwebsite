@@ -255,6 +255,10 @@ const MapMining = () => {
           <Link href="/v1/mapping/mining">
             <a className="step step-neutral">{t("mapping.mining.title")}</a>
           </Link>
+
+          <Link href="/v1/mapping/fop">
+            <a className="step">{t("mapping.fop.title")}</a>
+          </Link>
         </ul>
 
         <CardContainer>

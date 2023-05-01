@@ -244,6 +244,15 @@
         "query": "查询并登记",
         "claim": "申领"
       }
+    },
+    "fop": {
+      "title": "FOP换币",
+      "title-v1": "FOP V1记录",
+      "title-v2": "FOP V2记录",
+      "btn": {
+        "approve-v1": "授权操作FOP V1",
+        "approve-v2": "授权操作FOP V2"
+      }
     }
   },
   "upgrade": {

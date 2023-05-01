@@ -297,6 +297,10 @@ const MapStake = () => {
           <Link href="/v1/mapping/mining">
             <a className="step">{t("mapping.mining.title")}</a>
           </Link>
+
+          <Link href="/v1/mapping/fop">
+            <a className="step">{t("mapping.fop.title")}</a>
+          </Link>
         </ul>
 
         <CardContainer>
