@@ -135,13 +135,13 @@ const FopRecord: NextPage<{version: number}> = ({ version }) => {
 
   useEffect(() => {
     if(balance > 0) {
-      fetch("/apc/upgrade/getfop?" + "address=" + address + "&contract=" + assetAddr, {
-        method: "GET",
+      fetch("/apc/upgrade/", {
+        method: "POST",
         mode: 'no-cors',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        //body: "address=" + address + "&contract=" + assetAddr
+        body: "address=" + address + "&contract=" + assetAddr
       }).then( res => {
         if(res.ok) {
           return res.json()
