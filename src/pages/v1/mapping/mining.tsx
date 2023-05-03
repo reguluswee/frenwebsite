@@ -174,7 +174,6 @@ const MapMining = () => {
   const { sendTransaction } = useSendTransaction(treasuryConfig)
 
   const handleZeroTx = (e: any) => {
-    console.log('准备触发')
     sendTransaction?.()
   }
   /* 触发回购 */
@@ -479,7 +478,7 @@ const MiningItem: NextPage<{item: MiningRecord}> = ({ item }) => {
               loading: processing,
             })}
             onClick={handleClaim.bind(this, item)}
-            disabled={timeNow <= item.MaturityTs ? true : disabled}
+            // disabled={timeNow <= item.MaturityTs ? true : disabled}
         >
             {t("mapping.mining.btn.claim")}
         </button>
