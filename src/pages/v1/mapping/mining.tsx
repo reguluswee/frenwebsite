@@ -425,7 +425,7 @@ const MiningItem: NextPage<{item: MiningRecord}> = ({ item }) => {
     addressOrName: comAddr,
     contractInterface: comAbi,
     functionName: "claim",
-    overrides: { from: address },
+    //overrides: { from: address },
     args: [item.Tc, item.Round, claimAmount, claimMaturity, claimProof],
     onSuccess(data) {
     },
