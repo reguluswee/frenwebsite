@@ -297,7 +297,7 @@ const Fop: NextPage = () => {
                   className={clsx("btn glass text-neutral", {
                     loading: processing,
                   })}
-                  disabled={true}
+                  disabled={disabled}
                 >
                   {t("mint.start")}
                 </button>
