@@ -242,7 +242,8 @@
       "btn": {
         "approve": "授权操作旧fren",
         "query": "查询并登记",
-        "claim": "申领"
+        "claim": "申领",
+        "claimed": "已领取"
       }
     },
     "fop": {

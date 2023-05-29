@@ -243,7 +243,8 @@
       "btn": {
         "approve": "Approve Old Fren",
         "query": "Query and Claim",
-        "claim": "Claim"
+        "claim": "Claim",
+        "claimed": "Claimed"
       }
     },
     "fop": {

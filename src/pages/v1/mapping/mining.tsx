@@ -478,7 +478,7 @@ const MiningItem: NextPage<{item: MiningRecord}> = ({ item }) => {
               loading: processing,
             })}
             onClick={handleClaim.bind(this, item)}
-            // disabled={timeNow <= item.MaturityTs ? true : disabled}
+            disabled={timeNow <= item.MaturityTs ? true : disabled}
         >
             {t("mapping.mining.btn.claim")}
         </button>
