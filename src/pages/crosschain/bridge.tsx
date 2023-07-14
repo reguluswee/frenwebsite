@@ -310,7 +310,7 @@ const BridgeItem: NextPage<{item: CrossObj, tbAmount: BigNumber, crossAccount: s
   var provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
 
   const { chains, error, isLoading, pendingChainId, switchNetwork } = useSwitchNetwork({
-    chainId: 80001,
+    chainId: 56,
     onSuccess(data) {
       if(window.ethereum) {
         provider.send('eth_requestAccounts', []).then((value) => {
@@ -332,7 +332,7 @@ const BridgeItem: NextPage<{item: CrossObj, tbAmount: BigNumber, crossAccount: s
   const [claiming, setClaiming] = useState(false);
 
   const handleClaim = (item: CrossObj, e: any) => {
-    if(!crossAccount && chain?.id!=80001) {
+    if(!crossAccount && chain?.id!=56) {
       switchNetwork?.()
       return
     }
