@@ -8,6 +8,10 @@ import {
     multiAbi, multiAddress,
   } from "~/abi/BatchABI";
 
+import {
+    lockFancyABI, lockFancyAddr,
+  } from "~/abi/CrossABI";
+
 export const batchV1Contract = (contractChain?: Chain) => {
     return {
         addressOrName: batchV1Address,
@@ -52,4 +56,12 @@ export const multiContract = (contractChain?: Chain) => {
         contractInterface: multiAbi,
         chainId: contractChain?.id,
     };
+}
+
+export const lockFancyProxyContract = (contractChain? : Chain) => {
+    return {
+        addressOrName: lockFancyAddr,
+        contractInterface: lockFancyABI,
+        chainId: contractChain?.id,
+    }
 }

@@ -134,7 +134,9 @@
     "coins-description": "Currency Exchange Rate/ETHF",
     "coins-consume-total": "Total consume tokens",
     "coins-credit-quota": "Available credit quota",
-    "limit-exceed": "limit exceeded"
+    "limit-exceed": "limit exceeded",
+    "crosschain-amount-required": "Amount required",
+    "crosschain-amount-positive": "Amount must be greater than 0"
   },
   "toast": {
     "copied-to-clipboard": "Copied to clipboard",
@@ -264,6 +266,27 @@
       "it1": "Existing direct holding users can directly swap old $Fren for new $Fren at a 1:1 ratio by burning their old $Fren and receiving the same amount of new $Fren.",
       "it2": "Existing staking users can claim new $Fren at a 1:1 ratio based on the original staking algorithm and parameters of old $Fren at the expiration date of their staking.",
       "it3": "Existing minting users can claim new $Fren at a 1:1 ratio based on the original minting algorithm and parameters of old $Fren at the expiration date of their minting."
+    }
+  },
+  "crosschain": {
+    "title": "Bridge",
+    "start": "Cross Chain",
+    "des": "Cross-Chain Instructions",
+    "des-details": "After the cross-chain process starts, Fren tokens will be locked on ETHF based on the input quantity, and an equivalent amount of Fren tokens will be released on the target chain to the same wallet address. Users will need to claim the tokens manually",
+    "step1": "Lock",
+    "step2": "Release",
+    "record": "Record",
+    "recall": "Recall",
+    "claim": "Claim",
+    "record-item" : {
+      "status": "Status",
+      "amount": "Amount",
+      "action": "Action"
+    },
+    "status-text": {
+      "waiting": "Waiting",
+      "packed": "Packed",
+      "finished": "Finish"
     }
   }
 }

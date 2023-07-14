@@ -1,4 +1,4 @@
-import { BookOpenIcon, ViewGridIcon, LockClosedIcon, CashIcon } from "@heroicons/react/outline";
+import { BookOpenIcon, ViewGridIcon, LockClosedIcon, CashIcon, ScaleIcon } from "@heroicons/react/outline";
 import {
   DuneIcon,
   TwitterIcon,
@@ -75,13 +75,21 @@ export const navigationItems = [
     href: "/batch/saving",
     canDisable: true,
   },
-  {
-    id: 9,
-    t: "mapping.title",
-    icon: <CashIcon className="h-5 w-5" />,
-    href: "/v1/mapping/direct",
-    canDisable: true,
-  },
+  // {
+  //   id: 4,
+  //   t: "crosschain.title",
+  //   icon: <ScaleIcon className="h-5 w-5" />,
+  //   href: "/crosschain/bridge",
+  //   canDisable: true,
+  // },
+  
+  // {
+  //   id: 9,
+  //   t: "mapping.title",
+  //   icon: <CashIcon className="h-5 w-5" />,
+  //   href: "/v1/mapping/direct",
+  //   canDisable: true,
+  // },
 ];
 
 export const textLinkItems = [

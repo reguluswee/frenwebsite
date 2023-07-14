@@ -134,7 +134,10 @@
     "coins-description": "币种/ETHF汇率",
     "coins-consume-total": "总消耗代币",
     "coins-credit-quota": "可用额度",
-    "limit-exceed": "超过可用限额"
+    "limit-exceed": "超过可用限额",
+
+    "crosschain-amount-required": "需要输入数量",
+    "crosschain-amount-positive": "数量必须大于0"
   },
   "toast": {
     "copied-to-clipboard": "拷贝到剪贴板",
@@ -263,6 +266,27 @@
       "it1": "原直接持币用户，可进行直接1:1换币，将原$fren 燃烧，同时领取同等数量的新 $fren",
       "it2": "原质押用户，按照原$fren的质押算法和参数，在质押到期日可1:1领取新的 $fren",
       "it3": "原铸造用户，按照原$fren的铸造算法和参数，在铸造到期日可1:1领取新的 $fren"
+    }
+  },
+  "crosschain": {
+    "title": "跨链桥",
+    "start": "开始跨链",
+    "des": "跨链说明",
+    "des-details": "开始跨链后将在ETHF锁定输入数量的Fren，并在目标链同钱包地址释放相同数量的Fren，需要自行claim",
+    "step1": "锁仓",
+    "step2": "释放",
+    "record": "记录",
+    "recall": "撤回",
+    "claim": "提领",
+    "record-item" : {
+      "status": "状态",
+      "amount": "数量",
+      "action": "动作"
+    },
+    "status-text": {
+      "waiting": "等待打包",
+      "packed": "正在跨链",
+      "finished": "完成跨链"
     }
   }
 }
